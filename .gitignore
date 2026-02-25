@@ -1,0 +1,33 @@
+# ── Build artifacts ──
+build/
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.out
+
+# ── Simulation output ──
+trace/
+
+# ── CMake ──
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+Makefile
+compile_commands.json
+_deps/
+
+# ── IDE / OS ──
+.DS_Store
+*.code-workspace
+.vscode/
+.idea/
+
+# ── Misc ──
+*.log
+*.swp
+*.swo
+*~

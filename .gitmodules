@@ -1,0 +1,12 @@
+[submodule "third_party/ramulator2"]
+	path = third_party/ramulator2
+	url = https://github.com/Peter-Pocker/ramulator2.git
+[submodule "third_party/booksim2"]
+	path = third_party/booksim2
+	url = https://github.com/booksim/booksim2.git
+[submodule "third_party/GEMINI-HPCA2024"]
+	path = third_party/GEMINI-HPCA2024
+	url = https://github.com/SET-Scheduling-Project/GEMINI-HPCA2024.git
+[submodule "third_party/Gemini-Compiler-IR"]
+	path = third_party/Gemini-Compiler-IR
+	url = https://github.com/SET-Scheduling-Project/Gemini-Compiler-IR.git

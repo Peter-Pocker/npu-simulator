@@ -1,0 +1,35 @@
+{
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 256,
+        "vector_units": 64,
+        "clock_freq_mhz": 1000.0
+    },
+    "sram": {
+        "size_kb": 512,
+        "read_bandwidth_bytes_per_cycle": 64,
+        "write_bandwidth_bytes_per_cycle": 64
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "flit_size_bytes": 16,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "booksim2_config_path": "configs/booksim2_mesh.cfg",
+        "injection_queue_depth": 16
+    },
+    "dram": {
+        "config_path": "configs/ramulator2_ddr4.yaml",
+        "num_channels": 4,
+        "backend": "ramulator2"
+    },
+    "ir_path": "",
+    "output_path": "sim_output"
+}
