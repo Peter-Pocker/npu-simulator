@@ -1,0 +1,44 @@
+{
+  "_chip": "Simba (DRAM direct, no DRAM-on-NoC)",
+  "_comment": "Same as simba.json but topology.dram_controllers=[]. Use to rule out DRAM-on-NoC deadlock.",
+  "num_cores_x": 6,
+  "num_cores_y": 6,
+  "element_size_bits": 8,
+  "core": {
+    "mac_units": 128,
+    "vector_units": 32,
+    "clock_freq_mhz": 1000,
+    "use_analytical_time": false
+  },
+  "sram": {
+    "size_kb": 128,
+    "read_bandwidth_bytes_per_cycle": 64,
+    "write_bandwidth_bytes_per_cycle": 64
+  },
+  "ni": {
+    "max_outstanding_reqs": 16,
+    "injection_queue_size": 8,
+    "ejection_queue_size": 8
+  },
+  "noc": {
+    "flit_size_bytes": 16,
+    "hop_latency_cycles": 2,
+    "router_latency_cycles": 2,
+    "backend": "booksim2",
+    "injection_queue_depth": 16,
+    "num_vcs": 8,
+    "vc_buf_size": 8
+  },
+  "dram": {
+    "num_channels": 8,
+    "backend": "ramulator2",
+    "standard": "DDR4",
+    "org": "DDR4_8Gb_x8",
+    "timing": "DDR4_2400R",
+    "num_ranks": 2
+  },
+  "topology": {
+    "dram_controllers": [],
+    "dram_routing_policy": "nearest"
+  }
+}

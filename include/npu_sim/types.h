@@ -100,4 +100,25 @@ enum class DataType {
     OFMAP
 };
 
+enum class DRAMRoutingPolicy {
+    NEAREST,
+    HASH,
+    ROUND_ROBIN
+};
+
+inline DRAMRoutingPolicy string_to_dram_routing_policy(const std::string& s) {
+    if (s == "hash")        return DRAMRoutingPolicy::HASH;
+    if (s == "round_robin") return DRAMRoutingPolicy::ROUND_ROBIN;
+    return DRAMRoutingPolicy::NEAREST;
+}
+
+inline std::string dram_routing_policy_to_string(DRAMRoutingPolicy p) {
+    switch (p) {
+        case DRAMRoutingPolicy::NEAREST:     return "nearest";
+        case DRAMRoutingPolicy::HASH:        return "hash";
+        case DRAMRoutingPolicy::ROUND_ROBIN: return "round_robin";
+    }
+    return "nearest";
+}
+
 }  // namespace npu_sim

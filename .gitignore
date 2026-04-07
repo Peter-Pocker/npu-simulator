@@ -26,6 +26,12 @@ _deps/
 .vscode/
 .idea/
 
+# ── Python venv ──
+.venv/
+venv/
+env/
+python_deps/
+
 # ── Misc ──
 *.log
 *.swp

@@ -1,0 +1,48 @@
+{
+    "_chip": "双核/小规模配置（2×2 mesh，ResNet50 SET-IR vs Gemini 对比用）",
+    "_notes": "2×2 核阵列（SET-IR 要求 x,y>=2 的 DRAM 布局），单核 256 MAC、512KB SRAM、NoC 带宽 16，简单 NoC/DRAM",
+    "num_cores_x": 2,
+    "num_cores_y": 2,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 256,
+        "vector_units": 64,
+        "clock_freq_mhz": 1000,
+        "use_analytical_time": true
+    },
+    "sram": {
+        "size_kb": 512,
+        "read_bandwidth_bytes_per_cycle": 64,
+        "write_bandwidth_bytes_per_cycle": 64
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "backend": "simple",
+        "flit_size_bytes": 16,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1
+    },
+    "dram": {
+        "backend": "simple",
+        "num_channels": 4
+    },
+    "topology": {
+        "dram_controllers": [],
+        "dram_routing_policy": "nearest"
+    },
+    "gemini": {
+        "batch_size": 1,
+        "stride": 1,
+        "exploration_rounds": 1,
+        "opt_goal": 0,
+        "sram_kb": 512,
+        "nop_bw": 128,
+        "noc_bw": 16,
+        "dram_bw": 1024000,
+        "dram_type": "LPDDR5"
+    }
+}

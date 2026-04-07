@@ -10,3 +10,6 @@
 [submodule "third_party/Gemini-Compiler-IR"]
 	path = third_party/Gemini-Compiler-IR
 	url = https://github.com/SET-Scheduling-Project/Gemini-Compiler-IR.git
+[submodule "SET-IR"]
+	path = SET-IR
+	url = https://github.com/EliminateSpace/SET-IR.git

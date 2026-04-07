@@ -1,0 +1,57 @@
+{
+    "_chip": "Huawei Ascend 910 (Hot Chips 2020)",
+    "_reference": "Liao et al., Ascend: a Scalable and Unified Architecture for Ubiquitous Deep Neural Network Computing",
+    "_notes": "7nm+, 32 Da Vinci AI Cores, each with 16x16x16 Cube Unit (4096 MACs/core), 1.5GHz, 32MB L2, HBM2 4 stacks, 256 TOPS INT8",
+    "num_cores_x": 8,
+    "num_cores_y": 4,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 4096,
+        "vector_units": 128,
+        "clock_freq_mhz": 1500.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 1024,
+        "read_bandwidth_bytes_per_cycle": 256,
+        "write_bandwidth_bytes_per_cycle": 256
+    },
+    "ni": {
+        "max_outstanding_reqs": 32,
+        "injection_queue_size": 16,
+        "ejection_queue_size": 16
+    },
+    "noc": {
+        "flit_size_bytes": 32,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 2,
+        "backend": "booksim2",
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8
+    },
+    "dram": {
+        "num_channels": 8,
+        "backend": "ramulator2",
+        "standard": "HBM2",
+        "org": "HBM2_8Gb",
+        "timing": "HBM2_2Gbps",
+        "num_ranks": 1
+    },
+    "topology": {
+        "_comment": "8x4 cores at columns 1-8, DRAM controllers at columns 0 and 9 (10x4 mesh)",
+        "core_origin_x": 1,
+        "core_origin_y": 0,
+        "dram_controllers": [
+            {"x": 0, "y": 0},
+            {"x": 0, "y": 1},
+            {"x": 0, "y": 2},
+            {"x": 0, "y": 3},
+            {"x": 9, "y": 0},
+            {"x": 9, "y": 1},
+            {"x": 9, "y": 2},
+            {"x": 9, "y": 3}
+        ],
+        "dram_routing_policy": "nearest"
+    }
+}

@@ -1,0 +1,35 @@
+# ============================================
+# NPU Simulator - Dependencies
+# ============================================
+
+# ── System Requirements ──
+#
+# C++ Compiler (C++20 support required):
+#   - g++ >= 12        (Linux)
+#   - clang++ >= 15     (macOS / Linux)
+#
+# Build Tools:
+#   - CMake >= 3.16
+#   - Make (GNU Make)
+#
+# macOS:
+#   xcode-select --install
+#   brew install cmake
+#
+# Ubuntu / Debian:
+#   sudo apt install build-essential g++-12 cmake
+#
+# Fedora / RHEL:
+#   sudo dnf install gcc-c++ cmake make
+
+# ── Python Dependencies ──
+#   Install with: pip install -r requirements.txt
+#   Recommended: use a venv first: python3 -m venv .venv && source .venv/bin/activate (or .venv\Scripts\activate on Windows)
+
+# 实验与后处理脚本依赖（run_zebu_and_bottleneck_experiments.py 默认调用的脚本）
+openpyxl          # scripts/csv_to_xlsx.py：CSV 转 XLSX
+pandas            # scripts/plot_gantt.py：读取 state_trace.csv、实验数据处理
+matplotlib        # scripts/plot_gantt.py：绘制甘特图、论文用图
+
+# 可选（论文/统计图）
+seaborn           # 热力图、堆叠柱状图等统计可视化

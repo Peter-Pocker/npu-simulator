@@ -1,0 +1,1 @@
+model,batch,total_cycles,T_Compute,T_NoC_Stall,T_Mem_Stall,pct_Compute,pct_NoC_Stall,pct_Mem_Stall

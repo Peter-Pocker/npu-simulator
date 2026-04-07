@@ -1,10 +1,12 @@
 #include "npu_sim/gemini_parser.h"
 #include "npu_sim/ir_parser.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <set>
 #include <unordered_set>
+#include <vector>
 
 namespace npu_sim {
 
@@ -34,9 +36,35 @@ IRData GeminiParser::parse(const std::string& path) {
         ir.required_sram_bytes = root.value("buffersize", 0ul);
     }
 
-    uint32_t num_cores = ir.num_cores_y * (ir.num_cores_x + 2);
+    uint32_t num_cores = ir.num_cores_y * ir.num_cores_x;
     if (num_cores == 0) num_cores = 1;
     ir.core_workloads.resize(num_cores);
+
+    // First pass: collect all core IDs that have workloads
+    std::vector<int> raw_core_ids;
+    for (auto& [key, value] : root.items()) {
+        if (key == "xlen" || key == "ylen" || key == "top_batch_cut" ||
+            key == "buffersize" || key == "-1") continue;
+        int cid = -1;
+        try { cid = std::stoi(key); } catch (...) { continue; }
+        if (cid >= 0 && value.is_array() && !value.empty()) {
+            raw_core_ids.push_back(cid);
+        }
+    }
+    std::sort(raw_core_ids.begin(), raw_core_ids.end());
+
+    // Build compact remap: GEMINI xyid → 0-based index
+    core_id_remap_.clear();
+    bool needs_remap = false;
+    for (uint32_t i = 0; i < raw_core_ids.size(); ++i) {
+        core_id_remap_[static_cast<uint32_t>(raw_core_ids[i])] = i;
+        if (static_cast<uint32_t>(raw_core_ids[i]) != i) needs_remap = true;
+    }
+
+    uint32_t compact_cores = static_cast<uint32_t>(raw_core_ids.size());
+    if (compact_cores > num_cores) {
+        ir.core_workloads.resize(compact_cores);
+    }
 
     for (auto& [key, value] : root.items()) {
         if (key == "xlen" || key == "ylen" || key == "top_batch_cut" ||
@@ -51,15 +79,25 @@ IRData GeminiParser::parse(const std::string& path) {
         try { core_id = std::stoi(key); } catch (...) { continue; }
         if (core_id < 0) continue;
 
-        if (static_cast<uint32_t>(core_id) >= ir.core_workloads.size()) {
-            ir.core_workloads.resize(core_id + 1);
+        uint32_t mapped_id = core_id;
+        auto it = core_id_remap_.find(static_cast<uint32_t>(core_id));
+        if (it != core_id_remap_.end()) mapped_id = it->second;
+
+        if (mapped_id >= ir.core_workloads.size()) {
+            ir.core_workloads.resize(mapped_id + 1);
         }
 
         if (!value.is_array()) continue;
 
         for (auto& wl_json : value) {
-            ir.core_workloads[core_id].push_back(parse_workload(wl_json));
+            ir.core_workloads[mapped_id].push_back(parse_workload(wl_json));
         }
+    }
+
+    if (needs_remap) {
+        compact_core_ids(ir);
+        std::cout << "[GeminiParser] Remapped " << raw_core_ids.size()
+                  << " GEMINI core IDs to compact 0-based indices\n";
     }
 
     topological_sort_workloads(ir);
@@ -234,7 +272,13 @@ BufferRequirement GeminiParser::parse_buffer(const nlohmann::json& buf_json) {
 
     if (buf_json.contains("transfer_id") && buf_json["transfer_id"].is_array()) {
         for (auto& tid : buf_json["transfer_id"]) {
-            buf.transfer_ids.push_back(tid.get<transfer_id_t>());
+            if (tid.is_array()) {
+                for (auto& inner : tid) {
+                    buf.transfer_ids.push_back(inner.get<transfer_id_t>());
+                }
+            } else {
+                buf.transfer_ids.push_back(tid.get<transfer_id_t>());
+            }
         }
     }
 
@@ -427,6 +471,39 @@ void GeminiParser::fix_output_ref_counts(IRData& ir_data) {
                 }
             }
         }
+    }
+}
+
+void GeminiParser::compact_core_ids(IRData& ir_data) {
+    auto remap = [this](uint32_t id) -> uint32_t {
+        auto it = core_id_remap_.find(id);
+        return (it != core_id_remap_.end()) ? it->second : id;
+    };
+
+    for (auto& core_wls : ir_data.core_workloads) {
+        for (auto& wl : core_wls) {
+            for (auto& out : wl.outputs) {
+                for (auto& d : out.destinations) {
+                    if (d.type == SourceType::CORE) {
+                        d.dest_id = remap(d.dest_id);
+                    }
+                }
+            }
+            for (auto& buf : wl.buffers) {
+                for (auto& src : buf.sources) {
+                    if (src.type == SourceType::CORE) {
+                        src.source_id = remap(src.source_id);
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto& dt : ir_data.dram_reads) {
+        dt.core_id = remap(dt.core_id);
+    }
+    for (auto& dt : ir_data.dram_writes) {
+        dt.core_id = remap(dt.core_id);
     }
 }
 

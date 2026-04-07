@@ -1,0 +1,41 @@
+{
+    "_chip": "Google TPU v1 (ISCA 2017)",
+    "_reference": "Jouppi et al., In-Datacenter Performance Analysis of a Tensor Processing Unit",
+    "_notes": "28nm, 256x256 systolic array (65536 MACs), 700MHz, 28MB unified buffer, 40W TDP",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 65536,
+        "vector_units": 256,
+        "clock_freq_mhz": 700.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 28672,
+        "read_bandwidth_bytes_per_cycle": 256,
+        "write_bandwidth_bytes_per_cycle": 256
+    },
+    "ni": {
+        "max_outstanding_reqs": 32,
+        "injection_queue_size": 16,
+        "ejection_queue_size": 16
+    },
+    "noc": {
+        "flit_size_bytes": 32,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8
+    },
+    "dram": {
+        "num_channels": 4,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 2
+    }
+}

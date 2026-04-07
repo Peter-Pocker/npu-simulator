@@ -1,0 +1,53 @@
+{
+  "_comment": "ZeBu test chip config inferred from backend_default_globalLog.log + Scheduler IR. Use with scheduler_output/*_stschedule.json for ZeBu validation.",
+  "num_cores_x": 1,
+  "num_cores_y": 1,
+  "element_size_bits": 8,
+  "core": {
+    "mac_units": 256,
+    "vector_units": 64,
+    "clock_freq_mhz": 25,
+    "use_analytical_time": false
+  },
+  "sram": {
+    "size_kb": 8192,
+    "read_bandwidth_bytes_per_cycle": 64,
+    "write_bandwidth_bytes_per_cycle": 64
+  },
+  "ni": {
+    "max_outstanding_reqs": 16,
+    "injection_queue_size": 8,
+    "ejection_queue_size": 8
+  },
+  "noc": {
+    "backend": "booksim2",
+    "flit_size_bytes": 16,
+    "hop_latency_cycles": 1,
+    "router_latency_cycles": 1
+  },
+    "dram": {
+        "num_channels": 1,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 1
+    },
+  "topology": {
+    "dram_controllers": [],
+    "dram_routing_policy": "nearest"
+  },
+  "_inferred": {
+    "from_log": {
+      "core_clock_mhz": 25,
+      "dram_clock_mhz": 16.95,
+      "design_dsp": 1110,
+      "design_bram": 2251
+    },
+    "from_ir": {
+      "buffersize_bytes": 8388608,
+      "sram_kb": 8192
+    },
+    "dram_bw_gbps_schedule": 16
+  }
+}

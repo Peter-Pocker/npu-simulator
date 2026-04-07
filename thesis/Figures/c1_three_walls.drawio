@@ -1,0 +1,47 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram id="c1_three_walls" name="三墙耦合">
+    <mxGraphModel dx="1018" dy="659" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="360" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;" value="多核 NPU 面临的“三墙”及其耦合关系" vertex="1">
+          <mxGeometry height="24" width="360" x="220" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="Ux_yOvcZOODuE7zYIxRj-1" edge="1" parent="1" source="memory_wall" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="comm_wall">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Ux_yOvcZOODuE7zYIxRj-2" edge="1" parent="1" source="memory_wall" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="compile_wall">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="memory_wall" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=15;fontStyle=1;" value="存储墙&#xa;DRAM 带宽/行冲突&#xa;多核共享通道争用" vertex="1">
+          <mxGeometry height="92" width="180" x="320" y="48" as="geometry" />
+        </mxCell>
+        <mxCell id="comm_wall" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=15;fontStyle=1;" value="通信墙&#xa;NoC 拥塞/集合通信&#xa;核间数据搬运" vertex="1">
+          <mxGeometry height="96" width="180" x="120" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="compile_wall" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;fontStyle=1;" value="编译与调度墙&#xa;映射空间爆炸&#xa;代价模型与运行时语义鸿沟" vertex="1">
+          <mxGeometry height="96" width="190" x="510" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_mc_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;fontSize=12;" value="相互影响" vertex="1">
+          <mxGeometry height="18" width="52" x="220" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_ms_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;fontSize=12;" value="相互影响" vertex="1">
+          <mxGeometry height="18" width="52" x="540" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;align=center;rounded=1;" value="三墙高度耦合，单一维度优化或产生系统级负面效果 → 需端到端周期级模拟统一时间轴" vertex="1">
+          <mxGeometry height="45" width="630" x="100" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="Ux_yOvcZOODuE7zYIxRj-4" edge="1" parent="1" source="comm_wall" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#666666;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="compile_wall" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="300" y="247" as="sourcePoint" />
+            <mxPoint x="520" y="247" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_cs_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;fontSize=12;" value="相互影响" vertex="1">
+          <mxGeometry height="18" width="52" x="384" y="238" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,10 @@
+cycle,core_id,old_state,new_state,workload_idx,layer_name,detail
+0,0,IDLE,LOADING,0,layer1,"waiting_for=[t0(DRAM,4096B),t1(DRAM,1024B)]"
+207,0,LOADING,COMPUTING,0,layer1,"compute_cycles=500"
+707,0,COMPUTING,WRITEBACK,0,layer1,"writeback_to_dram"
+1358,0,WRITEBACK,IDLE,1,layer2,"writeback_complete"
+1359,0,IDLE,LOADING,1,layer2,"waiting_for=[t3(DRAM,8192B),t4(DRAM,16384B)]"
+2212,0,LOADING,COMPUTING,1,layer2,"compute_cycles=300"
+2512,0,COMPUTING,WRITEBACK,1,layer2,"writeback_to_dram"
+2683,0,WRITEBACK,IDLE,2,,"writeback_complete"
+2684,0,IDLE,DONE,2,,"all_workloads_finished"

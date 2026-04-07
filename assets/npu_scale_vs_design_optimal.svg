@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" width="720" height="380">
+  <defs>
+    <linearGradient id="easy" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4A90D9"/>
+      <stop offset="50%" style="stop-color:#7B68EE"/>
+      <stop offset="100%" style="stop-color:#E07C4A"/>
+    </linearGradient>
+    <linearGradient id="hard" x1="0%" y1="0%" x2="0%" y2="1">
+      <stop offset="0%" style="stop-color:#E07C4A"/>
+      <stop offset="100%" style="stop-color:#C0392B"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#999"/>
+    </marker>
+  </defs>
+
+  <rect width="720" height="380" fill="#FFFFFF"/>
+
+  <g transform="translate(80, 120)">
+    <rect x="0" y="0" width="36" height="36" fill="#4A90D9" opacity="0.9"/>
+    <rect x="44" y="0" width="36" height="36" fill="#4A90D9" opacity="0.9"/>
+    <rect x="22" y="44" width="36" height="36" fill="#4A90D9" opacity="0.9"/>
+    <polygon points="35,70 38,78 46,78 40,83 42,91 35,87 28,91 30,83 24,78 32,78" fill="#FFD700" stroke="#B8860B" stroke-width="1"/>
+    <text x="35" y="200" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="14" fill="#333">&#35268;&#27169;&#23567;</text>
+    <text x="35" y="218" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="11" fill="#666">&#37197;&#32622;&#23569;&#65292;&#26131;&#23547;&#20248;</text>
+  </g>
+
+  <g transform="translate(280, 100)">
+    <rect x="0" y="0" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <rect x="38" y="0" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <rect x="76" y="0" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <rect x="19" y="38" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <rect x="57" y="38" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <rect x="38" y="76" width="32" height="32" fill="#6B7FD7" opacity="0.85"/>
+    <polygon points="57,95 60,102 67,102 61,106 63,113 57,109 51,113 53,106 47,102 54,102" fill="#FFA500" stroke="#CC8400" stroke-width="1"/>
+    <text x="54" y="200" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="14" fill="#333">&#35268;&#27169;&#20013;</text>
+    <text x="54" y="218" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="11" fill="#666">&#37197;&#32622;&#22686;&#22810;</text>
+  </g>
+
+  <g transform="translate(480, 60)">
+    <ellipse cx="120" cy="100" rx="140" ry="90" fill="#E07C4A" opacity="0.15" stroke="#E07C4A" stroke-width="1"/>
+    <text x="120" y="55" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="#C0392B">&#23547;&#20248;&#38590;&#24230; &#8593;</text>
+    <text x="120" y="72" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="11" fill="#922B21">&#35774;&#35745;&#31354;&#38388;&#29190;&#28856;</text>
+    <rect x="30" y="75" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="60" y="65" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="90" y="70" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="120" y="60" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="150" y="75" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="180" y="68" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="50" y="105" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="80" y="115" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="110" y="108" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="140" y="118" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <rect x="170" y="110" width="24" height="24" fill="#E07C4A" opacity="0.5"/>
+    <polygon points="125,95 127,100 132,100 128,103 129,108 125,105 121,108 122,103 118,100 123,100" fill="#FFD700" stroke="#B8860B" stroke-width="1"/>
+    <text x="120" y="220" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="14" fill="#333">&#35268;&#27169;&#22823;</text>
+    <text x="120" y="238" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="11" fill="#666">&#26368;&#20248;&#38590;&#35266;</text>
+  </g>
+
+  <path d="M 100 320 L 620 320" stroke="#999" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="360" y="355" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#555">&#35268;&#27169;&#23567; &#8594; &#35268;&#27169;&#20013; &#8594; &#35268;&#27169;&#22823;</text>
+  <text x="360" y="372" text-anchor="middle" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="11" fill="#777">&#35774;&#35745;&#38454;&#27573;&#30828;&#20214;&#37197;&#32622;&#23547;&#20248;&#38590;&#24230;&#36882;&#22686;</text>
+</svg>

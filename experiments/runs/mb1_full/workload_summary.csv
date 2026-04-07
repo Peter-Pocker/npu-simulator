@@ -1,0 +1,3 @@
+core_id,workload_idx,layer_name,op_type,start_cycle,loading_done_cycle,compute_done_cycle,end_cycle,loading_cycles,compute_cycles,writeback_cycles,data_sources
+0,0,producer,,0,207,707,707,207,500,0,"waiting_for=[t0(DRAM,4096B),t1(DRAM,1024B)]"
+1,0,consumer,,0,2000,2300,2456,2000,300,156,"waiting_for=[t3(DRAM,8192B),t2(C0,16384B)]"

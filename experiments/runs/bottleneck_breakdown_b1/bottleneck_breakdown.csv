@@ -1,0 +1,3 @@
+model,batch,total_cycles,T_Compute,T_NoC_Stall,T_Mem_Stall,pct_Compute,pct_NoC_Stall,pct_Mem_Stall
+ResNet34,1,1890695,1530664,0,359888,80.96,0.0,19.04
+ResNet50,1,2432592,1863694,0,568717,76.61,0.0,23.39

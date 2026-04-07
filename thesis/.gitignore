@@ -1,0 +1,4 @@
+build/
+main.pdf
+.tex-dist/
+*.synctex.gz

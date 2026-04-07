@@ -26,6 +26,8 @@ public:
 
     virtual cycle_t current_cycle() const = 0;
 
+    virtual uint64_t total_subrequests() const { return 0; }
+
     static std::unique_ptr<MemoryInterface> create_simple(const DRAMConfig& config);
 
     static std::unique_ptr<MemoryInterface> create(const DRAMConfig& config);

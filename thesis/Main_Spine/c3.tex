@@ -1,0 +1,155 @@
+% !TeX root = ../main.tex
+
+\xchapter{模拟器整体架构与松耦合接口设计}{Overall Architecture and Loosely-coupled Interfaces}
+
+本章与第四章共同介绍本文模拟器的设计与实现。本章侧重\textbf{整体架构、输入解析与对外接口}，回答“有哪些模块、如何衔接、NoC/DRAM 以何种方式接入模拟器”。第四章侧重\textbf{单核执行模型、NoC/DRAM 在运行时的集成方式与全系统同步机制}，回答“核心如何按依赖推进、如何与接口交互、多时钟域如何对齐”。两章合起来形成从“结构”到“行为”的完整叙述。
+
+\xsection{总体架构概述}{Architecture Overview}
+
+本文模拟器面向多核 NPU 的端到端周期级评估需求，采用“IR 驱动—统一任务抽象—周期推进—统计追踪”的总体思路。整体由配置与入口、IR 解析、模拟引擎、计算核心阵列以及 NoC/DRAM 接口五部分构成。配置与入口负责读取 JSON 形式的模拟配置与调度器 IR 路径，模拟器据此完成加载、初始化与运行。
+
+\textbf{设计目标与原则。} 架构设计遵循三项原则。（1）\textbf{以 IR 为唯一调度输入}，使“改映射即改 IR 路径”，避免模拟器与上游调度器在输入格式上脱节。（2）\textbf{统一任务抽象}，将不同格式的 JSON IR 解析为与格式无关的 \texttt{IRData}/\texttt{Workload}，执行层仅依赖该抽象，实现“内容与形式分离”。（3）\textbf{可替换的 NoC/DRAM 后端}，通过抽象接口与配置项在简单延迟模型与周期级高保真后端之间切换，便于变量隔离与两档精度评估。
+
+\textbf{模块划分与职责边界。} 五部分职责如下。\textbf{配置与入口}：解析命令行与配置文件，提供 IR 路径、核心/NoC/DRAM/拓扑等参数，不参与周期推进。\textbf{IR 解析}：按格式将 JSON 转为统一任务表示，完成拓扑排序与引用计数等后处理，产出供执行层消费的 \texttt{IRData}。\textbf{模拟引擎}：持有拓扑与地址分配器，每周期按固定顺序推进各核心、收集报文、注入 NoC/DRAM、推进子系统、投递响应，并汇总统计。\textbf{计算核心阵列}：每核维护工作负载队列与状态机，产生读/写请求报文、消费到达的响应，不直接调用 NoC/DRAM 接口。\textbf{NoC/DRAM 接口}：对外提供“注入—推进—取回”的抽象，内部由配置选择简单或 BookSim2/Ramulator2 实现。模块间通过稳定的数据结构与接口契约衔接，便于单点扩展与测试。
+
+\textbf{配置与入口。} 用户通过命令行或配置文件指定 IR 路径（\texttt{ir\_path}）与可选配置路径。配置为 JSON，包含核心网格（\texttt{num\_cores\_x/y}，可为 0 表示从 IR 补齐）、单核计算与 SRAM 参数、NoC 与 DRAM 参数（含 \texttt{backend}、\texttt{clock\_ratio} 等）、拓扑（如 DRAM 控制器位置）及 \texttt{output\_path}。用户可基于“同一 IR、不同配置”做对照实验。
+
+\textbf{可配置的硬件与系统参数一览。} 模拟器当前支持的配置维度如下。具体语义与对周期的影响在第四章核心建模及本章 NoC/DRAM 小节中说明。（1）\textbf{核心规模与数据位宽}：\texttt{num\_cores\_x}/\texttt{num\_cores\_y}、\texttt{element\_size\_bits}。（2）\textbf{单核计算与片上存储}：\texttt{mac\_units}、\texttt{vector\_units}（分别用于 MAC 密集算子与向量/逐元素算子的周期估算）、SRAM 容量（\texttt{size\_kb}）与读/写带宽，并可区分 PE（卷积/全连接）与 VP（池化/逐元素）的带宽。（3）\textbf{网络接口}：最大未完成请求数、注入/弹出队列深度。（4）\textbf{NoC}：flit 大小、跳数延迟与路由器延迟、\texttt{backend}（\texttt{simple} 或 \texttt{booksim2}）、\texttt{clock\_ratio}、虚拟通道数与缓冲深度等。BookSim2 模式下还可指定外部配置文件路径。（5）\textbf{DRAM}：通道数、\texttt{backend}（\texttt{simple} 或 \texttt{ramulator2}）、\texttt{clock\_ratio}、标准与组织（如 DDR4/HBM2）、时序与调度策略（如 FR-FCFS）、地址映射方式等。Ramulator2 模式下可指定外部 YAML 配置。（6）\textbf{拓扑}：DRAM 控制器在 NoC 上的位置（\texttt{dram\_controllers}）与路由策略（如 \texttt{nearest}）。上述参数均可通过 JSON 配置或命令行覆盖，便于在同一 IR 下进行设计空间探索与变量隔离实验。
+
+\textbf{数据流与初始化。} 模拟器启动后执行“加载 IR”。内部根据格式创建解析器（当前支持 Gemini 格式），将 JSON IR 解析为统一的任务数据，包含核心网格、每核工作负载列表、DRAM 读/写表等。若配置中未显式指定核心规模，则从解析结果中的核心网格横向与纵向维度补齐。若 IR 中带有调度器给出的 SRAM 容量需求，则据此自动调整每核 SRAM 容量约束。随后根据拓扑配置构建拓扑，用于将逻辑核心 ID 映射到 NoC 节点以及可选的 DRAM 控制器节点。地址分配器根据 IR 中的 DRAM 读/写表为每次传输分配物理地址，供后续 DRAM 请求携带。完成上述准备后，初始化核心：创建计算核心数组（每核绑定核心配置、SRAM 配置、网络接口配置与数据位宽），将各核工作负载列表按核注入各核心，并根据 NoC 与 DRAM 的“后端类型”分别实例化网络接口与存储接口（简单模式或 BookSim2/Ramulator2 封装）。
+
+\textbf{运行循环与每周期顺序。} 模拟器在“所有核心均已完成”为真前循环执行“单周期推进”并递增全局周期。单次推进的顺序为：（1）各计算核心按当前全局周期推进，产生待发送的 NoC 包或 DRAM 请求。（2）引擎从各核心收集发出的报文，根据目的节点是逻辑 DRAM 还是他核，分别注入存储接口或网络接口。若拓扑将 DRAM 挂在 NoC 上，则 DRAM 请求先封装为发往 DRAM 控制器节点的 NoC 包。（3）若有上一周期未注入的 DRAM 响应，则在本周期尝试注入 NoC。（4）推进 NoC 与 DRAM 一个周期。（5）从 NoC 按节点取回本周期到达的包并投递给对应核心或 DRAM 控制器。（6）从 DRAM 取回本周期完成的响应并投递给核心（或经 NoC 再投递）。该顺序保证“先产生请求、再推进网络与存储、再投递响应”，依赖满足与状态更新在时间轴上因果一致。模拟结束后统计总周期、总工作负载数、NoC 包数、DRAM 读写次数等，并可导出状态追踪与工作负载汇总表供第五章分析使用。
+
+\textbf{模拟结束后的输出与统计。} 运行结束后输出三类结果。（1）\textbf{端到端统计}：总周期、总工作负载数、NoC 注入/投递包数、DRAM 读/写请求与响应数，用于与 ZeBu 等参考对比。（2）\textbf{每核统计}：各核 Loading、Compute、Writeback、StallNoC 等阶段周期数，用于阶段分解与瓶颈归因。（3）\textbf{可选的踪迹与汇总}：启用 \texttt{-t} 时导出 \texttt{state\_trace.csv}、\texttt{workload\_summary.csv} 等。输出目录可由 \texttt{output\_path} 或命令行指定，支持时间戳子目录以避免覆盖。
+
+图\ref{fig:c3_arch_overview} 给出上述数据流与模块关系的示意。图\ref{fig:c3_tech_roadmap} 进一步给出从 IR 输入到统计输出的技术路线与端到端数据流。
+
+% 图片由 thesis/figures/c3_arch_overview.drawio 导出为 PDF 或 PNG 后使用。
+% 导出方式：用 draw.io 打开 .drawio 文件 → File → Export as → PDF/PNG。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\linewidth]{figures/c3_arch_overview.pdf}
+  \caption{端到端总体架构示意}
+  \label{fig:c3_arch_overview}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  % 由 thesis/figures/c1_tech_roadmap_dataflow.drawio 导出为 PDF 后使用
+  \includegraphics[width=\textwidth]{figures/c1_tech_roadmap_dataflow.pdf}
+  \caption{本文模拟器技术路线与端到端数据流}
+  \label{fig:c3_tech_roadmap}
+\end{figure}
+
+% \begin{lstlisting}[language={},caption={Mermaid 源码：总体架构},label={lst:mermaid:arch}]
+% flowchart TB
+%   subgraph input["输入"]
+%     Config["SimConfig JSON（硬件配置）"]
+%     IR["Scheduler IR JSON（调度器输出）"]
+%   end
+
+%   subgraph framework["NPU 模拟器框架"]
+%     subgraph frontend["前端解析引擎"]
+%       Parser["IR 解析器
+%         IRParser / GeminiParser
+%         JSON 解析 · 格式适配"]
+%       IRData["统一任务表示 IRData
+%         Workload · Buffer · Output
+%         DRAMTransfer · Topology"]
+%       Parser -- "parse()" --> IRData
+%     end
+
+%     subgraph engine["模拟执行引擎"]
+%       Sim["Simulator 控制器
+%         Topology 构建 · 地址分配 · 周期推进 tick()"]
+
+%       subgraph cores["NPUCore 阵列"]
+%         SM["状态机 IDLE→LOADING→COMPUTING→WRITEBACK"]
+%         SRAM["SRAM 管理"]
+%         WQ["Workload 队列"]
+%       end
+
+%       subgraph noc_if["NetworkInterface（可替换）"]
+%         SNoC["SimpleNoC"]
+%         BNoC["BookSim2NoC"]
+%       end
+
+%       subgraph mem_if["MemoryInterface（可替换）"]
+%         SDRAM["SimpleDRAM"]
+%         R2["Ramulator2DRAM"]
+%       end
+
+%       Sim --> cores
+%       Sim --> noc_if
+%       cores <-- "Packet" --> noc_if
+%       cores <-- "Packet" --> mem_if
+%     end
+
+%     IRData --> Sim
+%   end
+
+%   subgraph output["输出"]
+%     Stats["性能统计"]
+%     Trace["状态追踪"]
+%     Summary["负载汇总"]
+%     Chart["核心状态图"]
+%   end
+
+%   Config -.-> Sim
+%   IR --> Parser
+%   framework --> output
+% \end{lstlisting}
+
+\xsection{前端 IR 解析模块设计：JSON 到统一任务表示}{Front-end IR Parsing: JSON to Unified Tasks}
+
+\paragraph{IR 的含义与定义。} 在展开解析器与格式细节之前，先明确本节所称 \textbf{IR（Intermediate Representation，中间表示）} 在本模拟器中的含义与作用。本文中，IR 指调度器（或编译/映射工具链）输出的、描述“已调度任务如何在多核 NPU 上执行”的\textbf{结构化数据}。其内容通常包括：核心网格规模、各核上按依赖关系排列的工作负载列表、每项工作负载的算子类型与数据范围、核间与核—DRAM 之间的数据传输（含传输标识、源宿、大小等），以及可选的 SRAM 容量需求等。IR 不描述硬件微架构细节（如具体 NoC 路由、DRAM 时序）。它描述的是“\textbf{做什么、在哪做、依赖谁}”的逻辑视图。模拟器据此驱动周期级执行并统计性能。因此，IR 实质上是调度器与模拟器之间的\textbf{接口约定}。上游生成 IR，下游解析 IR 并转化为统一任务表示，二者通过 IR 的格式与语义解耦。
+
+第二章已给出调度器 IR 的来源、生成过程及其应包含的形式与语义。本节结合本项目实现，说明模拟器前端如何消费该 IR：解析器接口、Gemini 格式的适配、以及统一任务表示与后处理流程。
+
+\textbf{解析器抽象与创建。} 为避免执行层与具体 IR 格式强耦合，本文定义解析器抽象。对外仅暴露“按路径解析并返回统一任务数据”的接口。根据格式字符串可创建具体实现（当前支持 Gemini 格式）。后续若支持其他调度器输出格式，只需新增解析器并注册，模拟引擎与核心逻辑无需修改。
+
+\textbf{Gemini 格式与解析流程。} Gemini 解析器读入 JSON 根节点后，先读取全局字段：核心网格横向与纵向维度、批切分参数。若存在“缓冲区容量”，则判定为调度器 IR 并记录所需 SRAM 容量。除上述保留键外，专用键表示 DRAM 段，其下为 DRAM 读/写表。其余数字键表示核心 ID，对应值为该核上的工作负载数组。每个工作负载的解析包括：工作负载 ID、层名、层类型（或调度器 IR 中的 PE/VP/DT 等），映射为统一的算子类型（见下段）。再读取输出张量/权重等范围与尺寸、可选的解析周期。输入依赖数组解析为“缓冲需求”（每项包含传输标识、来源列表：来源类型、源核、大小、传输标识）。输出解析为“输出传输”（含传输标识与目的列表：目的类型、目的核、目的工作负载、层名）。调度器 IR 与汇编器 IR 在部分字段上存在位与字节的差异，解析器据此做换算，保证写入工作负载结构的尺寸为字节单位，供执行层与统计使用。
+
+\textbf{目前支持的算子类型。} 模拟器在统一任务表示中支持以下算子类型。这些类型与执行层周期估算及 SRAM 带宽选择一致。\textbf{卷积}（CONV2D）与\textbf{全连接}（FC）为 MAC 密集型。周期按“总 MAC 数 / MAC 单元数”估算，SRAM 使用 PE 带宽。\textbf{池化}（POOLING）如 MaxPool、AveragePool、GlobalAveragePool，按输出元素数与向量单元数估算周期，使用 VP 带宽。\textbf{逐元素}（ELEMENT\_WISE）如 Add、Relu、Mul、Sub 等，同样按输出元素数与向量单元数估算，使用 VP 带宽。\textbf{点对点}（POINT\_TO\_POINT）对应数据搬运或 DT 类层，周期与带宽模型同逐元素。\textbf{自定义}（CUSTOM）在未显式匹配时归入此类，可按解析周期或默认规则估算。解析时由 IR 的层类型（如 Gemini 的 PE/VP/DT）与层名前缀（如 Conv、Gemm、MaxPool、Relu）映射为上述类型。周期估算的详细公式与可配置的 \texttt{mac\_units}/\texttt{vector\_units} 在第四章“计算资源与参数化模型”中给出。
+
+\textbf{后处理与统一表示。} 解析完各核工作负载后，解析器执行三项后处理。（1）按依赖对每核内工作负载拓扑排序，保证消费某传输标识的工作负载排在产生该传输的工作负载之后。（2）根据各传输标识被引用的次数补全输出的引用计数，供第四章核心在写回完成后做 SRAM 释放。（3）若调度器给出的核心 ID 非连续，则重映射为从 0 起的紧凑 ID，便于与核心数组下标一致。最终得到的统一任务数据包含核心网格规模、批切分、所需 SRAM 容量、各核工作负载列表、DRAM 读/写表。执行层仅依赖上述稳定数据结构，不直接依赖 JSON 键名。当上游 IR 格式演进时，仅需扩展或替换解析器实现，从而满足“内容与形式分离”的长期演进需求。
+
+\textbf{统一任务表示（IRData/Workload）与执行层契约。} 解析器产出的统一任务表示在内存中对应 \texttt{IRData} 与每核的 \texttt{Workload} 列表。\texttt{IRData} 持有：核心网格维度、批切分参数、可选的全局 SRAM 容量需求、按核心 ID 索引的工作负载列表数组，以及 DRAM 读/写表（每条记录含传输标识、数据量、源/宿等，供地址分配与 DRAM 请求构造）。每个 \texttt{Workload} 项包含：工作负载 ID、层名、算子类型、输入缓冲列表（每项含传输标识、来源类型与源核/DRAM、数据大小）、输出列表（每项含传输标识、目的列表与引用计数）、以及可选的解析周期或数据范围。执行层（第四章）仅通过“当前核的工作负载队列”“每项的缓冲需求与输出”“传输标识与引用计数”驱动状态机与 SRAM 管理，不依赖 JSON 键名或具体字段命名。因此新增或调整 IR 格式时，只需在解析器内完成映射与单位换算，统一表示与执行层契约保持不变。
+
+\textbf{IR 与配置的协同。} 模拟器在加载 IR 后，部分配置项可由 IR 内容补齐或覆盖，以降低用户配置负担并保证与调度结果一致。例如，若配置中 \texttt{num\_cores\_x}/\texttt{num\_cores\_y} 为 0 或未给出，则从 IR 的网格维度补齐。若 IR 中带有调度器给出的缓冲区容量需求（如 Gemini 的 \texttt{buffersize}），且大于配置中的 SRAM 容量，则自动将每核 SRAM 容量上调至满足需求，避免因配置过小导致逻辑错误。反之，计算资源（如 \texttt{mac\_units}、\texttt{vector\_units}）、NoC/DRAM 后端类型与参数等仍以配置为准，便于在同一 IR 上扫描不同硬件参数进行设计空间探索。
+
+\xsection{面向对象的松耦合接口设计}{Loosely-coupled Interfaces}
+
+模拟引擎通过两个抽象接口与片上网络、片外存储交互：网络接口与存储接口。二者均以统一的“报文”结构为请求/响应单元。这样便于核间读请求与 DRAM 读/写请求共用同一数据形式。当拓扑将 DRAM 控制器挂在 NoC 上时，DRAM 流量可经 NoC 转发。
+
+\textbf{拓扑与地址分配在接口使用中的角色。} 在将报文注入 NoC 或 DRAM 之前，模拟引擎依赖两类辅助结构。\textbf{拓扑}（Topology）根据配置的核心网格与可选的 DRAM 控制器位置，将逻辑核心 ID 映射为 NoC 节点 ID，并确定 DRAM 请求应发往的控制器节点或直连存储接口。当 DRAM 控制器挂在 NoC 上时，拓扑还负责“核心 $\to$ DRAM 控制器”的路径选择（如最近节点策略）。\textbf{地址分配器}（DRAM Address Allocator）在加载 IR 后根据 DRAM 读/写表为每条传输分配物理地址（按 cache line 对齐）。核心在发起 DRAM 读/写请求时由引擎将对应地址填入报文，供存储接口与 Ramulator2 等后端使用。拓扑与地址分配使“逻辑核心与传输标识”与“NoC 节点与 DRAM 地址”解耦。接口层仅需按报文中的目的节点与地址转发。
+
+\textbf{配置驱动的后端选择。} NoC 与 DRAM 的具体实现由配置中的 \texttt{noc.backend} 与 \texttt{dram.backend} 决定（如 \texttt{simple}、\texttt{booksim2}、\texttt{ramulator2}）。模拟引擎在初始化时通过工厂方法根据配置项创建对应的网络接口与存储接口实例。执行层仅持有抽象接口指针，不依赖具体后端类型。切换后端时仅需修改配置文件并重新运行，无需改动核心与引擎代码，从而实现“两档精度”与变量隔离。
+
+\textbf{报文生命周期与引擎侧数据流。} 报文从产生到被消费的路径可简述如下。核心在“加载”或“写回”阶段将待发送的读/写请求放入核内发送队列。引擎在每周期推进后遍历各核，收集本周期产生的报文，根据目的（他核或 DRAM）填入地址等信息后注入网络接口或存储接口。NoC/DRAM 在后续周期内推进。完成传输或访存后，本周期到达的响应由引擎按节点或目的核取回并投递到对应核心的接收入口。核心在下一周期推进开头处理到达的报文（写 SRAM、标记就绪、回复远端读请求等）。该数据流保证“请求先于响应被处理、响应在后续周期对核心可见”，与第四章所述的因果顺序一致。
+
+\xsubsection{统一报文类型与接口约定}{Unified Packet and Interface Contract}
+
+\textbf{报文结构。} 报文包含：类型（读请求、读响应、写请求、写响应）、源/目的节点 ID（目的为 DRAM 时使用保留 ID）、传输标识、数据大小（字节）、DRAM 物理地址（由地址分配器分配）、注入周期/投递周期（用于简单模式与统计）。NoC 注入时可根据 flit 大小计算分片数（读请求仅头片，写请求为头片加载荷），供 BookSim2 等后端做分片传输。
+
+\textbf{网络接口。} 接口提供的能力包括：按节点数与 NoC 配置初始化。注入报文并返回是否成功。每周期推进网络一次。按节点取回本周期到达的包。查询某节点是否可注入（背压判断）。查询当前周期。根据配置中的“后端类型”可选择简单延迟模型或 BookSim2 封装。
+
+\textbf{存储接口。} 接口提供的能力包括：按 DRAM 配置初始化。提交读/写请求并返回是否接受。每周期推进 DRAM 一次。取回本周期完成的响应包。可选地统计子请求总数。根据配置中的“后端类型”可选择简单固定延迟模型或 Ramulator2 封装。
+
+\xsubsection{NetworkInterface：简单模式与 BookSim2 封装}{NetworkInterface: Simple and BookSim2}
+
+\textbf{简单 NoC 模式。} 不依赖外部 NoC 模拟库，按 Manhattan 距离与配置的跳数延迟、路由器延迟计算端到端延迟。注入时记录投递周期并放入在途列表，每周期仅递增内部周期，到达时间已到的包在本周期取回。支持 NoC 与全局周期的时钟比，将 NoC 周期按比例折算到全局周期，便于与多时钟域实验一致。该模式无排队、无拥塞，适合快速回归与趋势对比。
+
+\textbf{BookSim2 封装。} 封装第三方 BookSim2，在初始化时根据 NoC 配置生成或加载 BookSim2 配置文件（拓扑、虚拟通道数、缓冲深度、路由与分配延迟等），将逻辑节点 ID 映射为 BookSim2 子网与节点。注入时将报文转为 BookSim2 的 Flit 序列（头 flit 携带源/目的/传输标识/大小等元数据），按时钟比进行多速率推进。每周期查询各节点投递的 Flit，按报文 ID 重组为完整报文后返回。执行层仅调用网络接口的“注入—推进—取回”能力，不依赖 BookSim2 的 VC、分配器等内部细节，从而实现松耦合与可替换性\cite{jiang2013booksim}。
+
+\xsubsection{MemoryInterface：简单模式与 Ramulator2 封装}{MemoryInterface: Simple and Ramulator2}
+
+\textbf{简单 DRAM 模式。} 固定读延迟与写延迟（如各 100 周期），提交请求时根据时钟比折算到全局周期，将响应放入在途列表并在投递周期到达时取回。无 Bank/行冲突、无排队，适合与高保真模式对照以隔离“时序与调度”的影响。
+
+\textbf{Ramulator2 封装。} 封装 Ramulator2，在初始化时根据 DRAM 配置加载或生成 Ramulator2 配置（通道数、Bank 组织、时序、调度策略等），并将报文的字节数与地址拆分为若干 cache-line 粒度子请求注入 Ramulator2 前端。Ramulator2 按自身时钟与时序推进，完成子请求后回调，封装器将同一传输标识的多个子请求聚合为一条读/写响应返回。支持 DRAM 时钟比，实现 DRAM 控制器与核心/NoC 的多速率推进（详见第四章）。执行层仅通过存储接口的“提交请求—推进—取回响应”交互，不依赖 Ramulator2 的内部 API，从而保证松耦合\cite{luo2023ramulator2}。
+
+\xsubsection{接口化设计的意义}{Why Loose Coupling Matters}
+
+从论文实验角度，松耦合接口的意义体现在三点。（1）\textbf{变量隔离}：替换 NoC/DRAM 后端不改变模拟器推进逻辑与核心逻辑，对比“简单模式与 BookSim2”或“简单模式与 Ramulator2”时仅改配置项，减少混杂因素。（2）\textbf{两档精度}：可先用简单模式完成回归与趋势分析，再用 BookSim2/Ramulator2 给出拥塞与时序敏感的结论。（3）\textbf{可扩展性}：便于后续引入新的 NoC 拓扑、DRAM 标准或统计插件，为设计空间探索提供持续演进能力。
+
+\textbf{简单模式与高保真模式的适用场景。} 两种后端在精度与开销上各有侧重，便于按实验目的选择。\textbf{简单 NoC/DRAM 模式}无排队、无拥塞，延迟为距离或固定常数的理想化模型，运行快、结果可复现。它适合快速回归（如验证解析与状态机正确性）、趋势对比（如扫描核心数、MAC 单元数时观察总周期随参数的大致走向），以及与高保真模式对照时作为基线，以隔离“仅因拥塞与时序”带来的差异。\textbf{BookSim2 + Ramulator2 高保真模式}周期级建模 NoC 的虚拟通道、仲裁与排队、DRAM 的 Bank/行缓冲与调度策略，能捕捉多核并发下的拥塞、背压与行冲突。它适合瓶颈归因（如第五章的阶段分解与 StallNoC/存储等待占比）、与 ZeBu 等硬件模拟结果的周期对比，以及设计空间探索中需要区分“计算墙、通信墙、存储墙”时的定量分析。实践中可先用简单模式确认流程与趋势，再切到高保真模式得到更贴近真实系统的周期与瓶颈分布。

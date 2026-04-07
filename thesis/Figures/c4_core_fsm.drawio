@@ -1,0 +1,106 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram id="fsm" name="Core FSM">
+    <mxGraphModel dx="1018" dy="659" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IDLE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=15;" value="IDLE&#xa;（空闲/取指）" vertex="1">
+          <mxGeometry height="60" width="120" x="340" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="LOADING" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=15;" value="LOADING&#xa;（数据加载）" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="COMPUTING" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=15;" value="COMPUTING&#xa;（执行计算）" vertex="1">
+          <mxGeometry height="60" width="120" x="340" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="WRITEBACK" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=15;" value="WRITEBACK&#xa;（写回DRAM）" vertex="1">
+          <mxGeometry height="60" width="120" x="560" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="DONE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=15;" value="DONE&#xa;（仿真结束）" vertex="1">
+          <mxGeometry height="60" width="120" x="610" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="START" parent="1" style="ellipse;fillColor=#000000;strokeColor=none;fontSize=15;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="200" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="E_START" edge="1" parent="1" source="START" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;" target="IDLE" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" edge="1" parent="1" source="IDLE" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;labelBackgroundColor=none;" target="DONE" value="Workload队列为空">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" edge="1" parent="1" source="IDLE" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;labelBackgroundColor=none;" target="LOADING" value="提取下一Workload&#xa;且存在依赖未在SRAM中">
+          <mxGeometry relative="1" x="0.4615" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="400" y="200" />
+              <mxPoint x="240" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E3" edge="1" parent="1" source="IDLE" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;labelBackgroundColor=none;" target="COMPUTING" value="提取下一Workload&lt;br&gt;且所有数据&lt;div&gt;已在SRAM中&lt;/div&gt;">
+          <mxGeometry relative="1" x="0.2308" y="60" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E4" edge="1" parent="1" source="LOADING" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;labelBackgroundColor=none;" target="LOADING" value="发送读请求">
+          <mxGeometry relative="1" x="0.5556" y="-36" as="geometry">
+            <mxPoint x="-30" y="-16" as="offset" />
+            <Array as="points">
+              <mxPoint x="160" y="260" />
+              <mxPoint x="160" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E5" edge="1" parent="1" source="LOADING" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;labelBackgroundColor=none;" target="COMPUTING" value="所有依赖数据加载完毕&#xa;(all_buffers_loaded)">
+          <mxGeometry relative="1" x="0.4483" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="180" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E6" edge="1" parent="1" source="COMPUTING" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;labelBackgroundColor=none;" target="COMPUTING" value="执行MAC/Vector操作">
+          <mxGeometry relative="1" x="0.3333" y="-100" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="380" y="520" />
+              <mxPoint x="420" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E7" edge="1" parent="1" source="COMPUTING" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=1;labelBackgroundColor=none;" target="WRITEBACK" value="计算完成且需写回DRAM&#xa;(needs_writeback)">
+          <mxGeometry relative="1" x="-0.3103" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="620" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E8" edge="1" parent="1" source="COMPUTING" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;exitX=0.25;exitY=0;entryX=0.25;entryY=1;labelBackgroundColor=none;" target="IDLE" value="计算完成且&lt;div&gt;无需写回&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.2308" y="30" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E9" edge="1" parent="1" source="WRITEBACK" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;labelBackgroundColor=none;" target="WRITEBACK" value="发送写请求">
+          <mxGeometry relative="1" x="0.6364" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="720" y="260" />
+              <mxPoint x="760" y="260" />
+              <mxPoint x="760" y="320" />
+              <mxPoint x="680" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E10" edge="1" parent="1" source="WRITEBACK" style="endArrow=classic;html=1;strokeColor=#333;fontSize=15;edgeStyle=orthogonalEdgeStyle;entryX=0.75;entryY=1;labelBackgroundColor=none;" target="IDLE" value="所有DRAM写回完成">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="200" />
+              <mxPoint x="430" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

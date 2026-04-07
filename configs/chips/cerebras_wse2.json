@@ -1,0 +1,43 @@
+{
+    "_chip": "Cerebras WSE-2 (Hot Chips 2021)",
+    "_reference": "Lie, Cerebras Architecture Deep Dive: First Look Inside the Wafer Scale Engine",
+    "_notes": "7nm TSMC wafer-scale, 850,000 cores, 40GB on-chip SRAM (48KB/core), 2D mesh fabric, no off-chip DRAM, ~1GHz, 75 PFLOPS FP16",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 16,
+    "core": {
+        "_comment": "Modeling a representative sub-array of 1024 cores as one macro-core for tractability",
+        "mac_units": 1024,
+        "vector_units": 1024,
+        "clock_freq_mhz": 1000.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 49152,
+        "read_bandwidth_bytes_per_cycle": 2048,
+        "write_bandwidth_bytes_per_cycle": 2048
+    },
+    "ni": {
+        "max_outstanding_reqs": 64,
+        "injection_queue_size": 32,
+        "ejection_queue_size": 32
+    },
+    "noc": {
+        "flit_size_bytes": 64,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "injection_queue_depth": 32,
+        "num_vcs": 8,
+        "vc_buf_size": 16
+    },
+    "dram": {
+        "_comment": "WSE-2 has no off-chip DRAM; data arrives via external host. Configured minimally for compatibility",
+        "num_channels": 1,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 1
+    }
+}

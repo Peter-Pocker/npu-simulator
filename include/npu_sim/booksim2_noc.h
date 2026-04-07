@@ -27,7 +27,8 @@ public:
     BookSim2NoC();
     ~BookSim2NoC() override;
 
-    void init(uint32_t num_nodes, const NoCConfig& config) override;
+    void init(uint32_t num_nodes, const NoCConfig& config,
+              uint32_t mesh_width = 0, uint32_t mesh_height = 0) override;
     bool inject(const Packet& pkt) override;
     void tick() override;
     std::vector<Packet> get_delivered_packets(core_id_t node_id) override;
@@ -35,7 +36,9 @@ public:
     cycle_t current_cycle() const override { return cycle_; }
 
 private:
-    void init_booksim(const std::string& config_path, uint32_t num_nodes);
+    void init_booksim(const std::string& config_path, uint32_t num_nodes,
+                      uint32_t mesh_w, uint32_t mesh_h);
+    void tick_network();
     int allocate_vc(int source, int subnet, Flit* head_flit);
 
     cycle_t cycle_ = 0;
@@ -55,6 +58,7 @@ private:
 
     int next_flit_id_ = 0;
     int next_packet_id_ = 0;
+    double tick_accum_ = 0.0;
 
     std::unordered_map<int, InFlightPacketInfo> in_flight_packets_;
 

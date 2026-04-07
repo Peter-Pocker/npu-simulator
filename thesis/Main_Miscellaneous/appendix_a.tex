@@ -1,0 +1,366 @@
+% !TeX root = ../main.tex
+\chapter{Gemini-Compiler-IR、硬件配置与模拟器输出示例}
+\sloppy
+
+本章给出论文中涉及的三种附录材料：Gemini 编译器 Scheduler IR 的片段示例、四核芯片的配置文件示例，以及模拟器的控制台输出与 trace 文件格式示例。
+
+\section{Gemini-Compiler-IR 示例}
+
+模拟器接受的输入为 Gemini 编译器调度后生成的 Scheduler IR（JSON 格式）。下面摘录单核、batch=1 的 ResNet50 调度结果中的一部分，用于说明 IR 的大致结构。
+
+\subsection{顶层结构}
+
+IR 的顶层包含：键 \texttt{"-1"} 表示与 DRAM 相关的数据（\texttt{in} 为写入 DRAM 的数据块，\texttt{out} 为从 DRAM 读出的数据块）；键 \texttt{"0"}, \texttt{"1"}, \ldots 表示各核心上的 workload 列表；\texttt{buffersize}、\texttt{top\_batch\_cut}、\texttt{xlen}、\texttt{ylen} 为全局参数。
+
+{\small
+\begin{verbatim}
+{
+   "-1" : { "in" : [ ... ], "out" : [ ... ] },
+   "0" : [ ... ],
+   "buffersize" : 8388608,
+   "top_batch_cut" : 1,
+   "xlen" : 1,
+   "ylen" : 1
+}
+\end{verbatim}
+}
+
+\subsection{DRAM 数据块示例（\texttt{"-1"}）}
+
+\texttt{"in"} 中每个元素描述一块写入 DRAM 的数据（多为某层的 ofmap）；\texttt{"out"} 中每个元素描述一块从 DRAM 读出的数据（权重、ifmap 等）。例如 \texttt{out} 中的一个权重块：
+
+{\small
+\begin{verbatim}
+{
+   "destination" : [
+      { "core_id" : 0, "layer_name" : "Conv_0",
+        "type" : "core", "workload_id" : 1 }
+   ],
+   "lower" : [ 0, 0, 0, 0 ],
+   "related_ifmap" : [],
+   "size" : 27136,
+   "transfer_id" : 0,
+   "type" : "weight",
+   "upper" : [ 0, 63, 2, 48 ]
+}
+\end{verbatim}
+}
+
+\subsection{核心 workload 示例（键 \texttt{"0"}）}
+
+每个 workload 对应一个计算 tile，包含层名、类型、ifmap/ofmap、tile\_info、时间估计等。下面为第一个 workload 的简化示例（\texttt{layer\_type} 为 \texttt{vp}，表示向量运算）：
+
+{\small
+\begin{verbatim}
+{
+   "layer_name" : "src_quantize_1_1",
+   "layer_type" : "vp",
+   "workload_id" : 0,
+   "ifmap" : [
+      { "align" : 4, "bitwidth" : 16,
+        "lower" : [ 0, 0, 0, 0 ], "upper" : [ 0, 2, 223, 223 ],
+        "size" : 401408, "transfer_id" : [ 54 ] }
+   ],
+   "ofmap" : [
+      { "destination" : [ { "core_id" : 0, "type" : "core",
+                           "workload_id" : 1 } ],
+        "lower" : [ 0, 0, 0, 0 ], "upper" : [ 0, 2, 223, 223 ],
+        "size" : 401408, "transfer_id" : 55 }
+   ],
+   "tile_info" : {
+      "tile_num_0" : {
+         "ifmap_lower" : [ 0, 0, 0, 0 ],
+         "ifmap_upper" : [ 0, 2, 223, 223 ],
+         "ofmap_lower" : [ 0, 0, 0, 0 ],
+         "ofmap_upper" : [ 0, 2, 223, 223 ],
+         "single_tile_time_pred" : 50190.0
+      }
+   },
+   "time" : 50190,
+   "workload" : [ [ 0, 0, 0, 0 ], [ 0, 2, 223, 223 ] ]
+}
+\end{verbatim}
+}
+
+\section{四核芯片配置文件示例}
+
+本节给出一个 2×2（共 4 核）的芯片配置示例，用于说明模拟器所描述的硬件参数。配置文件为 JSON，主要字段含义如下。
+
+\subsection{配置内容}
+
+\begin{itemize}
+  \item \textbf{核阵列}：\texttt{num\_cores\_x=2}，\texttt{num\_cores\_y=2}，即 4 个核心。
+  \item \textbf{数据位宽}：\texttt{element\_size\_bits=8}（INT8）。
+  \item \textbf{单核}：\texttt{mac\_units=256}，\texttt{vector\_units=64}，\texttt{clock\_freq\_mhz=1000}，\texttt{use\_analytical\_time=true}（解析时间模型）。
+  \item \textbf{SRAM}：\texttt{size\_kb=512}，读写带宽 64 bytes/cycle。
+  \item \textbf{网络接口}：\texttt{max\_outstanding\_reqs=16}，\texttt{injection\_queue\_size=8}，\texttt{ejection\_queue\_size=8}。
+  \item \textbf{NoC}：\texttt{backend="simple"}，\texttt{flit\_size\_bytes=16}，\texttt{hop\_latency\_cycles=1}，\texttt{router\_latency\_cycles=1}。
+  \item \textbf{DRAM}：\texttt{backend="simple"}，\texttt{num\_channels=4}。
+  \item \textbf{拓扑}：\texttt{dram\_controllers=[]} 表示 DRAM 不挂 NoC（简化模型）。
+\end{itemize}
+
+完整 JSON 如下（与 \texttt{configs/chips/quad\_core\_example.json} 一致）：
+
+{\small
+\begin{verbatim}
+{
+    "num_cores_x": 2,
+    "num_cores_y": 2,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 256,
+        "vector_units": 64,
+        "clock_freq_mhz": 1000,
+        "use_analytical_time": true
+    },
+    "sram": {
+        "size_kb": 512,
+        "read_bandwidth_bytes_per_cycle": 64,
+        "write_bandwidth_bytes_per_cycle": 64
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "backend": "simple",
+        "flit_size_bytes": 16,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1
+    },
+    "dram": {
+        "backend": "simple",
+        "num_channels": 4
+    },
+    "topology": {
+        "dram_controllers": [],
+        "dram_routing_policy": "nearest"
+    }
+}
+\end{verbatim}
+}
+
+\section{模拟器输出与 Trace}
+
+模拟器运行时会向标准输出打印运行过程与统计信息；若启用 \texttt{-t}（trace）选项，还会在指定目录下生成 trace 文件。
+
+\subsection{控制台输出示例}
+
+运行命令示例：
+\begin{verbatim}
+./npu_sim -c config.json -i model_stschedule.json -t trace
+\end{verbatim}
+
+运行过程中会周期性打印进度，例如：
+\begin{verbatim}
+[Simulator] Starting simulation...
+[Simulator] Cycle 100000, cores done: 0/4, workloads completed: 12
+[Simulator] Cycle 200000, cores done: 1/4, workloads completed: 28
+...
+[Simulator] Simulation complete at cycle 523456
+\end{verbatim}
+
+模拟结束后会打印统计信息（\texttt{print\_stats}），例如：
+{\small
+\begin{verbatim}
+========== Simulation Statistics ==========
+Total cycles:       523456
+NoC packets:        1245678
+DRAM reads:         89012
+DRAM writes:        45230
+DRAM sub-requests:  234567
+DRAM addr allocated: 128.50 MB
+
+--- Per-Core Statistics ---
+  Core   Idle   Loading  Compute  Writeback  StallNoC  Wloads  PeakSRAM(KB)
+    0    12000  45000    380000   12000     12000     22      412.5
+    1    10000  42000    390000   11000     10000     22      398.2
+    2    11000  44000    385000   11500     11000     22      405.0
+    3    11500  43000    388000   11200     10500     22      400.1
+=============================================
+\end{verbatim}
+}
+
+若启用了 trace，还会提示 trace 文件路径，例如：
+\begin{verbatim}
+[Trace] State transitions: trace/state_trace.csv (12345 events)
+[Trace] Workload summary: trace/workload_summary.csv
+[Trace] Files written to trace/
+\end{verbatim}
+
+\subsection{Trace 文件格式}
+
+\subsubsection{state\_trace.csv}
+
+记录各核心状态随周期的变化，每行一次状态转移。列含义如下：
+\begin{itemize}
+  \item \texttt{cycle}：发生转移的周期；
+  \item \texttt{core\_id}：核心编号；
+  \item \texttt{old\_state}：前一状态（如 IDLE、LOADING、COMPUTING、WRITEBACK、DONE）；
+  \item \texttt{new\_state}：新状态；
+  \item \texttt{workload\_idx}：当前 workload 索引；
+  \item \texttt{layer\_name}：层名称；
+  \item \texttt{detail}：附加说明（如依赖的数据源）。
+\end{itemize}
+
+表头与示例行：
+{\small
+\begin{verbatim}
+cycle,core_id,old_state,new_state,workload_idx,layer_name,detail
+0,0,IDLE,LOADING,0,Conv_0,"waiting_for=[...]"
+12500,0,LOADING,COMPUTING,0,Conv_0,""
+51200,0,COMPUTING,WRITEBACK,0,Conv_0,""
+\end{verbatim}
+}
+
+\subsubsection{workload\_summary.csv}
+
+按核心与 workload 汇总各阶段的起止周期与耗时。列包括：
+\texttt{core\_id}、\texttt{workload\_idx}、\texttt{layer\_name}、\texttt{op\_type}、
+\texttt{start\_cycle}、\texttt{loading\_done\_cycle}、\texttt{compute\_done\_cycle}、\texttt{end\_cycle}、
+\texttt{loading\_cycles}、\texttt{compute\_cycles}、\texttt{writeback\_cycles}、\texttt{data\_sources}。
+
+表头与示例行：
+{\small
+\begin{verbatim}
+core_id,workload_idx,layer_name,op_type,start_cycle,
+  loading_done_cycle,compute_done_cycle,end_cycle,
+  loading_cycles,compute_cycles,writeback_cycles,data_sources
+0,0,Conv_0,pe,0,12500,51200,53000,12500,38700,1800,
+  "transfer_id=[0,6]"
+0,1,Conv_3,pe,53000,65500,98500,100200,12500,33000,1700,
+  "transfer_id=[1,7]"
+\end{verbatim}
+}
+
+以上示例与格式与当前模拟器实现一致，便于复现与对照。
+
+\section{工作量说明与项目代码结构}
+\label{app:workload_and_structure}
+
+\subsection{工作量说明}
+
+本课题工作量主要包括：（1）周期级多核 NPU 模拟器的设计与实现，包括核心状态机、SRAM 与依赖建模、NoC/DRAM 抽象接口及 BookSim2/Ramulator2 的集成；（2）Gemini 编译器 Scheduler IR 的解析与驱动逻辑，将调度结果转化为可执行的 workload 序列与数据依赖；（3）实验脚本与可视化工具链，涵盖 ZeBu trace 解析、仿真对比、瓶颈分解与论文图表生成；（4）配置体系与实验设计，包括多种芯片配置、微基准 IR 与真实负载实验流程。除模拟器主体外，脚本与辅助工具保证实验可复现、结果可追溯。下表给出自写代码（含 C++ 源码、头文件、Python 脚本与 Shell 脚本）的规模统计，总规模约九千行。
+
+\begin{table}[H]
+  \centering
+  \caption{项目自写代码规模统计（约）}
+  \label{tab:app:code_stats}
+  {\small
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{模块} & \textbf{说明} & \textbf{代码量（行）} \\
+    \midrule
+    核心模拟器（\texttt{src/} + \texttt{include/npu\_sim/}） & 状态机、SRAM、IR 解析、引擎与主程序 & 约 6300 \\
+    实验与可视化脚本（\texttt{scripts/}） & ZeBu 解析、对比、瓶颈分解、甘特图与图表 & 约 2100 \\
+    构建与入口脚本 & \texttt{build.sh}、\texttt{run.sh} 及 CMake 配置 & 约 200 \\
+    配置与实验数据 & 芯片 JSON、微基准 IR、实验运行目录说明 & 约 400 \\
+    \midrule
+    \textbf{合计} & 自写代码（不含第三方与子模块） & \textbf{约 9000} \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\subsection{项目文件结构描述}
+
+以下为项目自写部分（不含 \texttt{third\_party/}、\texttt{ext/} 等第三方）的目录与主要文件结构。
+
+{\small
+\begin{verbatim}
+npu-simulator/
+|-- CMakeLists.txt
+|-- build.sh
+|-- run.sh
+|-- include/npu_sim/
+|   |-- types.h
+|   |-- config.h
+|   |-- task.h
+|   |-- packet.h
+|   |-- sram.h
+|   |-- core.h
+|   |-- ir_parser.h
+|   |-- gemini_parser.h
+|   |-- network_interface.h
+|   |-- memory_interface.h
+|   |-- booksim2_noc.h
+|   |-- ramulator2_dram.h
+|   |-- address_allocator.h
+|   |-- topology.h
+|   \-- simulator.h
+|-- src/
+|   |-- main.cpp
+|   |-- simulator.cpp
+|   |-- core.cpp
+|   |-- gemini_parser.cpp
+|   |-- sram.cpp
+|   |-- address_allocator.cpp
+|   |-- booksim2_noc.cpp
+|   \-- ramulator2_dram.cpp
+|-- scripts/
+|   |-- parse_zebu_trace.py
+|   |-- compare_zebu_simulator.py
+|   |-- batch_compare_zebu.py
+|   |-- run_zebu_and_bottleneck_experiments.py
+|   |-- plot_gantt.py
+|   |-- plot_gantt_mb1.py
+|   |-- plot_c4_concurrency.py
+|   |-- plot_c5_breakdown.py
+|   |-- gemini_run.py
+|   \-- csv_to_xlsx.py
+|-- configs/
+|   |-- default_config.json
+|   |-- full_config.json
+|   |-- gemini_run_example.json
+|   |-- booksim2_mesh.cfg
+|   |-- ramulator2_ddr4.yaml
+|   \-- chips/
+|       |-- quad_core_example.json
+|       |-- ascend_910.json
+|       \-- ...（其他芯片配置）
+\-- experiments/
+    |-- simple_single_core_config.json
+    |-- mb1_p2p_ir.json
+    |-- mb2_dram_only_ir.json
+    |-- runs/          （各次运行输出：trace、CSV 等）
+    \-- README.md
+\end{verbatim}
+}
+
+\subsection{项目代码结构及模块功能}
+
+项目根目录下主要目录与文件如下，第三方依赖（\texttt{third\_party/}、\texttt{ext/}）未列入。
+
+\textbf{根目录。}
+\texttt{CMakeLists.txt}：顶层 CMake 配置，定义可执行目标与依赖。\texttt{build.sh}：一键配置与编译。\texttt{run.sh}：示例运行命令与常用参数组合。
+
+\textbf{\texttt{include/npu\_sim/}（头文件）。}
+定义模拟器对外接口与内部数据结构。\texttt{types.h}：全局类型、枚举与常量。\texttt{config.h}：从 JSON 加载的配置结构体。\texttt{task.h}：Workload、BufferRequirement、OperatorType 等任务表示。\texttt{packet.h}：NoC 报文格式。\texttt{sram.h}：片上 SRAM 容量与占用模型。\texttt{core.h}：核心状态机（IDLE/LOADING/COMPUTING/WRITEBACK/DONE）与周期推进。\texttt{ir\_parser.h}、\texttt{gemini\_parser.h}：IR 解析接口与 Gemini Scheduler IR 实现。\texttt{network\_interface.h}、\texttt{memory\_interface.h}：NoC 与 DRAM 抽象接口。\texttt{booksim2\_noc.h}、\texttt{ramulator2\_dram.h}：BookSim2 与 Ramulator2 的封装声明。\texttt{address\_allocator.h}、\texttt{topology.h}：DRAM 地址分配与拓扑/路由。\texttt{simulator.h}：仿真引擎，多核推进、trace 导出与统计。
+
+\textbf{\texttt{src/}（实现）。}
+\texttt{main.cpp}：命令行解析、配置加载、仿真运行与统计输出。\texttt{simulator.cpp}：全局周期步进、核间报文收集与投递、DRAM 响应注入、trace 导出。\texttt{core.cpp}：单核状态转移、依赖检查、SRAM 占用、计算周期与 NoC/DRAM 请求发起。\texttt{gemini\_parser.cpp}：解析 Scheduler IR JSON，生成各核 workload 队列与 DRAM 张量描述。\texttt{sram.cpp}：SRAM 占用与释放。\texttt{address\_allocator.cpp}：DRAM 地址分配。\texttt{booksim2\_noc.cpp}：将报文映射为 BookSim2 的 Flit 流并驱动仿真。\texttt{ramulator2\_dram.cpp}：将读写请求转换为 Ramulator2 子请求并回调响应。
+
+\textbf{\texttt{scripts/}（脚本）。}
+\texttt{parse\_zebu\_trace.py}：解析 ZeBu 输出的 trace，汇总周期与统计。\texttt{compare\_zebu\_simulator.py}：单次 ZeBu 与模拟器结果对比。\texttt{batch\_compare\_zebu.py}：批量对比并输出 CSV/LaTeX。\texttt{run\_zebu\_and\_bottleneck\_experiments.py}：一键运行 ZeBu 对比与瓶颈分解实验。\texttt{plot\_gantt.py}、\texttt{plot\_gantt\_mb1.py}：根据 \texttt{state\_trace.csv} 绘制甘特图。\texttt{plot\_c4\_concurrency.py}、\texttt{plot\_c5\_breakdown.py}：第四章并发与第五章瓶颈分解图表。\texttt{gemini\_run.py}：调用 Gemini 生成 IR 并可选启动模拟器。\texttt{csv\_to\_xlsx.py}：结果 CSV 转 Excel 等辅助功能。
+
+\textbf{\texttt{configs/}。}
+\texttt{chips/} 下为各芯片 JSON 配置（如 \texttt{quad\_core\_example.json}、\texttt{default\_config} 等）；\texttt{default\_config.json} 等为全后端/简单后端示例。\texttt{experiments/} 下为微基准 IR、运行目录及说明，用于复现论文实验。
+
+以上模块共同支撑“IR 驱动—周期推进—NoC/DRAM 闭环—统计与 trace”的端到端仿真流程，并与脚本配合完成 ZeBu 精度对比与设计空间探索实验。
+
+\section{第五章 图5-1 数据来源}
+\label{app:c5_fig1_data}
+
+\begin{verbatim}
+cycle,core_id,old_state,new_state,workload_idx,layer_name,detail
+0,0,IDLE,LOADING,0,producer,"waiting_for=[t0(DRAM,4096B),t1(DRAM,1024B)]"
+0,1,IDLE,LOADING,0,consumer,"waiting_for=[t3(DRAM,8192B),t2(C0,16384B)]"
+207,0,LOADING,COMPUTING,0,producer,"compute_cycles=500"
+707,0,COMPUTING,IDLE,1,,"workload_done"
+708,0,IDLE,DONE,1,,"all_workloads_finished"
+2000,1,LOADING,COMPUTING,0,consumer,"compute_cycles=300"
+2300,1,COMPUTING,WRITEBACK,0,consumer,"writeback_to_dram"
+2456,1,WRITEBACK,IDLE,1,,"writeback_complete"
+2457,1,IDLE,DONE,1,,"all_workloads_finished"
+\end{verbatim}

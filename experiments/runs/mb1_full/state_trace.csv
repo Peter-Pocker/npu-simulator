@@ -1,0 +1,10 @@
+cycle,core_id,old_state,new_state,workload_idx,layer_name,detail
+0,0,IDLE,LOADING,0,producer,"waiting_for=[t0(DRAM,4096B),t1(DRAM,1024B)]"
+0,1,IDLE,LOADING,0,consumer,"waiting_for=[t3(DRAM,8192B),t2(C0,16384B)]"
+207,0,LOADING,COMPUTING,0,producer,"compute_cycles=500"
+707,0,COMPUTING,IDLE,1,,"workload_done"
+708,0,IDLE,DONE,1,,"all_workloads_finished"
+2000,1,LOADING,COMPUTING,0,consumer,"compute_cycles=300"
+2300,1,COMPUTING,WRITEBACK,0,consumer,"writeback_to_dram"
+2456,1,WRITEBACK,IDLE,1,,"writeback_complete"
+2457,1,IDLE,DONE,1,,"all_workloads_finished"

@@ -1,0 +1,61 @@
+{
+    "_chip": "NVIDIA/Stanford Simba (MICRO 2019)",
+    "_reference": "Shao et al., Simba: Scaling Deep-Learning Inference with Multi-Chip-Module-Based Architecture",
+    "_notes": "36 chiplets (6x6 mesh), each 8 PE groups x 16 MACs = 128 MACs/chiplet, 16nm, ~1GHz",
+    "num_cores_x": 6,
+    "num_cores_y": 6,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 128,
+        "vector_units": 32,
+        "clock_freq_mhz": 1000.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 128,
+        "read_bandwidth_bytes_per_cycle": 64,
+        "write_bandwidth_bytes_per_cycle": 64
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "flit_size_bytes": 16,
+        "hop_latency_cycles": 2,
+        "router_latency_cycles": 2,
+        "backend": "booksim2",
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8
+    },
+    "dram": {
+        "num_channels": 8,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 2
+    },
+    "topology": {
+        "_comment": "6x6 cores at columns 1-6, DRAM controllers at columns 0 and 7 (8x6 mesh)",
+        "core_origin_x": 1,
+        "core_origin_y": 0,
+        "dram_controllers": [
+            {"x": 0, "y": 0},
+            {"x": 0, "y": 1},
+            {"x": 0, "y": 2},
+            {"x": 0, "y": 3},
+            {"x": 0, "y": 4},
+            {"x": 0, "y": 5},
+            {"x": 7, "y": 0},
+            {"x": 7, "y": 1},
+            {"x": 7, "y": 2},
+            {"x": 7, "y": 3},
+            {"x": 7, "y": 4},
+            {"x": 7, "y": 5}
+        ],
+        "dram_routing_policy": "nearest"
+    }
+}

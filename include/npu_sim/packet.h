@@ -10,6 +10,7 @@ struct Packet {
     core_id_t dst;
     transfer_id_t transfer_id;
     uint64_t data_size_bytes;
+    uint64_t address = 0;
     cycle_t inject_cycle = 0;
     cycle_t deliver_cycle = 0;
 

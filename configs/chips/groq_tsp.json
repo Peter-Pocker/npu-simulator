@@ -1,0 +1,41 @@
+{
+    "_chip": "Groq Tensor Streaming Processor (ISCA 2022)",
+    "_reference": "Abts et al., Think Fast: A Tensor Streaming Processor (TSP) for Accelerating Deep Learning Workloads",
+    "_notes": "14nm, deterministic dataflow, 5120 functional units in 320 superlanes x 16 tiles, ~900MHz, 230MB SRAM, no caches, 80 TOPS INT8",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 5120,
+        "vector_units": 320,
+        "clock_freq_mhz": 900.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 235520,
+        "read_bandwidth_bytes_per_cycle": 1024,
+        "write_bandwidth_bytes_per_cycle": 1024
+    },
+    "ni": {
+        "max_outstanding_reqs": 64,
+        "injection_queue_size": 32,
+        "ejection_queue_size": 32
+    },
+    "noc": {
+        "flit_size_bytes": 64,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "injection_queue_depth": 32,
+        "num_vcs": 8,
+        "vc_buf_size": 16
+    },
+    "dram": {
+        "num_channels": 8,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2933V",
+        "num_ranks": 2
+    }
+}

@@ -1,0 +1,25 @@
+% !TeX root = ../main.tex
+\begin{englishabstract}
+% Uncomment if funding information is available.
+% \footnotetext{*The work was supported by the Foundation (foundation ID).}
+% \astfootnote{The work was supported by the Foundation (foundation ID).}
+
+With the widespread deployment of deep neural networks and large language models in the cloud and at the edge, demand for hardware compute is growing rapidly. To increase compute capability, neural network chips are evolving from single-core to multi-core architectures, and system-level issues such as on-chip network congestion, insufficient main-memory bandwidth, and high cross-core scheduling complexity are becoming increasingly salient. Against a backdrop of high tape-out cost and long iteration cycles, a cycle-level simulator that can provide quantitative feedback during the design phase plays an important supporting role in architecture evaluation and software--hardware co-optimization.
+
+This thesis designs and implements an end-to-end cycle-level simulation framework that takes as input an intermediate representation (IR) describing neural network workloads. Through general-purpose modeling of neural network chips and a unified task abstraction, multi-core execution is cast as a parsable model of ``core-level workload---explicit dependency---data flow'', and compute, on-chip interconnect, and off-chip memory are advanced in a coordinated manner on a unified timeline. By abstracting on-chip network and off-chip memory access as replaceable interfaces, the simulator can integrate cycle-level subsystem models such as BookSim2 and Ramulator2, and switch between ``fast validation'' and ``high-fidelity queuing/congestion'' backends while preserving consistent execution semantics. During simulation, per-core cycles in loading, computing, writeback, and network backpressure can be recorded to produce reproducible bottleneck attribution statistics, forming a closed loop of ``parse---execute---statistics''.
+
+For validation and application, this work constructs micro-benchmark experiments such as two-core point-to-point dependencies and single-core workloads with dependencies only on off-chip memory, to verify inter-core data-dependency propagation, correct request--response behavior for the on-chip network and off-chip memory, and differences among subsystem backends. Compared with simulation results from the Synopsys ZeBu hardware emulation platform under the same scheduling outcome and hardware configuration for workloads including ResNet34 and ResNet50, the relative error of this simulator can be kept within $\pm$5.2\%, which validates its accuracy. On this basis, intermediate representations produced by the scheduler are used to drive simulation of real neural network workloads, completing end-to-end stage-fraction breakdowns, per-core state statistics, and hotspot visualization. The simulation results further quantitatively reveal the dominant relationship between compute and memory access and the phenomenon of insufficient multi-core parallelism. Future work may couple this simulator more closely with compilation and mapping flows, and scale up to larger design-space exploration, including larger topologies, finer-grained interconnect, memory bandwidth, and related dimensions.
+
+This project provides a reproducible cycle-level simulation basis for evaluating multi-core neural network chip architectures and for software--hardware co-optimization; it is valuable for both engineering implementation and research, and can offer a repeatable evaluation loop for compiler--architecture co-optimization.
+
+\englishKeywords{Neural network chip; Multi-core architecture; Cycle-level simulation; Bottleneck analysis}
+
+% 每个关键词组的第一个字母大写，其余为小写，每一关键词之间用分号分开，最后一个关键词后不打标点符号。例如：Drip irrigation emitter; RP\&M; Hydraulics; Labyrinth flow channel\newline
+
+\englishType{Applied Research}
+
+% 须与中文摘要中的论文类型一致；每个单词第一个字母大写，其余为小写。例如：Applied Research
+
+% 论文类型包括：a.理论研究(Theoretical Research)；b.应用基础(Application Fundamentals)；c.应用研究(Application Research)；d.研究报告(Research Report)；e.设计报告(Design Report)；f.案例分析(Case Study)；g.调研报告(Investigation Report)；h.产品研发(Product Development)；i.工程设计(Engineering Design)；j.工程/项目管理(Engineering/Project Management)；k.其它（Others）。
+
+\end{englishabstract}

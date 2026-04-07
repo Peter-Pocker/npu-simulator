@@ -1,4 +1,5 @@
 {
+    "_comment": "Default: booksim2 + ramulator2 only (no simple backend).",
     "num_cores_x": 0,
     "num_cores_y": 0,
     "element_size_bits": 8,
@@ -21,14 +22,23 @@
         "flit_size_bytes": 16,
         "hop_latency_cycles": 1,
         "router_latency_cycles": 1,
-        "backend": "simple",
-        "booksim2_config_path": "configs/booksim2_mesh.cfg",
-        "injection_queue_depth": 16
+        "backend": "booksim2",
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8
     },
     "dram": {
-        "config_path": "configs/ramulator2_ddr4.yaml",
         "num_channels": 4,
-        "backend": "simple"
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 2
+    },
+    "topology": {
+        "_comment": "Empty dram_controllers = legacy mode (DRAM bypasses NoC)",
+        "dram_controllers": [],
+        "dram_routing_policy": "nearest"
     },
     "ir_path": "",
     "output_path": "sim_output"

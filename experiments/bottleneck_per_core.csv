@@ -1,0 +1,3 @@
+model,batch,core_id,idle,loading,computing,writeback,stall_noc
+ResNet34,1,0,0,357892,1530664,1996,0
+ResNet50,1,0,0,566297,1863694,2420,0

@@ -1,0 +1,199 @@
+{
+    "xlen": 1,
+    "ylen": 1,
+    "top_batch_cut": 1,
+    "0": [
+        {
+            "workload_id": 0,
+            "layer_name": "layer1",
+            "layer_type": "conv2d",
+            "workload": [[0, 0, 0, 0], [0, 31, 15, 15]],
+            "ofmap_size": 131072,
+            "time": 500,
+            "weight": {
+                "lower": 0,
+                "upper": 31,
+                "size": 32768,
+                "transfer_id": [0]
+            },
+            "buffer": [
+                {
+                    "type": "weight",
+                    "layer": "layer1",
+                    "lower": [0],
+                    "upper": [31],
+                    "workload_id": 0,
+                    "block": 4,
+                    "source": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "size": 32768,
+                            "transfer_id": 0,
+                            "layer_name": "layer1"
+                        }
+                    ],
+                    "transfer_id": [0]
+                },
+                {
+                    "type": "ifmap",
+                    "layer": "input",
+                    "lower": [0, 0, 0, 0],
+                    "upper": [0, 2, 17, 17],
+                    "workload_id": 0,
+                    "block": 1,
+                    "source": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "size": 8192,
+                            "transfer_id": 1,
+                            "layer_name": "input"
+                        }
+                    ],
+                    "transfer_id": [1]
+                }
+            ],
+            "ofmap": [
+                {
+                    "lower": [0, 0, 0, 0],
+                    "upper": [0, 31, 15, 15],
+                    "transfer_id": 2,
+                    "size": 131072,
+                    "destination": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "workload_id": 0,
+                            "layer_name": "layer1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "workload_id": 1,
+            "layer_name": "layer2",
+            "layer_type": "conv2d",
+            "workload": [[0, 0, 0, 0], [0, 63, 7, 7]],
+            "ofmap_size": 32768,
+            "time": 300,
+            "weight": {
+                "lower": 0,
+                "upper": 63,
+                "size": 65536,
+                "transfer_id": [3]
+            },
+            "buffer": [
+                {
+                    "type": "weight",
+                    "layer": "layer2",
+                    "lower": [0],
+                    "upper": [63],
+                    "workload_id": 1,
+                    "block": 8,
+                    "source": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "size": 65536,
+                            "transfer_id": 3,
+                            "layer_name": "layer2"
+                        }
+                    ],
+                    "transfer_id": [3]
+                },
+                {
+                    "type": "ifmap",
+                    "layer": "layer1",
+                    "lower": [0, 0, 0, 0],
+                    "upper": [0, 31, 15, 15],
+                    "workload_id": 1,
+                    "block": 16,
+                    "source": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "size": 131072,
+                            "transfer_id": 4,
+                            "layer_name": "layer1"
+                        }
+                    ],
+                    "transfer_id": [4]
+                }
+            ],
+            "ofmap": [
+                {
+                    "lower": [0, 0, 0, 0],
+                    "upper": [0, 63, 7, 7],
+                    "transfer_id": 5,
+                    "size": 32768,
+                    "destination": [
+                        {
+                            "type": "DRAM",
+                            "id": 0,
+                            "workload_id": 1,
+                            "layer_name": "layer2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "-1": {
+        "out": [
+            {
+                "type": "weight",
+                "layer_name": "layer1",
+                "lower": 0,
+                "upper": 31,
+                "size": 32768,
+                "transfer_id": 0,
+                "destination": [{"type": "core", "id": 0, "workload_id": 0}]
+            },
+            {
+                "type": "ifmap",
+                "layer_name": "input",
+                "lower": [0, 0, 0, 0],
+                "upper": [0, 2, 17, 17],
+                "size": 8192,
+                "transfer_id": 1,
+                "destination": [{"type": "core", "id": 0, "workload_id": 0}]
+            },
+            {
+                "type": "weight",
+                "layer_name": "layer2",
+                "lower": 0,
+                "upper": 63,
+                "size": 65536,
+                "transfer_id": 3,
+                "destination": [{"type": "core", "id": 0, "workload_id": 1}]
+            },
+            {
+                "type": "ifmap",
+                "layer_name": "layer1",
+                "lower": [0, 0, 0, 0],
+                "upper": [0, 31, 15, 15],
+                "size": 131072,
+                "transfer_id": 4,
+                "destination": [{"type": "core", "id": 0, "workload_id": 1}]
+            }
+        ],
+        "in": [
+            {
+                "type": "ofmap",
+                "layer_name": "layer1",
+                "transfer_id": 2,
+                "core_id": 0,
+                "workload_id": 0
+            },
+            {
+                "type": "ofmap",
+                "layer_name": "layer2",
+                "transfer_id": 5,
+                "core_id": 0,
+                "workload_id": 1
+            }
+        ]
+    }
+}

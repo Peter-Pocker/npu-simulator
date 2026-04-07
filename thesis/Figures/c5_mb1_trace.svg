@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 180" width="520" height="36">
+  <title>MB-1 State Trace (full backend)</title>
+  <!-- Core 0: Loading 0-207, Computing 207-707 -->
+  <rect x="0"   y="100" width="207"  height="35" fill="#ff7f0e"/>
+  <rect x="207" y="100" width="500"  height="35" fill="#1f77b4"/>
+  <!-- Core 1: Loading 0-2000, Computing 2000-2300, Writeback 2300-2456 -->
+  <rect x="0"    y="45" width="2000" height="35" fill="#ff7f0e"/>
+  <rect x="2000" y="45" width="300"  height="35" fill="#1f77b4"/>
+  <rect x="2300" y="45" width="156"  height="35" fill="#d62728"/>
+  <!-- Axis (labels omitted; see figure caption in paper for axis and color legend) -->
+  <line x1="0" y1="145" x2="2458" y2="145" stroke="#333" stroke-width="1"/>
+</svg>

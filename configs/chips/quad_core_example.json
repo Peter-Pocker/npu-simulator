@@ -1,0 +1,37 @@
+{
+    "_chip": "四核示例配置（2×2 mesh，用于论文附录说明）",
+    "_notes": "简化配置：2x2 核阵列，单核 256 MAC、512KB SRAM、简单 NoC/DRAM",
+    "num_cores_x": 2,
+    "num_cores_y": 2,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 256,
+        "vector_units": 64,
+        "clock_freq_mhz": 1000,
+        "use_analytical_time": true
+    },
+    "sram": {
+        "size_kb": 512,
+        "read_bandwidth_bytes_per_cycle": 64,
+        "write_bandwidth_bytes_per_cycle": 64
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "backend": "simple",
+        "flit_size_bytes": 16,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1
+    },
+    "dram": {
+        "backend": "simple",
+        "num_channels": 4
+    },
+    "topology": {
+        "dram_controllers": [],
+        "dram_routing_policy": "nearest"
+    }
+}

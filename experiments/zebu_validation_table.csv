@@ -1,0 +1,8 @@
+model,batch,zebu_cycles,sim_cycles,error_pct
+ResNet34,1,1922067,1890695,-1.63
+ResNet34,4,4280215,4501725,5.18
+ResNet34,16,16230844,,
+ResNet50,1,2545655,2432592,-4.44
+ResNet50,4,5470662,,
+ResNet50,16,21067273,,
+ResNet50,64,82907529,,

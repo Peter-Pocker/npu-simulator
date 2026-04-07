@@ -1,0 +1,3 @@
+config=experiments/simple_single_core_config.json
+timestamp=2026-02-27T00:34:36.774675
+simulator=/Users/then_mac/code/npu-simulator/build/npu_sim

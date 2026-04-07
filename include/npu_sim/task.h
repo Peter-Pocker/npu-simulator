@@ -70,8 +70,9 @@ struct Workload {
     std::vector<OutputTransfer> outputs;
 
     cycle_t compute_cycles(uint32_t mac_units, uint32_t vector_units,
-                           uint32_t element_size_bits) const {
-        if (analytical_time > 0) return analytical_time;
+                           uint32_t element_size_bits,
+                           bool use_analytical_time = true) const {
+        if (use_analytical_time && analytical_time > 0) return analytical_time;
 
         uint64_t ofmap_B = ofmap_range.dim_size(0);
         uint64_t ofmap_H = ofmap_range.dim_size(2);

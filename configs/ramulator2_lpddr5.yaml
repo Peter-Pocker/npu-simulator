@@ -1,0 +1,25 @@
+# Ramulator2 LPDDR5 配置，与 third_party/ramulator2/src/dram/impl/LPDDR5.cpp 中 preset 一致
+# 供 npu_sim 使用 dram.config_path 加载，避免内联 YAML 与库解析差异导致 key not found
+Frontend:
+  impl: GEM5
+  clock_ratio: 4
+
+MemorySystem:
+  impl: GenericDRAM
+  clock_ratio: 1
+  DRAM:
+    impl: LPDDR5
+    org:
+      preset: LPDDR5_8Gb_x16
+      channel: 4
+      rank: 1
+    timing:
+      preset: LPDDR5_6400
+  Controller:
+    impl: Generic
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+  AddrMapper:
+    impl: RoBaRaCoCh

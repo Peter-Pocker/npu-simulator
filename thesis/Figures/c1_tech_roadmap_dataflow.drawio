@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram id="c1_tech_roadmap" name="技术路线与数据流">
+    <mxGraphModel dx="1018" dy="659" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="400" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;" value="本文模拟器技术路线与端到端数据流" vertex="1">
+          <mxGeometry height="24" width="320" x="310" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="ir_input" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" value="调度器 IR&#xa;（JSON）唯一输入" vertex="1">
+          <mxGeometry height="55" width="120" x="95" y="61.5" as="geometry" />
+        </mxCell>
+        <mxCell id="parse" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="IR 解析&#xa;核心网格 / Workload / 依赖" vertex="1">
+          <mxGeometry height="55" width="160" x="240" y="61.5" as="geometry" />
+        </mxCell>
+        <mxCell id="task_abstraction" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" value="统一任务抽象&#xa;IRData / Workload" vertex="1">
+          <mxGeometry height="55" width="130" x="420" y="61.5" as="geometry" />
+        </mxCell>
+        <mxCell id="EQdvUYP-BCoxPCgqiXfq-2" edge="1" parent="1" source="engine_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="dram_interface">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQdvUYP-BCoxPCgqiXfq-3" edge="1" parent="1" source="engine_box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="noc_interface">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="engine_box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=6;" value="模拟引擎&#xa;（统一全局周期）" vertex="1">
+          <mxGeometry height="88" width="180" x="570" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="engine_inner" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;align=center;" value="多核周期级推进&#xa;依赖→计算→写回" vertex="1">
+          <mxGeometry height="42" width="150" x="585" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="output" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;" value="统计与踪迹输出" vertex="1">
+          <mxGeometry height="55" width="130" x="770" y="61.5" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="ir_input" style="endArrow=classic;html=1;strokeColor=#333333;strokeWidth=2;" target="parse">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="parse" style="endArrow=classic;html=1;strokeColor=#333333;strokeWidth=2;" target="task_abstraction">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="task_abstraction" style="endArrow=classic;html=1;strokeColor=#333333;strokeWidth=2;" target="engine_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="engine_box" style="endArrow=classic;html=1;strokeColor=#333333;strokeWidth=2;" target="output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_label" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;" value="NoC 子系统（可插拔）" vertex="1">
+          <mxGeometry height="18" width="120" x="230" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_interface" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=1;dashed=1;fontSize=14;" value="NetworkInterface" vertex="1">
+          <mxGeometry height="40" width="200" x="190" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_simple" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="简单延迟" vertex="1">
+          <mxGeometry height="38" width="100" x="180" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_booksim" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="BookSim2" vertex="1">
+          <mxGeometry height="38" width="100" x="300" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_to_impl1" edge="1" parent="1" source="noc_interface" style="endArrow=classic;html=1;strokeColor=#666;fontSize=12;" target="noc_simple" value="可选">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_to_impl2" edge="1" parent="1" source="noc_interface" style="endArrow=classic;html=1;strokeColor=#666;fontSize=12;" target="noc_booksim" value="可选">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_label" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;" value="DRAM 子系统（可插拔）" vertex="1">
+          <mxGeometry height="18" width="120" x="600" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_interface" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=1;dashed=1;fontSize=14;" value="MemoryInterface" vertex="1">
+          <mxGeometry height="40" width="200" x="560" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_simple" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="简单延迟" vertex="1">
+          <mxGeometry height="38" width="110" x="540" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_ramulator" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="Ramulator2" vertex="1">
+          <mxGeometry height="38" width="100" x="670" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_to_impl1" edge="1" parent="1" source="dram_interface" style="endArrow=classic;html=1;strokeColor=#666;fontSize=13;" target="dram_simple" value="可选">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_to_impl2" edge="1" parent="1" source="dram_interface" style="endArrow=classic;html=1;strokeColor=#666;fontSize=13;" target="dram_ramulator" value="可选">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;align=left;spacingLeft=6;rounded=1;" value="数据流：调度器 IR 为唯一输入，经解析与任务抽象后驱动模拟引擎；计算、NoC、DRAM 共享同一时间轴，可插拔切换后端。" vertex="1">
+          <mxGeometry height="50" width="560" x="210" y="310" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

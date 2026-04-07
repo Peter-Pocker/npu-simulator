@@ -1,0 +1,41 @@
+{
+    "_chip": "Tesla FSD (Full Self-Driving) Chip (Hot Chips 2019)",
+    "_reference": "Talpes et al., Compute Solution for Tesla's Full Self-Driving Computer",
+    "_notes": "14nm Samsung, 2 NPU cores, each 96x96 MAC array (9216 MACs), 2GHz, 32MB SRAM/core, 72 TOPS total",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 9216,
+        "vector_units": 128,
+        "clock_freq_mhz": 2000.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 32768,
+        "read_bandwidth_bytes_per_cycle": 256,
+        "write_bandwidth_bytes_per_cycle": 256
+    },
+    "ni": {
+        "max_outstanding_reqs": 32,
+        "injection_queue_size": 16,
+        "ejection_queue_size": 16
+    },
+    "noc": {
+        "flit_size_bytes": 32,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 2,
+        "backend": "booksim2",
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8
+    },
+    "dram": {
+        "num_channels": 4,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 2
+    }
+}

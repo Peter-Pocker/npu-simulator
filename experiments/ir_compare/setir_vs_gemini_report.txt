@@ -1,0 +1,26 @@
+============================================================
+SET-IR vs Gemini ResNet50 2×2 核 IR 对比
+============================================================
+
+【拓扑】
+  SET-IR:  xlen=0, ylen=0
+  Gemini:  xlen=2, ylen=2
+  -> 维度不一致
+  top_batch_cut: SET-IR=N/A, Gemini=1
+
+【核与 workload】
+  SET-IR 核 ID: ['1', '2', '3', '4', '7', '8', '9', '10', '13', '14', '15', '16', '19', '20', '21', '22'] (共 16 核)
+  Gemini 核 ID: ['1', '2', '5', '6'] (共 4 核)
+  SET-IR 总 workload 数: 11904
+  Gemini 总 workload 数: 288
+  SET-IR 每核 workload 数: min=716, max=780
+  Gemini 每核 workload 数: min=72, max=72
+
+【IR 结构差异】
+  仅 Gemini 有的 workload 字段: ['weight']
+  SET-IR 前若干 layer_name: ['conv1', 'conv1', 'conv1', 'conv1', 'conv1', 'conv1', 'conv1', 'conv1', 'conv1', 'conv1']
+  Gemini 前若干 layer_name: ['conv1', 'pool1', 'conv_2_0_a', 'conv_2_0_b', 'conv_2_0_c', 'conv1', 'pool1', 'conv_2_0_a', 'conv_2_0_b', 'conv_2_0_c']
+
+【DRAM 段 (-1)】
+  SET-IR 有 -1: 否
+  Gemini 有 -1: 是

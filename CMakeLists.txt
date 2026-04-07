@@ -28,6 +28,7 @@ add_executable(npu_sim
     src/simulator.cpp
     src/booksim2_noc.cpp
     src/ramulator2_dram.cpp
+    src/address_allocator.cpp
 )
 
 target_include_directories(npu_sim PRIVATE
@@ -48,3 +49,14 @@ target_link_libraries(npu_sim PRIVATE
     booksim2
     ramulator2
 )
+# 运行时优先从 third_party/ramulator2 加载 libramulator.dylib（LPDDR5 等需本仓库编译的库）
+set_target_properties(npu_sim PROPERTIES
+    BUILD_RPATH "${RAMULATOR2_DIR}"
+    INSTALL_RPATH "${RAMULATOR2_DIR}"
+)
+if(APPLE)
+    set_target_properties(npu_sim PROPERTIES
+        BUILD_RPATH "@executable_path/../third_party/ramulator2;${RAMULATOR2_DIR}"
+        INSTALL_RPATH "@executable_path/../third_party/ramulator2;${RAMULATOR2_DIR}"
+    )
+endif()

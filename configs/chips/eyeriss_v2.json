@@ -1,0 +1,41 @@
+{
+    "_chip": "MIT Eyeriss v2 (JSSC 2019)",
+    "_reference": "Chen et al., Eyeriss v2: A Flexible Accelerator for Emerging Deep Neural Networks on Mobile Devices",
+    "_notes": "65nm, 384 PEs in hierarchical mesh (16 clusters x 24 PEs), RS+ dataflow, 200MHz, supports sparse DNNs",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 16,
+    "core": {
+        "mac_units": 384,
+        "vector_units": 384,
+        "clock_freq_mhz": 200.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 192,
+        "read_bandwidth_bytes_per_cycle": 96,
+        "write_bandwidth_bytes_per_cycle": 96
+    },
+    "ni": {
+        "max_outstanding_reqs": 16,
+        "injection_queue_size": 8,
+        "ejection_queue_size": 8
+    },
+    "noc": {
+        "flit_size_bytes": 8,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "injection_queue_depth": 8,
+        "num_vcs": 8,
+        "vc_buf_size": 8
+    },
+    "dram": {
+        "num_channels": 1,
+        "backend": "ramulator2",
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 1
+    }
+}

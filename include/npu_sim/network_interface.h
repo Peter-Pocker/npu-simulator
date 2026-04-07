@@ -13,7 +13,10 @@ class NetworkInterface {
 public:
     virtual ~NetworkInterface() = default;
 
-    virtual void init(uint32_t num_nodes, const NoCConfig& config) = 0;
+    /// mesh_width/mesh_height: explicit mesh dimensions.
+    /// When 0, implementations auto-derive from num_nodes.
+    virtual void init(uint32_t num_nodes, const NoCConfig& config,
+                      uint32_t mesh_width = 0, uint32_t mesh_height = 0) = 0;
 
     /// Inject a packet into the network from a source node.
     /// Returns true if the packet was accepted, false if the injection buffer is full.
@@ -31,17 +34,19 @@ public:
     virtual cycle_t current_cycle() const = 0;
 
     static std::unique_ptr<NetworkInterface> create_simple(
-        uint32_t num_nodes, const NoCConfig& config);
+        uint32_t num_nodes, const NoCConfig& config,
+        uint32_t mesh_width = 0, uint32_t mesh_height = 0);
 
     static std::unique_ptr<NetworkInterface> create(
-        uint32_t num_nodes, const NoCConfig& config);
+        uint32_t num_nodes, const NoCConfig& config,
+        uint32_t mesh_width = 0, uint32_t mesh_height = 0);
 };
 
 /// Simple latency-based NoC stub (Manhattan distance * hop_latency).
-/// To be replaced by BookSim2 wrapper for accurate simulation.
 class SimpleNoC : public NetworkInterface {
 public:
-    void init(uint32_t num_nodes, const NoCConfig& config) override;
+    void init(uint32_t num_nodes, const NoCConfig& config,
+              uint32_t mesh_width = 0, uint32_t mesh_height = 0) override;
     bool inject(const Packet& pkt) override;
     void tick() override;
     std::vector<Packet> get_delivered_packets(core_id_t node_id) override;

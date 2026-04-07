@@ -2,6 +2,7 @@
 
 #include "npu_sim/ir_parser.h"
 #include <nlohmann/json.hpp>
+#include <unordered_map>
 
 namespace npu_sim {
 
@@ -12,6 +13,7 @@ public:
 
 private:
     bool is_scheduler_ir_ = false;
+    std::unordered_map<uint32_t, uint32_t> core_id_remap_;
 
     Workload parse_workload(const nlohmann::json& wl_json);
     BufferRequirement parse_buffer(const nlohmann::json& buf_json);
@@ -19,6 +21,7 @@ private:
     void parse_dram_section(const nlohmann::json& dram_json, IRData& ir_data);
     void fix_output_ref_counts(IRData& ir_data);
     void topological_sort_workloads(IRData& ir_data);
+    void compact_core_ids(IRData& ir_data);
 };
 
 }  // namespace npu_sim

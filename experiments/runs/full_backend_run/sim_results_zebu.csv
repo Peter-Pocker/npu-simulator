@@ -1,0 +1,5 @@
+model,batch,sim_cycles
+resnet34,1,2447639
+resnet34,4,5085306
+resnet50,1,3312232
+resnet50,4,6358794

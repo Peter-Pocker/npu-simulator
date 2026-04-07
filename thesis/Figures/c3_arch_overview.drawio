@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram id="arch" name="NPU Simulator Architecture">
+    <mxGraphModel dx="1357" dy="879" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="820" pageHeight="930" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="10" parent="1" style="swimlane;fontStyle=1;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;arcSize=8;fontSize=16;whiteSpace=wrap;horizontal=1;" value="输入" vertex="1">
+          <mxGeometry height="75" width="760" x="30" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="SimConfig JSON&#xa;（硬件配置）" vertex="1">
+          <mxGeometry height="36" width="200" x="65" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="12" parent="10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="Scheduler IR JSON&#xa;（调度器输出）" vertex="1">
+          <mxGeometry height="36" width="210" x="490" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="20" parent="1" style="swimlane;fontStyle=1;startSize=32;fillColor=none;strokeColor=#333333;dashed=1;dashPattern=10 5;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="NPU 模拟器框架" vertex="1">
+          <mxGeometry height="645" width="780" x="20" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="30" parent="20" style="swimlane;fontStyle=1;startSize=24;fillColor=none;strokeColor=#1a73e8;dashed=1;dashPattern=8 4;rounded=1;arcSize=8;fontSize=16;fontColor=#1a73e8;whiteSpace=wrap;" value="前端解析引擎" vertex="1">
+          <mxGeometry height="160" width="740" x="20" y="48" as="geometry" />
+        </mxCell>
+        <mxCell id="31" parent="30" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffffff;strokeColor=#333333;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="IR 解析器" vertex="1">
+          <mxGeometry height="108" width="260" x="25" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="311" parent="31" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;fontColor=#333;" value="IRParser / GeminiParser" vertex="1">
+          <mxGeometry height="28" width="230" x="15" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="312" parent="31" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;fontColor=#333;" value="JSON 解析 · 格式适配" vertex="1">
+          <mxGeometry height="28" width="230" x="15" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="32" parent="30" style="swimlane;fontStyle=1;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="统一任务表示 (IRData)" vertex="1">
+          <mxGeometry height="108" width="300" x="420" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="321" parent="32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Workload" vertex="1">
+          <mxGeometry height="28" width="85" x="10" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="322" parent="32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Buffer" vertex="1">
+          <mxGeometry height="28" width="85" x="105" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="323" parent="32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Output" vertex="1">
+          <mxGeometry height="28" width="90" x="200" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="324" parent="32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="DRAMTransfer" vertex="1">
+          <mxGeometry height="28" width="120" x="10" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="325" parent="32" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Topology" vertex="1">
+          <mxGeometry height="28" width="90" x="140" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="35" edge="1" parent="30" source="31" style="endArrow=classic;html=1;strokeColor=#333;fontSize=16;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="32" value="IRData">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="40" parent="20" style="swimlane;fontStyle=1;startSize=24;fillColor=none;strokeColor=#1a73e8;dashed=1;dashPattern=8 4;rounded=1;arcSize=8;fontSize=16;fontColor=#1a73e8;whiteSpace=wrap;" value="模拟执行引擎" vertex="1">
+          <mxGeometry height="395" width="740" x="20" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="41" parent="40" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffffff;strokeColor=#333333;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="Simulator 控制器" vertex="1">
+          <mxGeometry height="78" width="530" x="100" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="411" parent="41" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Topology 构建" vertex="1">
+          <mxGeometry height="30" width="155" x="10" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="412" parent="41" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="地址分配" vertex="1">
+          <mxGeometry height="30" width="155" x="180" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="413" parent="41" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="周期推进 tick()" vertex="1">
+          <mxGeometry height="30" width="170" x="350" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="50" parent="40" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffffff;strokeColor=#333333;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="NPUCore 阵列" vertex="1">
+          <mxGeometry height="205" width="305" x="25" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="501" parent="50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;fontColor=#333;" value="状态机 (IDLE→LOADING→COMPUTING→WRITEBACK)" vertex="1">
+          <mxGeometry height="56" width="278" x="12" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="502" parent="50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="SRAM 管理" vertex="1">
+          <mxGeometry height="28" width="130" x="12" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="503" parent="50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Workload 队列" vertex="1">
+          <mxGeometry height="28" width="133" x="155" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="504" parent="50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Packet 收发" vertex="1">
+          <mxGeometry height="28" width="130" x="12" y="143" as="geometry" />
+        </mxCell>
+        <mxCell id="505" parent="50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Stats 统计" vertex="1">
+          <mxGeometry height="28" width="133" x="155" y="143" as="geometry" />
+        </mxCell>
+        <mxCell id="60" parent="40" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffffff;strokeColor=#333333;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="NetworkInterface" vertex="1">
+          <mxGeometry height="100" width="295" x="425" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="601" parent="60" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="SimpleNoC" vertex="1">
+          <mxGeometry height="28" width="125" x="15" y="38" as="geometry" />
+        </mxCell>
+        <mxCell id="602" parent="60" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="BookSim2NoC" vertex="1">
+          <mxGeometry height="28" width="125" x="155" y="38" as="geometry" />
+        </mxCell>
+        <mxCell id="603" parent="60" style="text;html=1;align=right;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontColor=#999999;" value="可替换" vertex="1">
+          <mxGeometry height="30" width="70" x="220" y="-2" as="geometry" />
+        </mxCell>
+        <mxCell id="70" parent="40" style="swimlane;fontStyle=1;startSize=26;fillColor=#ffffff;strokeColor=#333333;rounded=1;arcSize=10;fontSize=16;whiteSpace=wrap;" value="MemoryInterface" vertex="1">
+          <mxGeometry height="100" width="295" x="425" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="701" parent="70" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="SimpleDRAM" vertex="1">
+          <mxGeometry height="28" width="125" x="15" y="38" as="geometry" />
+        </mxCell>
+        <mxCell id="702" parent="70" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=16;" value="Ramulator2DRAM" vertex="1">
+          <mxGeometry height="28" width="125" x="155" y="38" as="geometry" />
+        </mxCell>
+        <mxCell id="703" parent="70" style="text;html=1;align=right;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontColor=#999999;" value="可替换" vertex="1">
+          <mxGeometry height="30" width="70" x="220" y="-2" as="geometry" />
+        </mxCell>
+        <mxCell id="E5" edge="1" parent="40" source="41" style="endArrow=classic;html=1;strokeColor=#333;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" target="50" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E6" edge="1" parent="40" source="41" style="endArrow=classic;html=1;strokeColor=#333;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" target="60" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E7" edge="1" parent="40" source="50" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#333;fontSize=16;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="60" value="Packet">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E8" edge="1" parent="40" source="50" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#333;fontSize=16;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="70" value="Packet">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="80" parent="1" style="swimlane;fontStyle=1;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1;arcSize=8;fontSize=16;whiteSpace=wrap;horizontal=1;" value="输出" vertex="1">
+          <mxGeometry height="75" width="760" x="30" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="81" parent="80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="性能统计" vertex="1">
+          <mxGeometry height="35" width="130" x="25" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="82" parent="80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="状态追踪" vertex="1">
+          <mxGeometry height="35" width="130" x="185" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="83" parent="80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="负载汇总" vertex="1">
+          <mxGeometry height="35" width="130" x="345" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="84" parent="80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=16;" value="核心状态图" vertex="1">
+          <mxGeometry height="35" width="155" x="505" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" edge="1" parent="1" source="12" style="endArrow=classic;html=1;strokeColor=#333;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" target="31" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" edge="1" parent="1" source="11" style="endArrow=classic;html=1;strokeColor=#666;dashed=1;dashPattern=5 3;fontSize=16;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="41" value="Config">
+          <mxGeometry relative="1" x="0.5646" y="-40" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E4" edge="1" parent="1" source="32" style="endArrow=classic;html=1;strokeColor=#333;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" target="41" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E9" edge="1" parent="1" source="20" style="endArrow=classic;html=1;strokeColor=#333;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" target="80" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

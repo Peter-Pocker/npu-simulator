@@ -1,0 +1,129 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.5">
+  <diagram id="concurrency" name="多核并发请求汇聚与争用">
+    <mxGraphModel dx="1018" dy="659" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="580" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=15;fontColor=#333333;" value="同一全局周期：多核并行推进 → 请求汇聚 → 共享资源争用 → 响应投递" vertex="1">
+          <mxGeometry height="24" width="740" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cores_label" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontColor=#666666;" value="多核（每周期并行 tick）" vertex="1">
+          <mxGeometry height="20" width="140" x="50" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=15;" value="Core 0&#xa;LOADING" vertex="1">
+          <mxGeometry height="52" width="110" x="50" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=15;" value="Core 1&#xa;WRITEBACK" vertex="1">
+          <mxGeometry height="48" width="110" x="50" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=15;" value="Core 2&#xa;LOADING" vertex="1">
+          <mxGeometry height="44" width="110" x="50" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=15;dashed=1;" value="Core 3&#xa;LOADING（等待更久）" vertex="1">
+          <mxGeometry height="60" width="110" x="50" y="298" as="geometry" />
+        </mxCell>
+        <mxCell id="e_c0" edge="1" parent="1" source="c0" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=14;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="collect" value="请求">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_c1" edge="1" parent="1" source="c1" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=14;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="collect" value="请求">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_c2" edge="1" parent="1" source="c2" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=14;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="collect" value="请求">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_c3" edge="1" parent="1" source="c3" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=14;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="collect" value="请求">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="collect" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=16;" value="引擎统一收集&#xa;（按核遍历发送队列）&#xa;注入 NoC / DRAM" vertex="1">
+          <mxGeometry height="70" width="200" x="280" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e_to_noc" edge="1" parent="1" source="collect" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=13;" target="noc" value="读/写请求&#xa;（核间→NoC）">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_to_dram" edge="1" parent="1" source="collect" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=13;" target="dram" value="读/写请求&#xa;（→DRAM）">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="noc" parent="1" style="swimlane;fontStyle=1;startSize=24;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;fontSize=15;" value="NoC（片上网络）" vertex="1">
+          <mxGeometry height="100" width="180" x="570" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="noc_q" parent="noc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" value="共享链路 / 路由器&#xa;仲裁 · 排队 → 尾延迟" vertex="1">
+          <mxGeometry height="54" width="160" x="10" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="dram" parent="1" style="swimlane;fontStyle=1;startSize=24;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;fontSize=15;" value="DRAM（片外存储）" vertex="1">
+          <mxGeometry height="100" width="180" x="570" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="dram_q" parent="dram" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;fontSize=14;align=left;spacingLeft=6;" value="通道 / Bank 共享&#xa;排队 · 行冲突 · 调度延迟" vertex="1">
+          <mxGeometry height="54" width="160" x="10" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="deliver" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=15;" value="响应投递&#xa;（按节点/目的核）" vertex="1">
+          <mxGeometry height="50" width="200" x="280" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="e_noc_deliver" edge="1" parent="1" source="noc" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=10;" target="deliver" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;读/写响应&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="310" />
+              <mxPoint x="380" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dram_deliver" edge="1" parent="1" source="dram" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=14;" target="deliver" value="读/写响应">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="350" />
+              <mxPoint x="380" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_d_c0" edge="1" parent="1" source="deliver" style="endArrow=classic;html=1;strokeColor=#82b366;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="c0" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="260" />
+              <mxPoint x="200" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_d_c1" edge="1" parent="1" source="deliver" style="endArrow=classic;html=1;strokeColor=#82b366;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="c2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="300" />
+              <mxPoint x="190" y="280" />
+              <mxPoint x="180" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_d_c2" edge="1" parent="1" source="deliver" style="endArrow=classic;html=1;strokeColor=#82b366;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="290" />
+              <mxPoint x="190" y="250" />
+            </Array>
+            <mxPoint x="280" y="447.5" as="sourcePoint" />
+            <mxPoint x="160" y="234" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_d_c3" edge="1" parent="1" source="deliver" style="endArrow=classic;html=1;strokeColor=#82b366;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="c3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="330" />
+            </Array>
+            <mxPoint x="280" y="400" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="deliver_label" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontColor=#82b366;" value="响应回到各核 → 部分核因排队/背压&lt;div&gt;停留更久（LOADING/WRITEBACK）&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="210" x="50" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="foot" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontColor=#666666;" value="端到端周期与“因 NoC 背压停滞”等统计反映争用效应；同一配置与 IR 下结果可复现。" vertex="1">
+          <mxGeometry height="30" width="500" x="150" y="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

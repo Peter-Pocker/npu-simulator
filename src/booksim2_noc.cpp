@@ -53,36 +53,77 @@ BookSim2NoC::~BookSim2NoC() {
     delete bs_config_;
 }
 
-void BookSim2NoC::init(uint32_t num_nodes, const NoCConfig& config) {
+void BookSim2NoC::init(uint32_t num_nodes, const NoCConfig& config,
+                       uint32_t mesh_width, uint32_t mesh_height) {
     num_nodes_ = num_nodes;
     noc_config_ = config;
 
-    std::string cfg_path = config.booksim2_config_path;
-    if (cfg_path.empty()) {
-        cfg_path = "configs/booksim2_mesh.cfg";
-    }
-
-    init_booksim(cfg_path, num_nodes);
+    init_booksim(config.booksim2_config_path, num_nodes, mesh_width, mesh_height);
 }
 
-void BookSim2NoC::init_booksim(const std::string& config_path, uint32_t num_nodes) {
+void BookSim2NoC::init_booksim(const std::string& config_path, uint32_t num_nodes,
+                               uint32_t mesh_w, uint32_t mesh_h) {
     bs_config_ = new BookSimConfig();
-    bs_config_->ParseFile(config_path);
 
-    uint32_t mesh_dim = static_cast<uint32_t>(std::ceil(std::sqrt(num_nodes)));
+    if (!config_path.empty()) {
+        bs_config_->ParseFile(config_path);
+    }
 
-    bs_config_->Assign("k", static_cast<int>(mesh_dim));
-    bs_config_->Assign("n", 2);
-    bs_config_->Assign("x", static_cast<int>(mesh_dim));
-    bs_config_->Assign("y", static_cast<int>(mesh_dim));
+    // Override / set all DSE-relevant parameters from NoCConfig,
+    // regardless of whether an external file was parsed.
+    bs_config_->Assign("num_vcs", static_cast<int>(noc_config_.num_vcs));
+    bs_config_->Assign("vc_buf_size", static_cast<int>(noc_config_.vc_buf_size));
+    bs_config_->Assign("routing_delay", static_cast<int>(noc_config_.routing_delay));
+    bs_config_->Assign("vc_alloc_delay", static_cast<int>(noc_config_.vc_alloc_delay));
+    bs_config_->Assign("sw_alloc_delay", static_cast<int>(noc_config_.sw_alloc_delay));
+    bs_config_->Assign("st_final_delay", static_cast<int>(noc_config_.st_final_delay));
+    bs_config_->Assign("deadlock_warn_timeout", static_cast<int>(noc_config_.deadlock_warn_timeout));
+
+    // Fixed parameters for our use case
     bs_config_->Assign("topology", std::string("mesh"));
     bs_config_->Assign("routing_function", std::string("dim_order"));
     bs_config_->Assign("injection_rate", 0.0);
 
+    // When no external file was loaded, also set sensible defaults
+    // for parameters that the file would normally provide.
+    if (config_path.empty()) {
+        bs_config_->Assign("router", std::string("iq"));
+        bs_config_->Assign("vc_allocator", std::string("islip"));
+        bs_config_->Assign("sw_allocator", std::string("islip"));
+        bs_config_->Assign("alloc_iters", 1);
+        bs_config_->Assign("subnets", 1);
+        bs_config_->Assign("output_delay", 0);
+        bs_config_->Assign("credit_delay", 0);
+        bs_config_->Assign("classes", 1);
+        bs_config_->Assign("use_read_write", 0);
+        bs_config_->Assign("packet_size", 1);
+        bs_config_->Assign("hold_switch_for_packet", 0);
+        bs_config_->Assign("seed", 0);
+        bs_config_->Assign("print_activity", 0);
+        bs_config_->Assign("viewer_trace", 0);
+        bs_config_->Assign("sim_type", std::string("latency"));
+        bs_config_->Assign("traffic", std::string("uniform"));
+    }
+
+    uint32_t w, h;
+    if (mesh_w > 0 && mesh_h > 0) {
+        w = mesh_w;
+        h = mesh_h;
+    } else {
+        w = static_cast<uint32_t>(std::ceil(std::sqrt(num_nodes)));
+        h = w;
+    }
+
+    uint32_t k = std::max(w, h);
+    bs_config_->Assign("k", static_cast<int>(k));
+    bs_config_->Assign("n", 2);
+    bs_config_->Assign("x", static_cast<int>(w));
+    bs_config_->Assign("y", static_cast<int>(h));
+
     gK = bs_config_->GetInt("k");
     gN = bs_config_->GetInt("n");
     gC = bs_config_->GetInt("c");
-    gNodes = static_cast<int>(num_nodes);
+    gNodes = static_cast<int>(w * h);
 
     InitializeRoutingMap(*bs_config_);
 
@@ -97,15 +138,15 @@ void BookSim2NoC::init_booksim(const std::string& config_path, uint32_t num_node
         networks_[i] = Network::New(*bs_config_, name.str());
     }
 
-    buf_states_.resize(mesh_dim * mesh_dim);
-    last_vc_.resize(mesh_dim * mesh_dim, std::vector<int>(subnets_, 0));
-    for (uint32_t n = 0; n < mesh_dim * mesh_dim; ++n) {
+    uint32_t total = w * h;
+    buf_states_.resize(total);
+    last_vc_.resize(total, std::vector<int>(subnets_, 0));
+    for (uint32_t n = 0; n < total; ++n) {
         buf_states_[n].resize(subnets_);
         for (int s = 0; s < subnets_; ++s) {
             std::ostringstream bs_name;
             bs_name << "terminal_buf_" << n << "_" << s;
             buf_states_[n][s] = new BufferState(*bs_config_, nullptr, bs_name.str());
-            // Set min latency based on the injection channel
             const FlitChannel* inject_ch = networks_[s]->GetInject(n);
             if (inject_ch) {
                 buf_states_[n][s]->SetMinLatency(inject_ch->GetLatency());
@@ -113,14 +154,15 @@ void BookSim2NoC::init_booksim(const std::string& config_path, uint32_t num_node
         }
     }
 
-    injection_queues_.resize(mesh_dim * mesh_dim);
-    delivered_this_cycle_.resize(mesh_dim * mesh_dim);
+    injection_queues_.resize(total);
+    delivered_this_cycle_.resize(total);
 
     RandomSeed(0);
 
-    std::cout << "[BookSim2NoC] Initialized " << mesh_dim << "x" << mesh_dim
-              << " mesh, " << vcs_ << " VCs, "
-              << subnets_ << " subnets\n";
+    std::string src_desc = config_path.empty() ? "inline config" : config_path;
+    std::cout << "[BookSim2NoC] Initialized " << w << "x" << h
+              << " mesh (" << total << " nodes), " << vcs_ << " VCs, "
+              << subnets_ << " subnets (from " << src_desc << ")\n";
 }
 
 bool BookSim2NoC::can_inject(core_id_t node_id) const {
@@ -195,14 +237,9 @@ int BookSim2NoC::allocate_vc(int source, int subnet, Flit* head_flit) {
     return -1;
 }
 
-void BookSim2NoC::tick() {
+void BookSim2NoC::tick_network() {
     s_booksim_time = static_cast<int>(cycle_);
 
-    for (auto& v : delivered_this_cycle_) {
-        v.clear();
-    }
-
-    // Phase 1: Read ejected flits and process credits
     std::vector<std::vector<Flit*>> ejected(subnets_);
     for (int s = 0; s < subnets_; ++s) {
         ejected[s].resize(buf_states_.size(), nullptr);
@@ -222,7 +259,6 @@ void BookSim2NoC::tick() {
         networks_[s]->ReadInputs();
     }
 
-    // Phase 2: Inject flits from injection queues
     for (size_t n = 0; n < injection_queues_.size(); ++n) {
         auto& queue = injection_queues_[n];
         if (queue.empty()) continue;
@@ -253,7 +289,6 @@ void BookSim2NoC::tick() {
 
             f->itime = static_cast<int>(cycle_);
 
-            // Pass VC to next flit of same packet
             if (!queue.empty() && !f->tail) {
                 Flit* nf = queue.front();
                 if (nf->pid == f->pid) {
@@ -265,7 +300,6 @@ void BookSim2NoC::tick() {
         }
     }
 
-    // Phase 3: Process ejected flits and send credits
     for (int s = 0; s < subnets_; ++s) {
         for (size_t n = 0; n < buf_states_.size(); ++n) {
             Flit* f = ejected[s][n];
@@ -293,6 +327,21 @@ void BookSim2NoC::tick() {
 
         networks_[s]->Evaluate();
         networks_[s]->WriteOutputs();
+    }
+}
+
+void BookSim2NoC::tick() {
+    for (auto& v : delivered_this_cycle_) {
+        v.clear();
+    }
+
+    double ratio = noc_config_.clock_ratio;
+    if (ratio <= 0.0) ratio = 1.0;
+
+    tick_accum_ += 1.0;
+    while (tick_accum_ >= ratio) {
+        tick_network();
+        tick_accum_ -= ratio;
     }
 
     cycle_++;

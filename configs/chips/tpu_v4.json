@@ -1,0 +1,41 @@
+{
+    "_chip": "Google TPU v4i (ISCA 2023)",
+    "_reference": "Jouppi et al., TPU v4: An Optically Reconfigurable Supercomputer for Machine Learning with Hardware Support for Embeddings",
+    "_notes": "7nm, 2 TensorCores each with 128x128 MXU (32768 MACs total), ~1.05GHz, 32MB on-chip SRAM, HBM2e 4 stacks",
+    "num_cores_x": 0,
+    "num_cores_y": 0,
+    "element_size_bits": 8,
+    "core": {
+        "mac_units": 32768,
+        "vector_units": 512,
+        "clock_freq_mhz": 1050.0,
+        "use_analytical_time": false
+    },
+    "sram": {
+        "size_kb": 32768,
+        "read_bandwidth_bytes_per_cycle": 512,
+        "write_bandwidth_bytes_per_cycle": 512
+    },
+    "ni": {
+        "max_outstanding_reqs": 64,
+        "injection_queue_size": 32,
+        "ejection_queue_size": 32
+    },
+    "noc": {
+        "flit_size_bytes": 64,
+        "hop_latency_cycles": 1,
+        "router_latency_cycles": 1,
+        "backend": "booksim2",
+        "injection_queue_depth": 32,
+        "num_vcs": 8,
+        "vc_buf_size": 16
+    },
+    "dram": {
+        "num_channels": 8,
+        "backend": "ramulator2",
+        "standard": "HBM2",
+        "org": "HBM2_8Gb",
+        "timing": "HBM2_2Gbps",
+        "num_ranks": 1
+    }
+}
