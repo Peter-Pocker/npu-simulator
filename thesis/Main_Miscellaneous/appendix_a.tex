@@ -89,17 +89,17 @@ IR 的顶层包含：键 \texttt{"-1"} 表示与 DRAM 相关的数据（\texttt{
 \subsection{配置内容}
 
 \begin{itemize}
-  \item \textbf{核阵列}：\texttt{num\_cores\_x=2}，\texttt{num\_cores\_y=2}，即 4 个核心。
-  \item \textbf{数据位宽}：\texttt{element\_size\_bits=8}（INT8）。
-  \item \textbf{单核}：\texttt{mac\_units=256}，\texttt{vector\_units=64}，\texttt{clock\_freq\_mhz=1000}，\texttt{use\_analytical\_time=true}（解析时间模型）。
-  \item \textbf{SRAM}：\texttt{size\_kb=512}，读写带宽 64 bytes/cycle。
-  \item \textbf{网络接口}：\texttt{max\_outstanding\_reqs=16}，\texttt{injection\_queue\_size=8}，\texttt{ejection\_queue\_size=8}。
-  \item \textbf{NoC}：\texttt{backend="simple"}，\texttt{flit\_size\_bytes=16}，\texttt{hop\_latency\_cycles=1}，\texttt{router\_latency\_cycles=1}。
-  \item \textbf{DRAM}：\texttt{backend="simple"}，\texttt{num\_channels=4}。
-  \item \textbf{拓扑}：\texttt{dram\_controllers=[]} 表示 DRAM 不挂 NoC（简化模型）。
+  \item 核阵列：\texttt{num\_cores\_x=2}，\texttt{num\_cores\_y=2}，即 4 个核心。
+  \item 数据位宽：\texttt{element\_size\_bits=8}（INT8）。
+  \item 单核：\texttt{mac\_units=256}，\texttt{vector\_units=64}，\texttt{clock\_freq\_mhz=1000}，\texttt{use\_analytical\_time=false}（由模拟器根据张量形状与微架构推算计算周期）。
+  \item SRAM：\texttt{size\_kb=512}，读写带宽 64 bytes/cycle。
+  \item 网络接口：\texttt{max\_outstanding\_reqs=16}，\texttt{injection\_queue\_size=8}，\texttt{ejection\_queue\_size=8}。
+  \item NoC：\texttt{backend="booksim2"}，接入 BookSim2 周期级网络模拟器。\texttt{flit\_size\_bytes=16}，\texttt{num\_vcs=8}（虚拟通道数），\texttt{vc\_buf\_size=8}（每虚拟通道缓冲深度）。
+  \item DRAM：\texttt{backend="ramulator2"}，接入 Ramulator2 周期级存储模拟器。\texttt{standard="DDR4"}，\texttt{timing="DDR4\_2400R"}，\texttt{num\_channels=4}，\texttt{num\_ranks=2}，\texttt{scheduler="FRFCFS"}。
+  \item 拓扑：\texttt{dram\_controllers=[]} 表示 DRAM 直连各核（不经 NoC）。
 \end{itemize}
 
-完整 JSON 如下（与 \texttt{configs/chips/quad\_core\_example.json} 一致）：
+完整 JSON 如下（与 \texttt{configs/full\_config.json} 一致）：
 
 {\small
 \begin{verbatim}
@@ -111,7 +111,7 @@ IR 的顶层包含：键 \texttt{"-1"} 表示与 DRAM 相关的数据（\texttt{
         "mac_units": 256,
         "vector_units": 64,
         "clock_freq_mhz": 1000,
-        "use_analytical_time": true
+        "use_analytical_time": false
     },
     "sram": {
         "size_kb": 512,
@@ -124,14 +124,28 @@ IR 的顶层包含：键 \texttt{"-1"} 表示与 DRAM 相关的数据（\texttt{
         "ejection_queue_size": 8
     },
     "noc": {
-        "backend": "simple",
+        "backend": "booksim2",
         "flit_size_bytes": 16,
         "hop_latency_cycles": 1,
-        "router_latency_cycles": 1
+        "router_latency_cycles": 1,
+        "injection_queue_depth": 16,
+        "num_vcs": 8,
+        "vc_buf_size": 8,
+        "routing_delay": 1,
+        "vc_alloc_delay": 1,
+        "sw_alloc_delay": 1,
+        "st_final_delay": 1
     },
     "dram": {
-        "backend": "simple",
-        "num_channels": 4
+        "backend": "ramulator2",
+        "num_channels": 4,
+        "standard": "DDR4",
+        "org": "DDR4_8Gb_x8",
+        "timing": "DDR4_2400R",
+        "num_ranks": 2,
+        "scheduler": "FRFCFS",
+        "addr_mapper": "RoBaRaCoCh",
+        "frontend_clock_ratio": 4
     },
     "topology": {
         "dram_controllers": [],
@@ -241,7 +255,7 @@ core_id,workload_idx,layer_name,op_type,start_cycle,
 
 \subsection{工作量说明}
 
-本课题工作量主要包括：（1）周期级多核 NPU 模拟器的设计与实现，包括核心状态机、SRAM 与依赖建模、NoC/DRAM 抽象接口及 BookSim2/Ramulator2 的集成；（2）Gemini 编译器 Scheduler IR 的解析与驱动逻辑，将调度结果转化为可执行的 workload 序列与数据依赖；（3）实验脚本与可视化工具链，涵盖 ZeBu trace 解析、仿真对比、瓶颈分解与论文图表生成；（4）配置体系与实验设计，包括多种芯片配置、微基准 IR 与真实负载实验流程。除模拟器主体外，脚本与辅助工具保证实验可复现、结果可追溯。下表给出自写代码（含 C++ 源码、头文件、Python 脚本与 Shell 脚本）的规模统计，总规模约九千行。
+本课题工作量主要包括：（1）周期级多核 NPU 模拟器的设计与实现，包括核心状态机、SRAM 与依赖建模、NoC/DRAM 抽象接口及 BookSim2/Ramulator2 的集成；（2）Gemini 编译器 Scheduler IR 的解析与驱动逻辑，将调度结果转化为可执行的 workload 序列与数据依赖；（3）实验脚本与可视化工具链，涵盖 ZeBu trace 解析、仿真对比、瓶颈分解与论文图表生成；（4）配置体系与实验设计，包括多种芯片配置、微基准 IR 与真实负载实验流程。除模拟器主体外，脚本与辅助工具保证实验可复现、结果可追溯。下表给出自写代码（含 C++ 源码、头文件、Python 脚本与 Shell 脚本）的规模统计，总规模约一万二千行。
 
 \begin{table}[H]
   \centering
@@ -252,12 +266,12 @@ core_id,workload_idx,layer_name,op_type,start_cycle,
     \toprule
     \textbf{模块} & \textbf{说明} & \textbf{代码量（行）} \\
     \midrule
-    核心模拟器（\texttt{src/} + \texttt{include/npu\_sim/}） & 状态机、SRAM、IR 解析、引擎与主程序 & 约 6300 \\
+    核心模拟器（\texttt{src/} + \texttt{include/npu\_sim/}） & 状态机、SRAM、IR 解析、引擎与主程序 & 约 9200 \\
     实验与可视化脚本（\texttt{scripts/}） & ZeBu 解析、对比、瓶颈分解、甘特图与图表 & 约 2100 \\
     构建与入口脚本 & \texttt{build.sh}、\texttt{run.sh} 及 CMake 配置 & 约 200 \\
     配置与实验数据 & 芯片 JSON、微基准 IR、实验运行目录说明 & 约 400 \\
     \midrule
-    \textbf{合计} & 自写代码（不含第三方与子模块） & \textbf{约 9000} \\
+    \textbf{合计} & 自写代码（不含第三方与子模块） & \textbf{约 11900} \\
     \bottomrule
   \end{tabular}
   }

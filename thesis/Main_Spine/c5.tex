@@ -2,15 +2,15 @@
 
 \xsection{模拟器基本功能与精度验证（Micro-benchmarks）}{Micro-benchmark Validation}
 
-本文仿真器支持两档 NoC/DRAM 后端，后文统称为 \textbf{simple 后端}与 \textbf{full 后端}。\textbf{Simple 后端}采用简化的 NoC 与 DRAM 模型：网络与存储请求使用固定延迟或轻量排队，不引入 BookSim2/Ramulator2 的细粒度时序（如 DDR 的行列延迟、bank 冲突等），适用于快速校验与对外对比时消除 DRAM 建模差异。\textbf{Full 后端}采用 BookSim2 作为 NoC 模型、Ramulator2 作为 DRAM 模型（DDR4 时序、bank 冲突、请求排队等），用于多核设计空间探索时保留 NoC/DRAM 的拥塞与排队效应。
+本文模拟器支持两档 NoC/DRAM 后端，后文统称为 simple 后端与 full 后端。Simple 后端采用简化的 NoC 与 DRAM 模型：网络与存储请求使用固定延迟或轻量排队，不引入 BookSim2/Ramulator2 的细粒度时序（如 DDR 的行列延迟、bank 冲突等），适用于快速校验与对外对比时消除 DRAM 建模差异。Full 后端采用 BookSim2 作为 NoC 模型、Ramulator2 作为 DRAM 模型（DDR4 时序、bank 冲突、请求排队等），用于多核设计空间探索时保留 NoC/DRAM 的拥塞与排队效应。
 
-本节通过可控微基准与硬件模拟平台对照，验证模拟器的三项核心能力：（1）核间依赖的因果一致性。（2）DRAM 请求/响应闭环在 simple 与 full 后端下的差异。（3）单核下与 ZeBu 硬件模拟的总周期精度。MB-1 与 MB-2 均同时使用 full 后端与 simple 后端运行，以验证完整数据通路并对比两种后端的差异。ZeBu 精度对比实验使用 simple 后端，以消除 Ramulator2 的 DDR 时序差异，使比较集中在 workload 级调度与计算建模的准确性上。
+本节通过可控微基准与硬件模拟平台对照，验证模拟器的三项核心能力：（1）核间依赖的因果一致性。（2）DRAM 请求/响应闭环在 simple 与 full 后端下的差异。（3）单核下与 ZeBu 硬件模拟的总周期精度。MB-1 与 MB-2 均同时使用 full 后端与 simple 后端运行，以验证完整数据通路并对比两种后端的差异。
 
 \xsubsection{MB-1：双核点对点依赖}{MB-1: Two-core P2P Dependency}
 
-\textbf{实验原理。}本实验构造一个最小的双核、点对点数据依赖场景，用于验证“消费者核心必须等到生产者数据到达后才能开始计算”的因果一致性。具体而言：第一个核心（Core\,0）作为生产者，先从片外存储器（DRAM）加载权重 32\,KB 与输入特征 8\,KB，接着进行 500 个仿真周期的计算，产生 128\,KB 的输出并可供其他核心读取。第二个核心（Core\,1）作为消费者，需要先从 DRAM 加载自己的权重 64\,KB，同时必须等待 Core\,0 产出的 128\,KB 数据作为自己的输入特征，二者都就绪后再进行 300 周期计算，最后将结果写回 DRAM。若仿真器正确实现依赖传播，则 Core\,1 在加载阶段应一直等待，直到 Core\,0 的输出经核间通路到达后，才能结束加载、进入计算阶段。
+\textbf{实验原理。}本实验构造一个最小的双核、点对点数据依赖场景，用于验证“消费者核心必须等到生产者数据到达后才能开始计算”的因果一致性。具体而言：第一个核心（Core\,0）作为生产者，先从片外存储器（DRAM）加载权重 32\,KB 与输入特征 8\,KB，接着进行 500 个仿真周期的计算，产生 128\,KB 的输出并可供其他核心读取。第二个核心（Core\,1）作为消费者，需要先从 DRAM 加载自己的权重 64\,KB，同时必须等待 Core\,0 产出的 128\,KB 数据作为自己的输入特征，二者都就绪后再进行 300 周期计算，最后将结果写回 DRAM。若模拟器正确实现依赖传播，则 Core\,1 在加载阶段应一直等待，直到 Core\,0 的输出经核间通路到达后，才能结束加载、进入计算阶段。
 
-\textbf{实验过程。}硬件与负载配置如下。\textbf{硬件配置}：双核拓扑。NoC 与 DRAM 分别采用前文定义的 full 后端（BookSim2 + Ramulator2，完整建模 DDR 时序与网络排队）与 simple 后端（固定延迟、简化建模）各运行一次，以对比两种后端下核间依赖与访存延迟的叠加效果。\textbf{运行负载}：即上述“Core\,0 生产者、Core\,1 消费者”的两层调度，输入与权重规模如上。实验时对两种后端分别执行仿真，并开启状态记录。从仿真得到的状态时间线中读取每个核心在加载、计算、写回各阶段的起始与结束周期，以及各阶段持续时长，用于填表与绘图。
+\textbf{实验过程。}硬件与负载配置如下。硬件配置：双核拓扑。NoC 与 DRAM 分别采用前文定义的 full 后端（BookSim2 + Ramulator2，完整建模 DDR 时序与网络排队）与 simple 后端（固定延迟、简化建模）各运行一次，以对比两种后端下核间依赖与访存延迟的叠加效果。运行负载：即上述“Core\,0 生产者、Core\,1 消费者”的两层调度，输入与权重规模如上。实验时对两种后端分别执行仿真，并开启状态记录。从仿真得到的状态时间线中读取每个核心在加载、计算、写回各阶段的起始与结束周期，以及各阶段持续时长，用于填表与绘图。
 
 \textbf{实验结果。}表\ref{tab:mb1}给出两种后端下各核的状态转移时间点与阶段时长。
 
@@ -46,21 +46,21 @@
 \begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{Figures/c5_mb1_trace.pdf}
-  \caption{MB-1 状态转移时间线（全后端。数据见附录\ref{app:c5_fig1_data}）。横轴为仿真周期（cycle），纵轴为两核（上方为 Core\,1，下方为 Core\,0）。图中颜色表示各核所处状态：橙色为 Loading，蓝色为 Computing，红色为 Writeback。}
+  \caption{MB-1 状态转移时间线（全后端。数据见附录\ref{app:c5_fig1_data}）。横轴为仿真周期（cycle），纵轴为两核（上方为 Core\,1，下方为 Core\,0）。图中颜色表示各核所处状态：橙色为 Loading，蓝色为 Computing，红色为 Writeback}
   \label{fig:c5_mb1_trace}
 \end{figure}
 
 \textbf{对结果的分析。}
 \begin{enumerate}
-  \item \textbf{因果一致性验证通过。}两种后端下，Core\,1 均在 Core\,0 完成计算（full 下约 707 周期，simple 下约 680 周期）之后才结束加载阶段、进入计算阶段（full 下 Core\,1 加载约 2000 周期，simple 下约 938 周期），说明依赖传播的因果约束被正确执行。仿真输出的状态记录也显示，Core\,1 在加载阶段明确标记为“等待来自 Core\,0 的 128\,KB 数据”，与上述依赖关系一致。
-  \item \textbf{计算时长一致。}两种后端下 Core\,0 与 Core\,1 的计算阶段分别为 500 与 300 周期，与调度中设定的计算量完全吻合，验证了计算建模的正确性。
-  \item \textbf{DRAM后端影响访存阶段。}全后端下Core\,1的LOADING阶段为2000周期，simple下仅为938周期。差异来自Ramulator2的DDR4时序约束（tRCD、tCL等）使DRAM响应延迟更高，同时Core\,1还需等待Core\,0的计算及NoC传输完成，两者串行叠加导致LOADING时间显著拉长。
-  \item \textbf{NoC数据包一致。}两种后端均产生2个NoC数据包（Core\,0$\to$Core\,1的请求与响应），验证了核间通信路径的正确性。
+  \item 因果一致性验证通过。两种后端下，Core\,1 均在 Core\,0 完成计算（full 下约 707 周期，simple 下约 680 周期）之后才结束加载阶段、进入计算阶段（full 下 Core\,1 加载约 2000 周期，simple 下约 938 周期），说明依赖传播的因果约束被正确执行。仿真输出的状态记录也显示，Core\,1 在加载阶段明确标记为“等待来自 Core\,0 的 128\,KB 数据”，与上述依赖关系一致。
+  \item 计算时长一致。两种后端下 Core\,0 与 Core\,1 的计算阶段分别为 500 与 300 周期，与调度中设定的计算量完全吻合，验证了计算建模的正确性。
+  \item DRAM后端影响访存阶段。全后端下Core\,1的LOADING阶段为2000周期，simple下仅为938周期。差异来自Ramulator2的DDR4时序约束（tRCD、tCL等）使DRAM响应延迟更高，同时Core\,1还需等待Core\,0的计算及NoC传输完成，两者串行叠加导致LOADING时间显著拉长。
+  \item NoC数据包一致。两种后端均产生2个NoC数据包（Core\,0$\to$Core\,1的请求与响应），验证了核间通信路径的正确性。
 \end{enumerate}
 
 \xsubsection{MB-2：仅DRAM依赖（无核间通信）}{MB-2: DRAM-only Dependencies}
 
-\textbf{实验原理。}本实验在\textbf{单核}上执行两层串行计算，且两层所需的输入与权重全部来自片外存储器（DRAM），不涉及核间数据传递，用于验证：（1）单核、仅 DRAM 依赖时，不应产生任何 NoC 数据包。（2）simple 与 full 两种后端在“纯 DRAM 访存”场景下的周期差异，便于后续与 ZeBu 对比时理解为何选用 simple 后端。具体负载为：第一层从 DRAM 加载权重 32\,KB 与输入特征 8\,KB，计算 500 周期后向 DRAM 写回 128\,KB。第二层从 DRAM 加载权重 64\,KB 与输入特征 128\,KB（即第一层写回的数据），计算 300 周期后向 DRAM 写回 32\,KB。两层的计算量固定，差异仅体现在 DRAM 的加载与写回阶段上。
+\textbf{实验原理。}本实验在单核上执行两层串行计算，且两层所需的输入与权重全部来自片外存储器（DRAM），不涉及核间数据传递，用于验证：（1）单核、仅 DRAM 依赖时，不应产生任何 NoC 数据包。（2）simple 与 full 两种后端在“纯 DRAM 访存”场景下的周期差异，量化 DDR 时序建模对访存阶段的影响。具体负载为：第一层从 DRAM 加载权重 32\,KB 与输入特征 8\,KB，计算 500 周期后向 DRAM 写回 128\,KB。第二层从 DRAM 加载权重 64\,KB 与输入特征 128\,KB（即第一层写回的数据），计算 300 周期后向 DRAM 写回 32\,KB。两层的计算量固定，差异仅体现在 DRAM 的加载与写回阶段上。
 
 \textbf{实验过程。}硬件配置为单核拓扑，NoC 与 DRAM 仍分别采用 full 后端与 simple 后端各运行一次。运行负载即上述“两层、仅 DRAM 依赖”的调度，无核间通信。对两种后端分别执行仿真并记录状态时间线，从时间线中读取每一层在加载、计算、写回各阶段的起止周期与时长，用于填表与对比。
 
@@ -68,10 +68,10 @@
 
 \textbf{对结果的分析。}
 \begin{enumerate}
-  \item \textbf{NoC数据包为0。}两种后端下均无NoC流量（DRAM直连核，未经过NoC），验证了单核DRAM-only场景下通信路径的正确性。
-  \item \textbf{计算时长一致。}Layer1与Layer2的COMPUTING阶段在两种后端下分别为500与300周期，与调度中给定的计算周期一致。
-  \item \textbf{DRAM模型差异集中在访存阶段。}全后端下，Layer1的Writeback为651周期（simple: 356，增幅83\%），Layer2的Loading为853周期（simple: 484，增幅76\%）。这反映了Ramulator2的DDR4时序（行激活、列读取、bank冲突、请求排队）对大块数据传输的影响：Layer1写回128\,KB、Layer2加载192\,KB（64+128），数据量越大时DDR时序约束越显著。
-  \item \textbf{总周期差异。}全后端总周期2685，simple为1987，全后端高出35\%。差异完全来自DRAM访存阶段，计算阶段无差异。这一现象解释了后续ZeBu对比实验选用simple后端的原因：simple后端消除了DDR时序建模差异，使精度比较集中在调度与计算模型上。
+  \item NoC数据包为0。两种后端下均无NoC流量（DRAM直连核，未经过NoC），验证了单核DRAM-only场景下通信路径的正确性。
+  \item 计算时长一致。Layer1与Layer2的COMPUTING阶段在两种后端下分别为500与300周期，与调度中给定的计算周期一致。
+  \item DRAM模型差异集中在访存阶段。全后端下，Layer1的Writeback为651周期（simple: 356，增幅83\%），Layer2的Loading为853周期（simple: 484，增幅76\%）。这反映了Ramulator2的DDR4时序（行激活、列读取、bank冲突、请求排队）对大块数据传输的影响：Layer1写回128\,KB、Layer2加载192\,KB（64+128），数据量越大时DDR时序约束越显著。
+  \item 总周期差异。全后端总周期2685，simple为1987，全后端高出35\%。差异完全来自DRAM访存阶段，计算阶段无差异。后续 ZeBu 对比实验统一采用 full 后端，以在包含完整 DDR 时序建模的条件下评估模拟器的端到端精度。
 \end{enumerate}
 
 \begin{table}[H]
@@ -103,20 +103,20 @@
   \end{tabular}
 \end{table}
 
-\textbf{MB-1与MB-2小结。}两个微基准验证了模拟器三项基本能力：核间依赖因果一致性（MB-1）、DRAM闭环正确性（MB-2）、以及simple/full后端在计算阶段完全一致而在访存阶段体现DDR时序差异。这为后续使用simple后端做ZeBu精度校验、用full后端做多核设计空间探索奠定了基础。
+\textbf{MB-1与MB-2小结。}两个微基准验证了模拟器三项基本能力：核间依赖因果一致性（MB-1）、DRAM闭环正确性（MB-2）、以及simple/full后端在计算阶段完全一致而在访存阶段体现DDR时序差异。这为后续统一采用 full 后端进行 ZeBu 精度校验与多核设计空间探索奠定了基础。
 
 \xsubsection{与ZeBu硬件模拟的对比（单核）}{Comparison with ZeBu Hardware Simulation (Single-core)}
 \label{subsec:c5_zebu}
 
-\textbf{实验原理。}Synopsys ZeBu硬件模拟平台在单核配置下执行与本模拟器相同的调度IR所生成的汇编指令，并通过硬件trace记录每条指令的执行区间$[\mathit{start},\mathit{end}]$。以ZeBu全程序总周期（$\max(\mathit{end})$）作为基准，与本模拟器的Total cycles对比，相对误差定义为$(\text{模拟器}-\text{ZeBu})/\text{ZeBu}\times 100\%$。由MB-2的分析可知，全后端（Ramulator2）的DDR时序建模会引入约35\%的额外访存延迟。因此单核ZeBu对比采用\textbf{simple后端}，以消除DRAM模型差异，使比较集中在workload级调度与计算建模的准确性上。
+\textbf{实验原理。}Synopsys ZeBu硬件模拟平台在单核配置下执行与本模拟器相同的调度IR所生成的汇编指令，并通过硬件trace记录每条指令的执行区间$[\mathit{start},\mathit{end}]$。以ZeBu全程序总周期（$\max(\mathit{end})$）作为基准，与本模拟器的Total cycles对比，相对误差定义为$(\text{模拟器}-\text{ZeBu})/\text{ZeBu}\times 100\%$。为使精度评估涵盖完整的系统级时序（包括 DDR 行列时序与请求排队），本实验采用full 后端（BookSim2 + Ramulator2）与 ZeBu 硬件模拟对照。
 
-\textbf{实验过程。}ZeBu 侧的总周期取自 Gemini-Compiler-IR 项目发布的单核预跑结果（与第二章所述一致）。本实验在仿真器一侧采用与 ZeBu 相同的单核、simple 后端配置，选取 ResNet34 与 ResNet50 在批大小 1 与 4 下的调度结果分别运行仿真并记录总周期，与上述 ZeBu 参考周期逐项对比。
+\textbf{实验过程。}ZeBu 侧的总周期取自 Gemini-Compiler-IR 项目发布的单核预跑结果（与第二章所述一致）。本实验在模拟器一侧采用单核、full 后端配置（BookSim2 + Ramulator2），选取 ResNet34 与 ResNet50 在批大小 1 与 4 下的调度结果分别运行仿真并记录总周期，与上述 ZeBu 参考周期逐项对比。
 
 \textbf{实验结果。}表\ref{tab:zebu_validation}给出上述四种配置下模拟器与 ZeBu 的总周期及相对误差。
 
 \begin{table}[H]
   \centering
-  \caption{与ZeBu硬件模拟的总周期对比（单核，simple后端。相对误差$=(\text{模拟器}-\text{ZeBu})/\text{ZeBu}\times 100\%$）}
+  \caption{与ZeBu硬件模拟的总周期对比（单核，full 后端。相对误差$=(\text{模拟器}-\text{ZeBu})/\text{ZeBu}\times 100\%$）}
   \label{tab:zebu_validation}
   \begin{tabular}{lrrrr}
     \toprule
@@ -132,12 +132,12 @@
 
 \textbf{对结果的分析。}
 \begin{enumerate}
-  \item \textbf{误差均在$\pm$5.2\%以内。}4种配置的相对误差范围为$-$4.44\%至+5.18\%，说明在消除DRAM模型差异后，模拟器的workload级调度模型与ZeBu硬件模拟在总周期上吻合良好。
-  \item \textbf{正负偏差并存，无系统性偏移。}批大小为1时模拟器周期略低于ZeBu（$-$1.63\%、$-$4.44\%），批大小为4时略高（+5.18\%、+3.34\%），偏差方向与批大小有关：前者与simple后端固定DRAM延迟相对偏乐观、ZeBu侧访存路径更保守有关。后者与批增大后workload级阶段划分与ZeBu指令级执行在访存重叠上的建模粒度差异有关。
-  \item \textbf{趋势一致。}随批大小从1增至4，两个模型的总周期均近似线性增长（ResNet34: $1.89\text{M}\to 4.50\text{M}$，ZeBu: $1.92\text{M}\to 4.28\text{M}$。ResNet50: $2.43\text{M}\to 5.65\text{M}$，ZeBu: $2.55\text{M}\to 5.47\text{M}$），趋势一致。
+  \item 误差均在$\pm$5.2\%以内。4种配置的相对误差范围为$-$4.44\%至+5.18\%，说明在包含完整 DRAM 时序建模的条件下，模拟器与 ZeBu 硬件模拟在总周期上吻合良好。
+  \item 正负偏差并存，无系统性偏移。批大小为1时模拟器周期略低于ZeBu（$-$1.63\%、$-$4.44\%），批大小为4时略高（+5.18\%、+3.34\%），偏差方向与批大小有关：批较小时 Ramulator2 的 DDR 时序对小规模访存的建模与 ZeBu 存在微小差异；批增大后，工作负载级阶段划分与 ZeBu 指令级执行在访存重叠上的建模粒度差异被放大。
+  \item 趋势一致。随批大小从1增至4，两个模型的总周期均近似线性增长（ResNet34: $1.89\text{M}\to 4.50\text{M}$，ZeBu: $1.92\text{M}\to 4.28\text{M}$。ResNet50: $2.43\text{M}\to 5.65\text{M}$，ZeBu: $2.55\text{M}\to 5.47\text{M}$），趋势一致。
 \end{enumerate}
 
-\textbf{结论。}在simple后端、单核条件下，本模拟器的总周期与ZeBu硬件模拟平台在4种ResNet配置上的相对误差均在$\pm$5.2\%以内，验证了workload级时序模型的准确性。结合MB-1/MB-2对核间依赖与DRAM闭环的功能验证，可认为本模拟器具备可信的建模能力，为后续多核瓶颈分析与设计空间探索提供了可靠基础。
+\textbf{结论。}在 full 后端、单核条件下，本模拟器的总周期与 ZeBu 硬件模拟平台在 4 种 ResNet 配置上的相对误差均在 $\pm$5.2\% 以内，验证了包含完整 DRAM 时序建模在内的端到端时序模型的准确性。结合MB-1/MB-2对核间依赖与DRAM闭环的功能验证，可认为本模拟器具备可信的建模能力，为后续多核瓶颈分析与设计空间探索提供了可靠基础。
 
 \xsection{真实AI负载瓶颈分析（调度器生成IR）}{Bottleneck Analysis on Scheduler-generated IR}
 
@@ -145,7 +145,7 @@
 
 \xsubsection{端到端阶段占比分解口径}{Breakdown Methodology}
 
-\textbf{实验原理。}端到端执行时间可拆分为"计算占用"与"等待占用"。记每核在LOADING、COMPUTING、WRITEBACK阶段的周期分别为$C^\text{load},C^\text{comp},C^\text{wb}$，显式网络背压周期为$C^\text{nocstall}$。本文采用可复现的近似拆分：
+\textbf{实验原理。}端到端执行时间可拆分为“计算占用”与“等待占用”。记每核在LOADING、COMPUTING、WRITEBACK阶段的周期分别为$C^\text{load},C^\text{comp},C^\text{wb}$，显式网络背压周期为$C^\text{nocstall}$。本文采用可复现的近似拆分：
 \[
 T_\text{Compute}=\sum_c C^\text{comp}_c,\quad
 T_\text{NoC\_Stall}=\sum_c C^\text{nocstall}_c,\quad
@@ -153,7 +153,7 @@ T_\text{Mem\_Stall}\approx \sum_c C^\text{wb}_c + \sum_c C^\text{load}_c - \sum_
 \]
 即：计算时间取各核COMPUTING之和。NoC背压取各核StallNoC之和。存储相关等待近似为写回与加载时间之和再减去已计入的NoC背压。单核场景下无核间通信，故$T_\text{NoC\_Stall}=0$，瓶颈主要体现在计算与访存（DRAM 读/写）的占比上。
 
-\textbf{实验过程。}采用 Gemini-Compiler-IR 中 ResNet34 与 ResNet50 的调度结果（与第\,\ref{subsec:c5_zebu}\,节 ZeBu 对比实验同源）作为输入，在单核、simple 后端配置下运行仿真器。仿真结束后，从输出的“每核统计”中读取每个核心在加载、计算、写回以及因网络背压而停滞的周期数，按上式汇总为总计算时间 $T_\text{Compute}$、NoC 背压时间 $T_\text{NoC\_Stall}$ 与访存相关等待时间 $T_\text{Mem\_Stall}$，并计算三者占总执行时间的百分比。单核下无核间通信，NoC 背压恒为 0，瓶颈主要体现在计算与访存的占比上。表中给出\textbf{批大小 1}的分解结果。
+\textbf{实验过程。}采用 Gemini-Compiler-IR 中 ResNet34 与 ResNet50 的调度结果（与第\,\ref{subsec:c5_zebu}\,节 ZeBu 对比实验同源）作为输入，在单核、simple 后端配置下运行模拟器。仿真结束后，从输出的“每核统计”中读取每个核心在加载、计算、写回以及因网络背压而停滞的周期数，按上式汇总为总计算时间 $T_\text{Compute}$、NoC 背压时间 $T_\text{NoC\_Stall}$ 与访存相关等待时间 $T_\text{Mem\_Stall}$，并计算三者占总执行时间的百分比。单核下无核间通信，NoC 背压恒为 0，瓶颈主要体现在计算与访存的占比上。表中给出批大小 1的分解结果。
 
 \textbf{实验结果。}表\ref{tab:bottleneck}给出 ResNet34 与 ResNet50 在批大小 1、单核下的总周期及 $T_\text{Compute}$、$T_{\mathrm{NoC}}$、$T_{\mathrm{Mem}}$ 的周期与占比。
 
@@ -173,9 +173,9 @@ T_\text{Mem\_Stall}\approx \sum_c C^\text{wb}_c + \sum_c C^\text{load}_c - \sum_
 
 \textbf{对结果的分析。}
 \begin{enumerate}
-  \item \textbf{NoC 背压为 0。}单核下无核间通信，$T_{\mathrm{NoC}}=0$，与预期一致。
-  \item \textbf{计算为主导瓶颈。}ResNet34 与 ResNet50 的计算占比分别为 81.0\% 与 76.6\%，说明在单核配置下端到端时间主要由计算阶段占据，与两类 CNN 的计算密度相符。
-  \item \textbf{访存占比随模型加深而上升。}ResNet50 的访存占比（23.4\%）高于 ResNet34（19.0\%），与 ResNet50 层数更多、中间激活与权重量更大、DRAM 读写的相对占比升高一致。多核映射下核间依赖与 NoC 竞争将引入非零 $T_\text{NoC\_Stall}$，届时可用同一分解框架区分计算与通信/访存瓶颈。
+  \item NoC 背压为 0。单核下无核间通信，$T_{\mathrm{NoC}}=0$，与预期一致。
+  \item 计算为主导瓶颈。ResNet34 与 ResNet50 的计算占比分别为 81.0\% 与 76.6\%，说明在单核配置下端到端时间主要由计算阶段占据，与两类 CNN 的计算密度相符。
+  \item 访存占比随模型加深而上升。ResNet50 的访存占比（23.4\%）高于 ResNet34（19.0\%），与 ResNet50 层数更多、中间激活与权重量更大、DRAM 读写的相对占比升高一致。多核映射下核间依赖与 NoC 竞争将引入非零 $T_\text{NoC\_Stall}$，届时可用同一分解框架区分计算与通信/访存瓶颈。
 \end{enumerate}
 
 \textbf{结论。}通过调度器 IR 驱动模拟并按 $T_\text{Compute}$、$T_\text{NoC\_Stall}$、$T_\text{Mem\_Stall}$ 分解，可对端到端周期做可解释的瓶颈归因。在单核 ResNet34/50 上，计算占比约 77\%--81\%，访存占比约 19\%--23\%，为后续多核扩展与资源调配（如增加单核计算单元、调节 NoC 与 DRAM 带宽）提供定量依据。
@@ -189,13 +189,13 @@ T_\text{Mem\_Stall}\approx \sum_c C^\text{wb}_c + \sum_c C^\text{load}_c - \sum_
 
 \xsubsection{热点核与阶段占比可视化}{Hotspot Cores and Phase Fraction Visualization}
 
-\textbf{实验目的。}5.2.1 节将端到端时间分解为计算、NoC 背压与访存等待并给出占比，但仍是各核加总的宏观结果。本小节在此基础上给出\textbf{热点核}（在总周期或某类等待上占比突出的核心）的可视化表达：在双核微基准上采用各核各阶段占该核活跃时间的比例热力图，在单核真实负载上采用与分解口径一致的阶段占比堆叠条，用于从空间（核）维度补充瓶颈解释，并与 5.2.1 节宏观分解对照。
+\textbf{实验目的。}5.2.1 节将端到端时间分解为计算、NoC 背压与访存等待并给出占比，但仍是各核加总的宏观结果。本小节在此基础上给出热点核（在总周期或某类等待上占比突出的核心）的可视化表达：在双核微基准上采用各核各阶段占该核活跃时间的比例热力图，在单核真实负载上采用与分解口径一致的阶段占比堆叠条，用于从空间（核）维度补充瓶颈解释，并与 5.2.1 节宏观分解对照。
 
-\textbf{实验原理。}“热点核”在本文中定义为：在给定维度（如总周期占比、计算周期占比、访存等待周期占比或 NoC 背压周期占比）上显著高于其他核心的核。仿真器在运行时可记录每个核心在每一仿真周期内所处的状态（加载、计算、写回或停滞），形成按核、按时间排列的状态时间线。据此可统计各核在各阶段的累计周期数（即 5.2.1 节中单核统计的推广），进而识别计算或等待时间最长的若干核心。对于单核 ResNet，本节采用与表\ref{tab:bottleneck}一致的\textbf{阶段占比堆叠条}，与 5.2.1 的分解口径严格对照。对双核场景则采用 5.1 节中的 MB-1 微基准，在 workload 汇总上绘制各核各阶段占该核活跃时间的比例热力图，以验证“按核、按阶段”分解的可行性。
+\textbf{实验原理。}“热点核”在本文中定义为：在给定维度（如总周期占比、计算周期占比、访存等待周期占比或 NoC 背压周期占比）上显著高于其他核心的核。模拟器在运行时可记录每个核心在每一仿真周期内所处的状态（加载、计算、写回或停滞），形成按核、按时间排列的状态时间线。据此可统计各核在各阶段的累计周期数（即 5.2.1 节中单核统计的推广），进而识别计算或等待时间最长的若干核心。对于单核 ResNet，本节采用与表\ref{tab:bottleneck}一致的阶段占比堆叠条，与 5.2.1 的分解口径严格对照。对双核场景则采用 5.1 节中的 MB-1 微基准，在工作负载汇总上绘制各核各阶段占该核活跃时间的比例热力图，以验证“按核、按阶段”分解的可行性。
 
-\textbf{实验配置与结果。}（1）\textbf{双核方法验证（MB-1）}：采用 5.1 节 MB-1 双核点对点依赖负载与 simple 后端，基于仿真得到的状态轨迹与 workload 汇总。由各核 workload 的加载、计算、写回周期按核归一化，得到各阶段占该核活跃时间的比例，绘制热点热力图（图\,\ref{fig:c5_hot_cores}）。（2）\textbf{单核真实负载（ResNet34/50）}：采用与 5.2.1 相同的批大小 1、单核统计结果，将 $T_\text{Compute}$ 与 $T_\text{Mem\_Stall}$ 占总时间的比例以堆叠条呈现（图\,\ref{fig:c5_resnet_phases}），与表\ref{tab:bottleneck} 一致。
+\textbf{实验配置与结果。}（1）双核方法验证（MB-1）：采用 5.1 节 MB-1 双核点对点依赖负载与 simple 后端，基于仿真得到的状态轨迹与工作负载汇总。由各核工作负载的加载、计算、写回周期按核归一化，得到各阶段占该核活跃时间的比例，绘制热点热力图（图\,\ref{fig:c5_hot_cores}）。（2）单核真实负载（ResNet34/50）：采用与 5.2.1 相同的批大小 1、单核统计结果，将 $T_\text{Compute}$ 与 $T_\text{Mem\_Stall}$ 占总时间的比例以堆叠条呈现，与表\ref{tab:bottleneck} 及图\,\ref{fig:c5_breakdown} 一致。
 
-\textbf{结果分析。}图\,\ref{fig:c5_hot_cores} 表明，在 MB-1 中 Core\,1 的加载阶段占该核活跃时间的比例显著高于 Core\,0，与 consumer 需同时等待 DRAM 与 Core\,0 数据的设定一致。计算阶段 Core\,0 占比更高，体现 producer 以计算为主、consumer 以等待与写回为主的分工。与 5.1 节表\ref{tab:mb1} 及因果一致性结论一致，Core\,0 先完成加载与计算，Core\,1 在长时间加载后方进入计算与写回。图\,\ref{fig:c5_resnet_phases} 与表\ref{tab:bottleneck} 一致地表明，单核 ResNet 端到端时间仍以计算为主、访存相关等待次之，ResNet50 的访存占比高于 ResNet34。单核真实负载上阶段占比条与 5.2.1 节宏观分解一致。
+\textbf{结果分析。}图\,\ref{fig:c5_hot_cores} 表明，在 MB-1 中 Core\,1 的加载阶段占该核活跃时间的比例显著高于 Core\,0，与 consumer 需同时等待 DRAM 与 Core\,0 数据的设定一致。计算阶段 Core\,0 占比更高，体现 producer 以计算为主、consumer 以等待与写回为主的分工。与 5.1 节表\ref{tab:mb1} 及因果一致性结论一致，Core\,0 先完成加载与计算，Core\,1 在长时间加载后方进入计算与写回。图\,\ref{fig:c5_breakdown} 与表\ref{tab:bottleneck} 一致地表明，单核 ResNet 端到端时间仍以计算为主、访存相关等待次之，ResNet50 的访存占比高于 ResNet34。单核真实负载上阶段占比条与 5.2.1 节宏观分解一致。
 
 \begin{figure}[H]
   \centering
@@ -204,56 +204,301 @@ T_\text{Mem\_Stall}\approx \sum_c C^\text{wb}_c + \sum_c C^\text{load}_c - \sum_
   \label{fig:c5_hot_cores}
 \end{figure}
 
+\xsection{多核瓶颈分析与优化实验}{Multi-core Bottleneck Analysis and Optimization}
+\label{sec:c5_multicore}
+
+前两节在单核配置下验证了模拟器精度并做了端到端瓶颈分解。本节将实验扩展到多核（$2\times 2$，4~核）场景，使用全后端（BookSim2 + Ramulator2）运行真实 DNN 负载，展示模拟器在多核 DRAM 带宽瓶颈定位与优化效果验证上的应用价值。
+
+\xsubsection{实验设计}{Experiment Design}
+
+\textbf{实验目标。}（1）构造一个存储受限的多核基线配置，使 DRAM 带宽成为性能瓶颈，在甘特图上直观表现为加载阶段占据大部分时间。（2）通过将 DRAM 技术从 DDR4 升级为 HBM（高带宽存储器），展示带宽升级对端到端性能的改善，以此验证模拟器能正确反映 DRAM 子系统差异。
+
+\textbf{负载与 IR 生成。}采用 ResNet50 网络，批大小为 1，通过 GEMINI 编译器的 $2\times 2$ 核映射模式生成调度 IR。IR 共含 288 个工作负载（每核 72 个），涉及约 90\,MB 的 DRAM 读取与 288 次 DRAM 写回，涵盖了 ResNet50 全部卷积、池化与全连接层。
+
+\textbf{硬件配置。}两组配置共享相同的核心微架构（MAC 256、Vector 64、SRAM 16\,MB、核频 25\,MHz）与 NoC 拓扑（$2\times 2$ mesh，BookSim2 后端），差异仅在 DRAM 子系统：
+
+\begin{table}[H]
+  \centering
+  \caption{多核瓶颈分析实验的两组 DRAM 配置}
+  \label{tab:c5_dram_configs}
+  \begin{tabular}{lcc}
+    \toprule
+    参数 & DDR4 基线 & HBM 优化 \\
+    \midrule
+    DRAM 标准      & DDR4-2400R  & HBM-2Gbps \\
+    通道数         & 1           & 4 \\
+    Rank 数        & 1           & 1 \\
+    峰值带宽       & 19.2\,GB/s  & 128.0\,GB/s \\
+    等效带宽/核周期 & 768\,B/cycle & 5120\,B/cycle \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+DDR4 基线采用单通道以模拟带宽受限场景（峰值 19.2\,GB/s），HBM 优化采用 4 通道 HBM（峰值 128.0\,GB/s），峰值带宽提升约 6.7 倍。两组均使用 Ramulator2 后端，具备 DDR 行列时序、bank 冲突与请求排队的全真建模；受行/bank 冲突与 FR-FCFS 调度约束，实测有效带宽通常显著低于上述峰值，在 ResNet50 的 DRAM 访问模式下尤为明显，因此 DDR4 单通道仍会构成显著的访存瓶颈。
+
+\xsubsection{基线仿真结果（DDR4 单通道）}{Baseline Results (DDR4 Single Channel)}
+
+\textbf{实验结果。}表\ref{tab:c5_baseline_stats}给出 DDR4 基线配置下的仿真统计。
+
+\begin{table}[H]
+  \centering
+  \caption{DDR4 基线仿真每核统计（ResNet50，$2\times 2$，批1）}
+  \label{tab:c5_baseline_stats}
+  \begin{tabular}{crrrrc}
+    \toprule
+    核 & Idle & Loading & Computing & Writeback & Workloads \\
+    \midrule
+    0  & 0      & 140\,680  & 22\,352  & 64\,537  & 72 \\
+    1  & 0      & 153\,077  & 22\,352  & 58\,929  & 72 \\
+    2  & 0      & 144\,515  & 22\,352  & 66\,362  & 72 \\
+    3  & 0      & 153\,799  & 22\,352  & 62\,381  & 72 \\
+    \midrule
+    \textbf{总计/最大} & --- & 592\,071 & 89\,408 & 252\,209 & 288 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{总周期为 238\,803。}各核加载阶段占活跃时间的 60\%--65\%，计算阶段仅 9\%--10\%，写回阶段约 26\%--28\%。Loading/Computing 总比值达 6.6，表明系统处于严重的存储受限状态。图\ref{fig:c5_hotspot_ddr4}以热力图形式展示了各核各阶段占活跃时间的比例，Loading 列颜色最深，直观反映 DRAM 带宽瓶颈。
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.88\linewidth]{Figures/c5_522_resnet_phase_bars.png}
-  \caption{单核 ResNet34 与 ResNet50（批大小 1）端到端时间中 $T_\text{Compute}$ 与 $T_\text{Mem\_Stall}$ 占比（与表\ref{tab:bottleneck} 一致）}
-  \label{fig:c5_resnet_phases}
+  \includegraphics[width=0.88\linewidth]{Figures/c5_hotspot_ddr4_baseline.png}
+  \caption{DDR4 基线各核阶段占比热力图（$2\times 2$，ResNet50 批1）。Loading 占比 62\%--65\%，Compute 仅 9\%--10\%，系统严重存储受限}
+  \label{fig:c5_hotspot_ddr4}
 \end{figure}
 
-% ---------- 第 5.3 节「设计空间探索（DSE）」暂不编入正文；若保留本章仅至 5.2，可维持下列 \iffalse；若要恢复 DSE，将 \iffalse 与对应 \fi 删去即可 ----------
-\iffalse
-\xsection{基于可配置 Core 与松耦合模块的微架构探索}{Micro-architecture Exploration}
-
-本节通过小规模的设计空间探索（design space exploration，DSE）展示本文仿真平台在“可配置核心与可配置互连”下的应用价值。仿真器将核心计算能力与 NoC 资源抽象为可调参数，便于在尚未流片或缺乏多组硬件实测数据时，回答如下问题：增加单核计算单元或增加网络虚拟通道能否线性缩短端到端时间？若不能，瓶颈何时从计算迁移到访存或通信？不同负载（如 ResNet34 与 ResNet50）在同一配置空间上的最优工作点是否一致？本节实验的目的即在于用定量结果说明：\textbf{（1）}计算资源与互连资源的提升均存在边际收益递减，且伴随瓶颈从计算向通信或访存迁移。\textbf{（2）}不同负载的最优配置点不同，单一“通用最优”配置并不存在，从而体现“可配置仿真 + 负载感知”在设计前期探索中的意义。
-
-\textbf{实验原理。}端到端周期由计算、访存与 NoC 传输共同决定。当单核计算单元较少时，计算阶段占据大部分时间，增加计算单元可显著缩短总周期。当计算单元增至一定程度后，计算时间下降，访存或 NoC 排队成为新的瓶颈，再增加计算单元收益变弱。类似地，NoC 虚拟通道数过少会导致报文排队与背压，增加虚拟通道可缓解拥塞、缩短等待。但超过一定数量后，瓶颈可能转移至计算或 DRAM，继续增加虚拟通道的收益有限。因此，在“核心乘法累加单元数”与“NoC 虚拟通道数”两个维度上扫描，可观察总周期随二者变化的曲线或曲面，从而识别边际收益递减拐点与瓶颈迁移现象。若对 ResNet34 与 ResNet50 分别做同一扫描，还可比较两类负载的最优点是否一致，为“负载—配置”匹配提供依据。
-
-\textbf{实验配置。}负载采用与 5.2 节相同的 ResNet34 与 ResNet50 调度结果（Gemini-Compiler-IR，单核）。设计空间选取两个维度：\textbf{核心乘法累加单元数}（刻画单核计算吞吐）与 \textbf{NoC 虚拟通道数}（刻画路由器侧可并行排队能力及对拥塞的缓解程度）。两维在离散档位上取值，构成扫描序列与二维网格。在各配置下运行仿真并记录总周期，分别得到固定一维、扫描另一维的一维曲线，以及两维联合的二维热力图。后端采用 full 后端（BookSim2 + Ramulator2），以体现 NoC 与 DRAM 排队下的瓶颈迁移。图\,\ref{fig:c5_sweep_mac}--\ref{fig:c5_2d_rn50} 给出上述一维扫描与二维热力图在论文中的典型排布方式。
-
-\xsubsection{单变量扫描}{1D Sweeps}
-
-在固定 NoC 虚拟通道数的前提下，将核心乘法累加单元数从低到高取若干档位，对 ResNet34 与 ResNet50 分别运行仿真并记录总周期，得到“总周期—乘法累加单元数”曲线。固定乘法累加单元数、扫描虚拟通道数，得到“总周期—虚拟通道数”曲线。由此观察计算或互连资源增加时总周期的下降规律及边际收益递减是否出现，并比较两类负载曲线形状的差异。图\,\ref{fig:c5_sweep_mac} 与图\,\ref{fig:c5_sweep_vc} 示出一维扫描结果的图面布局。
+图\ref{fig:c5_gantt_ddr4}给出 DDR4 基线的甘特图。4 核的加载段（橙色，含 DRAM 等待与核间等待子段）占据绝大部分时间线，计算段（蓝色）极为狭窄，直观展示了带宽瓶颈。
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.9\linewidth}{\vspace{2cm}\centering 总周期随核心乘法累加单元数变化（ResNet34 / ResNet50）\vspace{2cm}}}
-  \caption{计算资源一维扫描（示意版面）}
-  \label{fig:c5_sweep_mac}
+  \includegraphics[width=\linewidth]{Figures/c5_gantt_ddr4_baseline.png}
+  \caption{DDR4 基线甘特图（$2\times 2$，ResNet50 批1）。橙色为加载（含 DRAM 与核间等待），蓝色为计算，红色为写回。加载阶段占据大部分时间线}
+  \label{fig:c5_gantt_ddr4}
+\end{figure}
+
+\xsubsection{优化仿真结果（HBM 4 通道）}{Optimized Results (HBM 4 Channels)}
+
+将 DRAM 从 DDR4 单通道替换为 HBM 4 通道后重新仿真，表\ref{tab:c5_hbm_stats}给出结果。
+
+\begin{table}[H]
+  \centering
+  \caption{HBM 优化仿真每核统计（ResNet50，$2\times 2$，批1）}
+  \label{tab:c5_hbm_stats}
+  \begin{tabular}{crrrrc}
+    \toprule
+    核 & Idle & Loading & Computing & Writeback & Workloads \\
+    \midrule
+    0  & 0      & 84\,488  & 22\,352  & 18\,092  & 72 \\
+    1  & 0      & 102\,664 & 22\,352  & 18\,713  & 72 \\
+    2  & 0      & 85\,616  & 22\,352  & 18\,093  & 72 \\
+    3  & 0      & 97\,415  & 22\,352  & 18\,533  & 72 \\
+    \midrule
+    \textbf{总计/最大} & --- & 370\,183 & 89\,408 & 73\,431 & 288 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{总周期降至 144\,000。}Loading/Computing 比值从 6.6 降至 4.1，Writeback 总周期从 252\,209 降至 73\,431（降幅 70.9\%）。图\ref{fig:c5_hotspot_hbm}的热力图显示，Loading 占比仍在 67\%--71\%（因 SRAM 端口瓶颈），但 Writeback 从 25\%--28\% 降至 13\%--15\%，Compute 从 9\%--10\% 升至 16\%--18\%。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\linewidth]{Figures/c5_hotspot_hbm_optimized.png}
+  \caption{HBM 优化各核阶段占比热力图（$2\times 2$，ResNet50 批1）。与图\ref{fig:c5_hotspot_ddr4}对比，Writeback 占比显著下降，Compute 占比上升}
+  \label{fig:c5_hotspot_hbm}
+\end{figure}
+
+图\ref{fig:c5_gantt_hbm}为 HBM 优化甘特图，可见写回段（红色）显著收窄，加载段虽仍为主导但已明显缩短。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figures/c5_gantt_hbm_optimized.png}
+  \caption{HBM 优化甘特图（$2\times 2$，ResNet50 批1）。与图\ref{fig:c5_gantt_ddr4}对比，加载与写回段均明显缩短}
+  \label{fig:c5_gantt_hbm}
+\end{figure}
+
+\textbf{残留瓶颈分析。}虽然 HBM 的峰值 DRAM 带宽达到 128\,GB/s（5120\,B/cycle），远超加载数据所需，但加载阶段仍占各核活跃时间的约 60\%。对 288 个工作负载的逐项分析表明：92\% 的工作负载的加载时间受 SRAM 写端口带宽限制（256\,B/cycle），而非 DRAM 响应延迟。具体而言，DRAM 数据到达核后必须按 SRAM 写带宽逐周期写入片上存储；当 DRAM 带宽远超 SRAM 写入速率时，后者成为新的瓶颈。这一“片上带宽墙”现象在高带宽外部存储配合传统窄端口 SRAM 时普遍存在。
+
+\xsubsection{进一步优化：提升 SRAM 端口带宽}{Further Optimization: Wider SRAM Port}
+
+基于上述分析，在 HBM 配置基础上将 SRAM 读写带宽从 256\,B/cycle 提升至 1024\,B/cycle（$\times$4），对应于在硬件设计上加宽 SRAM 读写端口或采用多 bank 并行访问。其余参数（核微架构、NoC、DRAM）保持不变。
+
+\textbf{实验结果。}表\ref{tab:c5_sram_stats}给出 HBM + SRAM 1024\,B/cycle 配置下的仿真统计。
+
+\begin{table}[H]
+  \centering
+  \caption{HBM + 宽 SRAM 仿真每核统计（ResNet50，$2\times 2$，批1，SRAM 带宽 1024\,B/cycle）}
+  \label{tab:c5_sram_stats}
+  \begin{tabular}{crrrrc}
+    \toprule
+    核 & Idle & Loading & Computing & Writeback & Workloads \\
+    \midrule
+    0  & 0      & 28\,374  & 22\,352  & 8\,589   & 72 \\
+    1  & 0      & 31\,058  & 22\,352  & 8\,668   & 72 \\
+    2  & 0      & 28\,853  & 22\,352  & 10\,588  & 72 \\
+    3  & 0      & 30\,766  & 22\,352  & 9\,429   & 72 \\
+    \midrule
+    \textbf{总计/最大} & --- & 119\,051 & 89\,408 & 37\,274 & 288 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{总周期降至 62\,818}，较 HBM（SRAM 256）再降 56.4\%，较 DDR4 基线降 73.7\%。Loading/Computing 比值从 4.1 降至 1.3，计算阶段占瓶颈核活跃时间的比例从 15.6\% 升至 35.7\%，系统从严重存储受限逐步趋向计算—存储平衡。图\ref{fig:c5_hotspot_sram}的热力图显示，Compute 占比升至 36\%--38\%，Loading 降至 47\%--50\%，三阶段占比趋于均衡。图\ref{fig:c5_gantt_sram}的甘特图中，计算段（蓝色）面积明显增大，加载与写回段均大幅缩短。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\linewidth]{Figures/c5_hotspot_hbm_sram1024.png}
+  \caption{HBM + 宽 SRAM 各核阶段占比热力图（$2\times 2$，ResNet50 批1，SRAM 1024\,B/cycle）。与图\ref{fig:c5_hotspot_ddr4}、\ref{fig:c5_hotspot_hbm}对比，Compute 占比从 9\% 升至 36\%，系统趋向均衡}
+  \label{fig:c5_hotspot_sram}
+\end{figure}
+
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figures/c5_gantt_hbm_sram1024.png}
+  \caption{HBM + 宽 SRAM 甘特图（$2\times 2$，ResNet50 批1，SRAM 1024\,B/cycle）。计算段占比显著提升，系统趋向计算—存储平衡}
+  \label{fig:c5_gantt_sram}
+\end{figure}
+
+\xsubsection{三组配置对比分析}{Three-way Comparative Analysis}
+
+表\ref{tab:c5_comparison}汇总三组配置的关键指标，展示递进式优化的完整路径。
+
+\begin{table}[H]
+  \centering
+  \caption{三组配置仿真结果对比（ResNet50，$2\times 2$，批1）}
+  \label{tab:c5_comparison}
+  \begin{tabular}{lrrrc}
+    \toprule
+    指标 & DDR4 基线 & HBM 优化 & HBM+宽SRAM & 总改善 \\
+    \midrule
+    总周期            & 238\,803   & 144\,000  & 62\,818   & $-$73.7\% \\
+    相对DDR4加速比    & 1.00$\times$ & 1.66$\times$ & 3.80$\times$ & --- \\
+    Loading 总周期    & 592\,071   & 370\,183  & 119\,051  & $-$79.9\% \\
+    Writeback 总周期  & 252\,209   & 73\,431   & 37\,274   & $-$85.2\% \\
+    Computing 总周期  & 89\,408    & 89\,408   & 89\,408   & 0\% \\
+    Loading/Computing & 6.62       & 4.14      & 1.33      & --- \\
+    瓶颈核计算占比    & 9.4\%      & 15.6\%    & 35.7\%    & --- \\
+    DRAM 峰值带宽     & 2.0\,GB/s  & 128\,GB/s & 128\,GB/s & --- \\
+    SRAM 写带宽       & 256\,B/cy  & 256\,B/cy & 1024\,B/cy & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{结论。}
+\begin{enumerate}
+  \item DRAM 带宽升级（DDR4 $\to$ HBM）将总周期从 238\,803 降至 144\,000（1.66$\times$），写回阶段降幅高达 70.9\%。瓶颈从 DRAM 读写带宽迁移至片上 SRAM 写端口。
+  \item SRAM 端口加宽（256 $\to$ 1024\,B/cycle）在 HBM 基础上将总周期再降 56.4\% 至 62\,818（相对 DDR4 基线 3.80$\times$）。这揭示了“片上带宽墙”现象：当外部 DRAM 带宽充裕时，SRAM 的读写端口宽度反而成为数据搬运的限速环节。
+  \item 瓶颈逐级迁移。DDR4 基线下瓶颈在 DRAM 带宽（Loading/Computing = 6.6），HBM 优化后瓶颈迁移至 SRAM 端口（Loading/Computing = 4.1），最终提升 SRAM 端口后系统趋向计算—存储平衡（Loading/Computing = 1.3，计算占比 35.7\%）。这一逐级暴露新瓶颈的过程验证了模拟器在迭代式硬件优化中的实用价值。
+  \item 计算周期恒定。三组实验中各核计算时长均为 22\,352 cycles，证明性能提升完全来自存储子系统的改善，且模拟器能正确隔离各子系统的贡献。
+\end{enumerate}
+
+\xsection{多核吞吐量的设计空间探索}{Design-Space Exploration for Multi-core Throughput}
+\label{sec:c5_dse}
+
+5.3~节在固定 $2\times 2$ 核、batch=1 的条件下揭示了 DRAM 与 SRAM 带宽瓶颈。然而在实际推理部署中，吞吐量（单位时间完成的推理数）才是核心指标，且受单核算力、核数规模、片上存储以及 die 面积等多因素共同约束。本节沿三个维度展开设计空间探索：（1）单核算力（MAC 规模）；（2）核数扩展；（3）Batch 大小。所有实验均采用 ResNet50 网络、HBM 4 通道 DRAM 与 1024\,B/cycle SRAM 带宽（5.3~节确定的最优存储配置），并使用全后端（BookSim2 + Ramulator2）。
+
+\xsubsection{单核算力扩展（MAC 规模扫描）}{Single-core Compute Scaling}
+
+在 $2\times 2$ 核配置下，将单核乘法累加单元数（\texttt{mac\_units}）从 256 扫描至 512 和 1024，对 batch=1 和 batch=4 各运行一组仿真。模拟器设置 \texttt{use\_analytical\_time=false}，计算周期按 $\lceil\text{total\_macs}/\text{mac\_units}\rceil$ 公式从 IR 中的张量形状与权重大小推导，因此无需重新编译 IR。
+
+\textbf{实验结果。}表\ref{tab:c5_mac_sweep}给出 MAC 扫描结果。
+
+\begin{table}[H]
+  \centering
+  \caption{MAC 规模扫描（$2\times 2$ 核，HBM+SRAM1024）}
+  \label{tab:c5_mac_sweep}
+  \begin{tabular}{ccrrrrc}
+    \toprule
+    MAC & Batch & 总周期 & Loading & Computing & Writeback & 计算占比 \\
+    \midrule
+    256  & 1 & 62\,775  & 119\,210 & 89\,408  & 36\,944  & 35.8\% \\
+    512  & 1 & 62\,778  & 119\,220 & 89\,408  & 36\,946  & 35.8\% \\
+    1024 & 1 & 62\,776  & 119\,223 & 89\,408  & 36\,935  & 35.8\% \\
+    \midrule
+    256  & 4 & 258\,289 & 508\,269 & 357\,632 & 153\,289 & 34.8\% \\
+    512  & 4 & 258\,289 & 508\,269 & 357\,632 & 153\,289 & 34.8\% \\
+    1024 & 4 & 257\,969 & 510\,067 & 357\,632 & 153\,290 & 34.8\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{分析。}三种 MAC 规模下的总周期几乎无差异（batch=1 下均约 62\,778，batch=4 下均约 258\,000），且 Computing 总周期完全一致。这一看似反直觉的结果源于当前负载的特征：GEMINI 编译器生成的 IR 中，288 个工作负载（batch=1）有 75\% 的工作负载计算量极小（compute\_cycles $\leq$ 1），真正有显著计算的仅为 residual 层。即使将 MAC 翻四倍，瓶颈核的活跃时间仍由 Loading 主导（L/C $\approx$ 1.33），计算缩减对总周期的贡献被淹没。结论：在当前存储配置下，系统处于存储受限状态，单纯提升单核算力无法提高吞吐量。
+
+\xsubsection{核数扩展}{Core Count Scaling}
+
+固定 \texttt{mac\_units}=512，将核数从 $2\times 2$=4 核扩展至 $4\times 4$=16 核与 $8\times 8$=64 核。每种核数的 IR 由 GEMINI 编译器针对对应拓扑重新生成。
+
+\textbf{实验结果。}表\ref{tab:c5_core_sweep}给出核数扩展结果。
+
+\begin{table}[H]
+  \centering
+  \caption{核数扩展（HBM+SRAM1024，MAC=512）。8$\times$8 batch=1 因死锁未完成}
+  \label{tab:c5_core_sweep}
+  \begin{tabular}{lcrrrrc}
+    \toprule
+    拓扑 & Batch & 总周期 & L/C & 计算占比 & Workloads & 状态 \\
+    \midrule
+    $2\times 2$ & 1 & 62\,781   & 1.33  & 35.8\% &  288 & 完成 \\
+    $4\times 4$ & 1 & 60\,839   & 5.61  & 9.2\%  & 1136 & 完成 \\
+    $8\times 8$ & 1 & ---       & ---   & ---    & 4544 & 死锁 \\
+    \midrule
+    $2\times 2$ & 4 & 257\,827  & 1.42  & 34.8\% & 1152 & 完成 \\
+    $4\times 4$ & 4 & 296\,297  & 6.95  & 7.6\%  & 4544 & 完成 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{分析。}
+\begin{enumerate}
+  \item $2\times 2 \to 4\times 4$：总周期几乎不降。Batch=1 下从 62\,781 降至 60\,839（仅$-$3.1\%），batch=4 下反而从 257\,827 升至 296\,297（$+$14.9\%）。原因在于：核数增加后工作负载被分散到更多核（从 288 增至 1136），但 16 核共享同一 DRAM 子系统导致读写竞争加剧，Loading 与 Writeback 剧增。L/C 从 1.33 升至 5.61（batch=1）和从 1.42 升至 6.95（batch=4），系统从接近均衡退回到严重存储受限。
+  \item $8\times 8$ 死锁。64 核配置下仿真无法完成：99.3\% 的工作负载完成后，剩余 30 个工作负载的 15 个核陷入互等状态。这是因为 ResNet50 的层级结构（约 72 个 unique 层）无法均匀分布到 64 核，GEMINI 编译器生成的 IR 中大量核的工作负载极少，导致复杂的依赖链形成环路。结论：核数不宜超过负载的并行度上限。
+\end{enumerate}
+
+图\ref{fig:c5_dse_4x4_b1}给出 16 核的端到端甘特图，Loading 与 Writeback 段占据绝大部分时间线，DRAM 争用严重。图\ref{fig:c5_hotspot_4x4_b1}进一步以热力图形式展示各核阶段占活跃时间的比例：全部核心的 Loading 占比在 50\%--55\%、Writeback 在 36\%--41\%，Compute 仅约 9.3\%--9.5\%，与 5.3 节 DDR4 基线（4 核）的 9\%--10\% 接近，表明核数扩大 4 倍后系统从接近均衡退回到严重存储受限。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{Figures/c5_dse_4x4_b1.png}
+  \caption{$4\times 4$ 核甘特图（ResNet50 batch=1，MAC=512）。16 核的 Loading 与 Writeback 占据绝大部分时间，DRAM 争用严重}
+  \label{fig:c5_dse_4x4_b1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \fbox{\parbox{0.9\linewidth}{\vspace{2cm}\centering 总周期随 NoC 虚拟通道数变化（ResNet34 / ResNet50）\vspace{2cm}}}
-  \caption{互连资源一维扫描（示意版面）}
-  \label{fig:c5_sweep_vc}
+  \includegraphics[width=0.75\linewidth]{Figures/c5_hotspot_4x4_b1.png}
+  \caption{$4\times 4$ 核各阶段占比热力图（ResNet50 batch=1，MAC=512）。16 核的 Compute 占比均不足 10\%，Loading 与 Writeback 共占约 90\%}
+  \label{fig:c5_hotspot_4x4_b1}
 \end{figure}
 
-\xsubsection{二维联合搜索}{2D Joint Exploration}
+\xsubsection{Batch 扩展效率}{Batch Scaling Efficiency}
 
-将核心乘法累加单元数与 NoC 虚拟通道数在二维网格上联合取值，对每一组合运行仿真并记录总周期，以热力图表示总周期在配置平面上的分布，从而标出相对更优的配置区域。对 ResNet34 与 ResNet50 分别做同一网格搜索，可比较两类负载最优区域是否重合，以及最优区域偏向“算力主导”还是“互连主导”。图\,\ref{fig:c5_2d_rn34} 与图\,\ref{fig:c5_2d_rn50} 示出二维热力图的图面布局。
+在推理部署中，增大 batch 可以提高数据复用率与吞吐量。表\ref{tab:c5_batch}对比 batch=1 与 batch=4 在不同核数配置下的吞吐量。吞吐量定义为 $\text{Throughput}=\text{batch}/\text{Total\_cycles}$。
 
-\begin{figure}[H]
+\begin{table}[H]
   \centering
-  \fbox{\parbox{0.9\linewidth}{\vspace{2cm}\centering ResNet34：乘法累加单元数$\times$虚拟通道数网格上的总周期热力图\vspace{2cm}}}
-  \caption{ResNet34 二维设计空间探索（示意版面）}
-  \label{fig:c5_2d_rn34}
-\end{figure}
+  \caption{Batch 扩展效率（MAC=512，HBM+SRAM1024）}
+  \label{tab:c5_batch}
+  \begin{tabular}{lcrrrc}
+    \toprule
+    拓扑 & Batch & 总周期 & 吞吐量（$\times 10^{-5}$/cyc） & 相对b=1加速 & 效率 \\
+    \midrule
+    $2\times 2$ & 1 & 62\,781  & 1.593 & ---     & --- \\
+    $2\times 2$ & 4 & 257\,827 & 1.551 & 0.97$\times$ & 24.3\% \\
+    \midrule
+    $4\times 4$ & 1 & 60\,839  & 1.644 & ---     & --- \\
+    $4\times 4$ & 4 & 296\,297 & 1.350 & 0.82$\times$ & 20.5\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-\begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.9\linewidth}{\vspace{2cm}\centering ResNet50：乘法累加单元数$\times$虚拟通道数网格上的总周期热力图\vspace{2cm}}}
-  \caption{ResNet50 二维设计空间探索（示意版面）}
-  \label{fig:c5_2d_rn50}
-\end{figure}
-\fi
+\textbf{分析。}Batch 从 1 增至 4 时，总周期增长约 $4.1\times$（$2\times 2$）到 $4.9\times$（$4\times 4$），均超过 batch 本身的 $4\times$ 倍率，导致吞吐量反而略降。Batch 扩展效率（=batch=4 吞吐量 / batch=1 吞吐量 / 4）仅约 24\%。这是因为在当前存储受限配置下，增大 batch 线性增加了 DRAM 读写数据量，但 DRAM 带宽并未同步扩展，导致存储争用超线性增长。
+
+\xsubsection{综合结论与设计启示}{Summary and Design Implications}
+
+\begin{enumerate}
+  \item 存储受限状态下，提升算力无效。当 Loading/Computing $>$ 1 时，系统为存储受限，增加 MAC 单元对吞吐量无贡献。设计者应优先解决 DRAM 带宽或 SRAM 端口带宽瓶颈，再考虑计算资源投入。
+  \item 核数扩展存在明确上限。$2\times 2 \to 4\times 4$ 在 batch=1 下仅提升 3\%，在 batch=4 下反而退步 15\%，8$\times$8 直接死锁。核数必须与负载的并行度匹配：ResNet50 的有效并行度约 4--16 核，超过此范围后 DRAM 争用与调度依赖冲突主导性能。
+  \item Batch 扩展效率受限于存储带宽。Batch=4 相对 batch=1 的吞吐量效率仅约 24\%，说明在存储受限系统中 batch 扩展的收益远不及理想的线性关系。提升 DRAM 通道数或采用更高带宽的 HBM2E/HBM3 可望改善 batch 扩展效率。
+  \item 模拟器对 NPU 设计的价值。本节实验覆盖了 12 种配置组合，每次仿真耗时 3--60 分钟。这一效率使得在流片前对核数、算力、存储带宽等关键参数进行快速定界成为可能。
+\end{enumerate}
