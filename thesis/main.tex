@@ -23,7 +23,7 @@
                 % Mandatory: {academic, professional} Fill in the type of your degree
     % english,  % 可选项：   英文正文请选择此项
                 % Optional:  For english main content, It will change some auto-generated matter into English
-    % blind,    % 可选项：   论文用于盲审请选择此项，将不会产生致谢(内容)、答辩委员会会议决议(内容)、
+    blind,      % 可选项：   论文用于盲审请选择此项，将不会产生致谢(内容)、答辩委员会会议决议(内容)、
                 %            常规评阅人名单(内容)；提交盲审时取消本行注释，正式提交时注释掉以显示致谢等
                 % Optional:  For blind review, uncomment this line to hide Acknowledgements etc.; comment out for final submission
 ]{XJTU-thesis}
@@ -53,11 +53,15 @@
 % If you have only foreign name, put it as both first and second argument
 % 第一个参数为中文名，第二个参数为外文名
 % The first argument is Chinese name, the second argument is foreign name
-\author{彭森}{Peng Sen}
+% 【盲审占位】正式提交时将占位行注释并启用下方真实信息
+% \author{彭森}{Peng Sen}
+\author{\hphantom{XXXX}}{\hphantom{XXXXXXXX}}
 
 % 指导老师姓名（注意：同作者姓名）
 % Name of supervisor, It have the same requirments as the author
-\advisor{姚期智}{教授}{Andrew Chi-Chih Yao}{(Associate)\ Prof.}
+% 【盲审占位】
+% \advisor{姚期智}{教授}{Andrew Chi-Chih Yao}{(Associate)\ Prof.}
+\advisor{\hphantom{XXXX}}{教授}{\hphantom{XXXXXXXX}}{Prof.}
 
 % 合作指导老师姓名 或 导师团队
 %（校方模板要求只能选择一个，都有则显示合作导师）
@@ -66,7 +70,9 @@
 % ==== 设置合作导师
 % 注：以下情况可认定为申请学生的合作导师。
 %（1）与招生简章中一致的合作导师；（2）CSC项目的合作导师；（3）交叉培养项目认定的合作导师。
-\advisorassociate{马恺声}{教授}{Kai-Sheng Ma}{Prof.}
+% 【盲审占位】
+% \advisorassociate{马恺声}{教授}{Kai-Sheng Ma}{Prof.}
+\advisorassociate{\hphantom{XXXX}}{教授}{\hphantom{XXXXXXXX}}{Prof.}
 
 % ==== 设置合作导师
 % 注：“导师团队”的书写需与招生简章保持一致
@@ -165,6 +171,10 @@
 % Table of Contents
 \thesistableofcontens
 
+% 缩写与符号说明（英文缩写及符号解释表）修改 Main_Miscellaneous/glossary.tex
+% 按 GB/T 7713.2 与校方规范，前置在正文之前。
+\thesisglossarylist
+
 % 正文 注意：英文正文写作时，中、英标题还是先中后英标题；同时，下面参数的顺序有意义，不要乱放
 % Main contents, X of cX is the chapter of the thesis, you can change it if you want, the order matters
 % and KEEP Chinese Title as the FIRST argument, English Titile as the SECOND, if you use `english' option
@@ -180,15 +190,12 @@
 
 % 致谢 修改 Main_Miscellaneous/acknowledegment.tex 中的内容
 % Acknowledgement, Rewrite your content in Main_Miscellaneous/acknowledegment.tex
-\thesisacknowledegment
+% 【盲审占位】致谢一节暂时隐去，正式提交时取消下一行注释即可
+% \thesisacknowledegment
 
 % [自动生成] 参考文献 默认使用 References/reference.bib，手动指定请在导言区 \addbibresource 处指定
 % [Auto Generate] Bibliography, Default file is References/reference.bib, change argument in \addbibresource for manual specification
 \thesisbibliography
-
-% 缩写与符号说明（英文缩写及符号解释表）修改 Main_Miscellaneous/glossary.tex
-% Abbreviations and Notation; edit Main_Miscellaneous/glossary.tex. 非强制，符号不多可省略。
-\thesisglossarylist
 
 % 附录（有几个附录就导入几个文件（不加.tex后缀）），
 % Appendi(x/ies), argument should not have the .tex suffix
@@ -196,7 +203,8 @@
 
 % 攻读学位期间取得的研究成果 修改 Main_Miscellaneous/achievement.tex 中的内容 注意盲审时需要手动修改格式
 % Achievement, Rewrite your content in Main_Miscellaneous/achievement.tex
-\thesisachivements
+% 【盲审占位】攻读学位期间取得的研究成果一节暂时隐去，正式提交时取消下一行注释即可
+% \thesisachivements
 
 % 答辩委员会决议 修改 Main_Miscellaneous/decision.tex 中的内容
 % Decision, Rewrite your content in Main_Miscellaneous/decision.tex

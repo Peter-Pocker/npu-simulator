@@ -27,12 +27,13 @@
   },
     "dram": {
         "num_channels": 4,
+        "clock_ratio": 0.025,
         "backend": "ramulator2",
         "standard": "HBM",
         "org": "HBM_4Gb",
         "timing": "HBM_2Gbps",
         "num_ranks": 1,
-        "_comment": "Ramulator2 HBM 预设见 third_party/ramulator2/src/dram/impl/HBM.cpp（HBM_4Gb / HBM_2Gbps）"
+        "_comment": "clock_ratio = core_freq/dram_freq = 25MHz/1GHz = 0.025. Ramulator2 HBM 预设见 third_party/ramulator2/src/dram/impl/HBM.cpp（HBM_4Gb / HBM_2Gbps）"
     },
   "topology": {
     "dram_controllers": [],

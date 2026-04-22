@@ -1,0 +1,1 @@
+out/c5_multicore/trace_20260408_001305/resnet_2x2_ir.json

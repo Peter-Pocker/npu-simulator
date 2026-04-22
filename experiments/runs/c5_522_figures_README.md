@@ -5,7 +5,8 @@
 | 文件 | 含义 |
 |------|------|
 | `c5_522_hotspot_mb1.png` | MB-1 各核 Loading / Compute / Writeback / StallNoC 占该核活跃时间比例的热力图，数据来自同目录 `workload_summary.csv` |
-| `c5_522_resnet_phase_bars.png` | 单核 ResNet34/50（批大小 1）计算与访存相关等待占比堆叠条，与 `experiments/runs/bottleneck_breakdown_b1/bottleneck_breakdown.csv` 一致 |
+
+单核 ResNet 堆叠条与 §5.2.1 共用 `thesis/Figures/c5_breakdown.png`，由 `scripts/plot_c5_breakdown.py` 生成。
 
 复现命令（项目根目录）：
 

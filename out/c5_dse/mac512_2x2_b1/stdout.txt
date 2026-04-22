@@ -1,0 +1,76 @@
+[GeminiParser] Remapped 4 GEMINI core IDs to compact 0-based indices
+[Topology] mesh=2x2 (4 nodes), 4 cores, 0 DRAM controllers (direct, bypass NoC)
+[AddressAllocator] Allocated 651 transfer blocks, total 1672326.46 MB (alignment=64B)
+[Simulator] Loaded IR: 2x2 cores, top_batch_cut=1
+[Simulator] Total workloads: 288, DRAM reads: 363, DRAM writes: 288
+[BookSim2NoC] Initialized 2x2 mesh (4 nodes), 8 VCs, 1 subnets (from inline config)
+[Ramulator2DRAM] Initialized from inline config (HBM HBM_2Gbps), yaml_clock_ratio=1, sim_clock_ratio=0.03, channels=4, cache_line=64B
+[Simulator] Starting simulation...
+[Simulator] Simulation complete at cycle 62778
+
+========== Simulation Statistics ==========
+Total cycles:       62778
+NoC packets:        0
+DRAM reads:         793
+DRAM writes:        288
+DRAM sub-requests:  1659858
+DRAM addr allocated:1672326.46 MB
+
+--- Per-Core Statistics ---
+  Core        Idle     Loading     Compute   Writeback    StallNoC Workloads  PeakSRAM(KB)
+     0           0       28452       22352        8472           0        72         730.0
+     1           0       31270       22352        8416           0        72         784.0
+     2           0       28769       22352       10632           0        72         730.0
+     3           0       30729       22352        9426           0        72         784.0
+=============================================
+[Trace] State transitions: /Users/then_mac/code/npu-simulator/out/c5_dse/mac512_2x2_b1/state_trace.csv (1156 events)
+[Trace] Workload summary: /Users/then_mac/code/npu-simulator/out/c5_dse/mac512_2x2_b1/workload_summary.csv
+
+[Trace] Files written to /Users/then_mac/code/npu-simulator/out/c5_dse/mac512_2x2_b1/
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 254848
+  total_num_read_requests: 1405010
+  memory_system_cycles: 2511119
+  DRAM:
+    impl: HBM
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 1
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 2
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 3
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+

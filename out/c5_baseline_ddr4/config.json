@@ -1,0 +1,62 @@
+{
+  "_comment": "Chapter 5.3 baseline: 4-core (2x2), DDR4 (limited BW) for bottleneck analysis.",
+  "num_cores_x": 2,
+  "num_cores_y": 2,
+  "element_size_bits": 8,
+  "core": {
+    "mac_units": 256,
+    "vector_units": 64,
+    "clock_freq_mhz": 25,
+    "use_analytical_time": false
+  },
+  "sram": {
+    "size_kb": 16384,
+    "read_bandwidth_bytes_per_cycle": 256,
+    "write_bandwidth_bytes_per_cycle": 256
+  },
+  "ni": {
+    "max_outstanding_reqs": 16,
+    "injection_queue_size": 8,
+    "ejection_queue_size": 8
+  },
+  "noc": {
+    "backend": "booksim2",
+    "flit_size_bytes": 16,
+    "hop_latency_cycles": 1,
+    "router_latency_cycles": 1,
+    "injection_queue_depth": 16,
+    "num_vcs": 8,
+    "vc_buf_size": 8
+  },
+  "dram": {
+    "num_channels": 1,
+    "clock_ratio": 0.025,
+    "backend": "ramulator2",
+    "standard": "DDR4",
+    "org": "DDR4_8Gb_x8",
+    "timing": "DDR4_2400R",
+    "num_ranks": 1,
+    "scheduler": "FRFCFS",
+    "addr_mapper": "RoBaRaCoCh",
+    "frontend_clock_ratio": 4
+  },
+  "topology": {
+    "dram_controllers": [],
+    "dram_routing_policy": "nearest"
+  },
+  "gemini": {
+    "tech": "7",
+    "package_type": "SI",
+    "io_type": "UCIe",
+    "dram_type": "HBM",
+    "batch_size": 1,
+    "stride": 1,
+    "exploration_rounds": 1,
+    "opt_goal": 0,
+    "xcut": 2,
+    "ycut": 2,
+    "nop_bw": 128,
+    "dram_bw": 1024000,
+    "noc_bw": 128
+  }
+}

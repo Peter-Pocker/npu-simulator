@@ -1,0 +1,337 @@
+[GeminiParser] Remapped 64 GEMINI core IDs to compact 0-based indices
+[Topology] mesh=8x8 (64 nodes), 64 cores, 0 DRAM controllers (direct, bypass NoC)
+[AddressAllocator] Allocated 7831 transfer blocks, total 26433788.56 MB (alignment=64B)
+[Simulator] Loaded IR: 8x8 cores, top_batch_cut=1
+[Simulator] Total workloads: 4544, DRAM reads: 3267, DRAM writes: 4501
+[BookSim2NoC] Initialized 8x8 mesh (64 nodes), 8 VCs, 1 subnets (from inline config)
+[Ramulator2DRAM] Initialized from inline config (HBM HBM_2Gbps), yaml_clock_ratio=1, sim_clock_ratio=0.03, channels=4, cache_line=64B
+[Simulator] Starting simulation...
+[Simulator] Cycle 100000, cores done: 0/64, workloads completed: 4251/4544 (93.6%)
+[Simulator] Cycle 200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 1900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 2900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 3900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 4900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 5900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 6900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 7900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 8900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 9900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 10900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 11900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 12900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 13900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 14900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 15900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 16900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 17900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 18900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19300000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19400000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19500000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19600000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19700000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19800000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 19900000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 20000000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 20100000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Simulator] Cycle 20200000, cores done: 49/64, workloads completed: 4514/4544 (99.3%)
+[Trace] State transitions: /Users/then_mac/code/npu-simulator/out/c5_dse/cores8x8chip_b1/state_trace.csv (18077 events)
+[Trace] Workload summary: /Users/then_mac/code/npu-simulator/out/c5_dse/cores8x8chip_b1/workload_summary.csv
+
+[Trace] Files written to /Users/then_mac/code/npu-simulator/out/c5_dse/cores8x8chip_b1/
+
+========== Simulation Statistics ==========
+Total cycles:       0
+NoC packets:        126
+DRAM reads:         10410
+DRAM writes:        4471
+DRAM sub-requests:  0
+DRAM addr allocated:26433788.56 MB
+
+--- Per-Core Statistics ---
+  Core        Idle     Loading     Compute   Writeback    StallNoC Workloads  PeakSRAM(KB)
+     0           0       49451        1466       53861           0        71         209.5
+     1           0       51576        1342       51881           0        71         209.5
+     2           0       54844        1465       48713           0        71         209.5
+     3           0       54309        1342       49308           0        71         209.5
+     4           0       55991        1465       47566           0        71         209.5
+     5           0       57246        1307       47395           0        71         209.5
+     6           0    20150084        1429       48226           0        69         209.5
+     7           0       52218        1307       52436           0        71         209.5
+     8           0       55733        1382       48056           0        71         209.5
+     9           0       52277        1450       51447           0        71         209.5
+    10           0       54216        1382       49579           0        71         209.5
+    11           0       52343        1450       51384           0        71         209.5
+    12           0       52294        1382       51501           0        71         209.5
+    13           0    20146229        1413       52097           0        69         209.5
+    14           0    20146023        1345       52371           0        69         209.5
+    15           0    20149180        1413       49146           0        69         209.5
+    16           0       52145        1465       51597           0        71         209.5
+    17           0       51490        1365       52352           0        71         209.5
+    18           0       52954        1465       50858           0        71         209.5
+    19           0       51989        1365       51880           0        71         209.5
+    20           0       52249        1465       51593           0        71         209.5
+    21           0    20146945        1329       51465           0        69         209.5
+    22           0    20147011        1429       51299           0        69         209.5
+    23           0       54754        1331       49848           0        71         209.5
+    24           0       52109        1350       51775           0        71         209.5
+    25           0       52171        1450       51686           0        71         209.5
+    26           0       52830        1350       51056           0        71         209.5
+    27           0       53170        1450       50687           0        71         209.5
+    28           0       52488        1350       51439           0        71         209.5
+    29           0    20148253        1413       50073           0        69         209.5
+    30           0    20146788        1313       51638           0        69         209.5
+    31           0    20150320        1413       48006           0        69         209.5
+    32           0       54628        1450       49243           0        71         209.5
+    33           0       53445        1350       50526           0        71         209.5
+    34           0       55448        1450       48425           0        71         209.5
+    35           0       54924        1350       49049           0        71         209.5
+    36           0       55613        1450       48260           0        71         209.5
+    37           0    20150586        1313       47840           0        69         209.5
+    38           0    20150719        1413       47607           0        69         209.5
+    39           0       56875        1315       47270           0        71         209.5
+    40           0       56426        1365       47577           0        71         209.5
+    41           0       55492        1465       48436           0        71         209.5
+    42           0       56628        1365       47375           0        71         209.5
+    43           0       55661        1465       48281           0        71         209.5
+    44           0       56669        1365       47334           0        71         209.5
+    45           0       55827        1465       48129           0        71         209.5
+    46           0       57234        1331       47106           0        71         209.5
+    47           0    20147978        1429       50332           0        69         209.5
+    48           0       55724        1450       48219           0        71         209.5
+    49           0       56003        1382       48049           0        71         209.5
+    50           0       56125        1450       47859           0        71         209.5
+    51           0       55017        1382       49062           0        71         209.5
+    52           0       55736        1450       48275           0        71         209.5
+    53           0       54971        1382       49108           0        71         209.5
+    54           0    20149344        1413       48982           0        69         209.5
+    55           0       56055        1347       48525           0        71         209.5
+    56           0       53874        1342       50245           0        71         209.5
+    57           0       52700        1465       51296           0        71         209.5
+    58           0       54566        1342       49553           0        71         209.5
+    59           0       53693        1465       50312           0        71         209.5
+    60           0       53400        1342       50739           0        71         209.5
+    61           0       53931        1465       50101           0        71         209.5
+    62           0    20148579        1305       49855           0        69         209.5
+    63           0    20148197        1429       50113           0        69         209.5
+=============================================
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 253917
+  total_num_read_requests: 3937581
+  memory_system_cycles: 807999999
+  DRAM:
+    impl: HBM
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 1
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 2
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 3
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+

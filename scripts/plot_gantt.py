@@ -11,6 +11,9 @@ def main():
     parser.add_argument("--workload-summary", default=None,
                         help="Path to workload_summary.csv (overrides auto path when --trace is a folder)")
     parser.add_argument("--output", default="core_states.png", help="Path to output image")
+    parser.add_argument("--figsize", default=None,
+                        help="Figure size as WxH in inches, e.g. '12x4'. Default: auto (20x6 or adapted to core count)")
+    parser.add_argument("--dpi", type=int, default=300, help="Output DPI (default 300)")
     args = parser.parse_args()
 
     trace_path = os.path.abspath(args.trace)
@@ -49,8 +52,6 @@ def main():
     # Extract max cycle to set x-axis limits correctly
     max_cycle = df["cycle"].max()
 
-    fig, ax = plt.subplots(figsize=(20, 6))
-
     # States drawn in the chart (order matters for legend)
     colors = {
         "LOADING_DRAM": "#E67E22",   # dark orange – waiting for DRAM
@@ -65,6 +66,15 @@ def main():
     segments = []
     cores = df["core_id"].unique()
     max_core_id = max(cores) if len(cores) > 0 else 0
+    num_cores = len(cores)
+
+    if args.figsize:
+        w, h = args.figsize.split("x")
+        figsize = (float(w), float(h))
+    else:
+        figsize = (20, max(3, 1.5 * num_cores + 2))
+
+    fig, ax = plt.subplots(figsize=figsize)
 
     for core in cores:
         core_events = df[df["core_id"] == core]
@@ -172,7 +182,7 @@ def main():
     ax.legend(handles, labels, loc="upper right", bbox_to_anchor=(1.22, 1))
 
     plt.tight_layout()
-    plt.savefig(args.output, dpi=300)
+    plt.savefig(args.output, dpi=args.dpi, facecolor="white", edgecolor="none")
     print(f"Gantt chart saved to {args.output}")
     if has_loading_breakdown:
         print("  (LOADING split: DRAM vs other-core wait from workload_summary.csv)")

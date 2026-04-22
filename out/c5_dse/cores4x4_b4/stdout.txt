@@ -1,0 +1,90 @@
+[GeminiParser] Remapped 16 GEMINI core IDs to compact 0-based indices
+[Topology] mesh=4x4 (16 nodes), 16 cores, 0 DRAM controllers (direct, bypass NoC)
+[AddressAllocator] Allocated 7864 transfer blocks, total 26907447.41 MB (alignment=64B)
+[Simulator] Loaded IR: 4x4 cores, top_batch_cut=1
+[Simulator] Total workloads: 4608, DRAM reads: 3256, DRAM writes: 4608
+[BookSim2NoC] Initialized 4x4 mesh (16 nodes), 8 VCs, 1 subnets (from inline config)
+[Ramulator2DRAM] Initialized from inline config (HBM HBM_2Gbps), yaml_clock_ratio=1, sim_clock_ratio=0.03, channels=4, cache_line=64B
+[Simulator] Starting simulation...
+[Simulator] Cycle 100000, cores done: 0/16, workloads completed: 1214/4608 (26.3%)
+[Simulator] Cycle 200000, cores done: 0/16, workloads completed: 2994/4608 (65.0%)
+[Simulator] Simulation complete at cycle 296297
+
+========== Simulation Statistics ==========
+Total cycles:       296297
+NoC packets:        0
+DRAM reads:         14704
+DRAM writes:        4608
+DRAM sub-requests:  11774128
+DRAM addr allocated:26907447.41 MB
+
+--- Per-Core Statistics ---
+  Core        Idle     Loading     Compute   Writeback    StallNoC Workloads  PeakSRAM(KB)
+     0           0      152845       22352      117731           0       288         466.0
+     1           0      155151       22352      115425           0       288         466.0
+     2           0      156259       22352      114730           0       288         466.0
+     3           0      159294       22352      111695           0       288         466.0
+     4           0      155621       22352      115786           0       288         466.0
+     5           0      154969       22352      116438           0       288         466.0
+     6           0      153242       22352      118474           0       288         466.0
+     7           0      152820       22352      118896           0       288         466.0
+     8           0      153157       22352      118559           0       288         466.0
+     9           0      155335       22352      116796           0       288         466.0
+    10           0      154287       22352      118001           0       288         466.0
+    11           0      156771       22352      115724           0       288         466.0
+    12           0      157210       22352      115339           0       288         466.0
+    13           0      155344       22352      117231           0       288         466.0
+    14           0      156265       22352      116358           0       288         466.0
+    15           0      156477       22352      116387           0       288         466.0
+=============================================
+[Trace] State transitions: /Users/then_mac/code/npu-simulator/out/c5_dse/cores4x4_b4/state_trace.csv (18448 events)
+[Trace] Workload summary: /Users/then_mac/code/npu-simulator/out/c5_dse/cores4x4_b4/workload_summary.csv
+
+[Trace] Files written to /Users/then_mac/code/npu-simulator/out/c5_dse/cores4x4_b4/
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 1019584
+  total_num_read_requests: 10754544
+  memory_system_cycles: 11851879
+  DRAM:
+    impl: HBM
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 1
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 2
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 3
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+

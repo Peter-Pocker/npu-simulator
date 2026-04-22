@@ -1,12 +1,96 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2600 180" width="520" height="36">
-  <title>MB-1 State Trace (full backend)</title>
-  <!-- Core 0: Loading 0-207, Computing 207-707 -->
-  <rect x="0"   y="100" width="207"  height="35" fill="#ff7f0e"/>
-  <rect x="207" y="100" width="500"  height="35" fill="#1f77b4"/>
-  <!-- Core 1: Loading 0-2000, Computing 2000-2300, Writeback 2300-2456 -->
-  <rect x="0"    y="45" width="2000" height="35" fill="#ff7f0e"/>
-  <rect x="2000" y="45" width="300"  height="35" fill="#1f77b4"/>
-  <rect x="2300" y="45" width="156"  height="35" fill="#d62728"/>
-  <!-- Axis (labels omitted; see figure caption in paper for axis and color legend) -->
-  <line x1="0" y1="145" x2="2458" y2="145" stroke="#333" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Helvetica, Arial, sans-serif">
+  <title>MB-1 State Trace (full backend, BookSim2 + Ramulator2)</title>
+
+  <defs>
+    <style>
+      .axis-label { font-size: 13px; fill: #333; }
+      .tick-label { font-size: 11px; fill: #555; }
+      .core-label { font-size: 12px; fill: #333; font-weight: bold; }
+      .legend-text { font-size: 11px; fill: #333; }
+      .anno { font-size: 9.5px; fill: #fff; font-weight: bold; }
+      .anno-dark { font-size: 9.5px; fill: #333; }
+    </style>
+  </defs>
+
+  <!-- === Layout constants ===
+       Plot area: x=[80,560], y=[45,185]   width=480, height=140
+       Scale: 2458 cycles -> 480 px  => 1 cycle = 0.1953 px
+       Core 1 bar: y=60..110 (h=50)
+       Core 0 bar: y=125..175 (h=50)
+  -->
+
+  <!-- ── Legend (top) ── -->
+  <rect x="135" y="10" width="16" height="12" rx="2" fill="#ff7f0e"/>
+  <text x="155" y="20" class="legend-text">Loading</text>
+  <rect x="225" y="10" width="16" height="12" rx="2" fill="#1f77b4"/>
+  <text x="245" y="20" class="legend-text">Computing</text>
+  <rect x="335" y="10" width="16" height="12" rx="2" fill="#d62728"/>
+  <text x="355" y="20" class="legend-text">Writeback</text>
+  <rect x="445" y="10" width="16" height="12" rx="2" fill="#ddd" stroke="#999" stroke-width="0.5"/>
+  <text x="465" y="20" class="legend-text">Idle / Done</text>
+
+  <!-- ── Y-axis labels ── -->
+  <text x="72" y="90" text-anchor="end" class="core-label">Core 1</text>
+  <text x="72" y="155" text-anchor="end" class="core-label">Core 0</text>
+
+  <!-- ── Core 0 bars ── -->
+  <!-- Loading  0-207:   0*0.1953=0   207*0.1953=40.4  w=40.4 -->
+  <rect x="80" y="130" width="40" height="45" rx="2" fill="#ff7f0e"/>
+  <text x="100" y="157" text-anchor="middle" class="anno">207</text>
+  <!-- Computing 207-707: 40->138  w=97.6 -->
+  <rect x="120" y="130" width="98" height="45" rx="2" fill="#1f77b4"/>
+  <text x="169" y="157" text-anchor="middle" class="anno">500</text>
+  <!-- Idle/Done 707-2458: 138->480  w=342  (gray, light) -->
+  <rect x="218" y="130" width="342" height="45" rx="2" fill="#eee" stroke="#ccc" stroke-width="0.5"/>
+  <text x="389" y="157" text-anchor="middle" class="anno-dark" font-size="10">Idle / Done</text>
+
+  <!-- ── Core 1 bars ── -->
+  <!-- Loading  0-2000:  0->390.6  w=390.6 -->
+  <rect x="80" y="65" width="391" height="45" rx="2" fill="#ff7f0e"/>
+  <text x="275" y="92" text-anchor="middle" class="anno">Loading: 2000 cycles</text>
+  <!-- Computing 2000-2300: 390.6->449.3  w=58.6 -->
+  <rect x="471" y="65" width="59" height="45" rx="2" fill="#1f77b4"/>
+  <text x="500" y="92" text-anchor="middle" class="anno" font-size="8.5">300</text>
+  <!-- Writeback 2300-2456: 449.3->480  w=30.5 -->
+  <rect x="530" y="65" width="30" height="45" rx="2" fill="#d62728"/>
+  <text x="545" y="92" text-anchor="middle" class="anno" font-size="7.5">156</text>
+
+  <!-- ── Dependency arrow: Core 0 Computing done (707) -> Core 1 still loading ── -->
+  <line x1="218" y1="130" x2="218" y2="115" stroke="#333" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <polygon points="218,115 215,121 221,121" fill="#333"/>
+  <text x="225" y="120" class="tick-label" font-size="9" fill="#666">Core 0 done @707</text>
+
+  <!-- ── X-axis ── -->
+  <line x1="80" y1="185" x2="560" y2="185" stroke="#333" stroke-width="1"/>
+  <!-- Ticks -->
+  <line x1="80"  y1="185" x2="80"  y2="190" stroke="#333" stroke-width="1"/>
+  <text x="80"  y="202" text-anchor="middle" class="tick-label">0</text>
+
+  <line x1="178" y1="185" x2="178" y2="190" stroke="#333" stroke-width="1"/>
+  <text x="178" y="202" text-anchor="middle" class="tick-label">500</text>
+
+  <line x1="276" y1="185" x2="276" y2="190" stroke="#333" stroke-width="1"/>
+  <text x="276" y="202" text-anchor="middle" class="tick-label">1000</text>
+
+  <line x1="374" y1="185" x2="374" y2="190" stroke="#333" stroke-width="1"/>
+  <text x="374" y="202" text-anchor="middle" class="tick-label">1500</text>
+
+  <line x1="471" y1="185" x2="471" y2="190" stroke="#333" stroke-width="1"/>
+  <text x="471" y="202" text-anchor="middle" class="tick-label">2000</text>
+
+  <line x1="560" y1="185" x2="560" y2="190" stroke="#333" stroke-width="1"/>
+  <text x="560" y="202" text-anchor="middle" class="tick-label">2458</text>
+
+  <!-- X-axis title -->
+  <text x="320" y="225" text-anchor="middle" class="axis-label">仿真周期 (cycle)</text>
+
+  <!-- ── Annotations: key time points ── -->
+  <!-- Core 0: Loading ends @207 -->
+  <line x1="120" y1="175" x2="120" y2="192" stroke="#999" stroke-width="0.5" stroke-dasharray="2,2"/>
+  <text x="120" y="245" text-anchor="middle" class="tick-label" font-size="9">207</text>
+
+  <!-- Core 0: Computing ends @707 -->
+  <line x1="218" y1="175" x2="218" y2="192" stroke="#999" stroke-width="0.5" stroke-dasharray="2,2"/>
+  <text x="218" y="245" text-anchor="middle" class="tick-label" font-size="9">707</text>
+
 </svg>

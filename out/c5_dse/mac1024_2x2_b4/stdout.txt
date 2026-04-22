@@ -1,0 +1,78 @@
+[GeminiParser] Remapped 4 GEMINI core IDs to compact 0-based indices
+[Topology] mesh=2x2 (4 nodes), 4 cores, 0 DRAM controllers (direct, bypass NoC)
+[AddressAllocator] Allocated 2204 transfer blocks, total 6644264.23 MB (alignment=64B)
+[Simulator] Loaded IR: 2x2 cores, top_batch_cut=1
+[Simulator] Total workloads: 1144, DRAM reads: 1060, DRAM writes: 1144
+[BookSim2NoC] Initialized 2x2 mesh (4 nodes), 8 VCs, 1 subnets (from inline config)
+[Ramulator2DRAM] Initialized from inline config (HBM HBM_2Gbps), yaml_clock_ratio=1, sim_clock_ratio=0.03, channels=4, cache_line=64B
+[Simulator] Starting simulation...
+[Simulator] Cycle 100000, cores done: 0/4, workloads completed: 299/1144 (26.1%)
+[Simulator] Cycle 200000, cores done: 0/4, workloads completed: 823/1144 (71.9%)
+[Simulator] Simulation complete at cycle 257969
+
+========== Simulation Statistics ==========
+Total cycles:       257969
+NoC packets:        0
+DRAM reads:         3652
+DRAM writes:        1144
+DRAM sub-requests:  7247526
+DRAM addr allocated:6644264.23 MB
+
+--- Per-Core Statistics ---
+  Core        Idle     Loading     Compute   Writeback    StallNoC Workloads  PeakSRAM(KB)
+     0           0      124730       89408       39450           0       286         850.0
+     1           0      127382       89408       37297           0       286         850.0
+     2           0      129415       89408       37595           0       286         850.0
+     3           0      128540       89408       38948           0       286         850.0
+=============================================
+[Trace] State transitions: /Users/then_mac/code/npu-simulator/out/c5_dse/mac1024_2x2_b4/state_trace.csv (4580 events)
+[Trace] Workload summary: /Users/then_mac/code/npu-simulator/out/c5_dse/mac1024_2x2_b4/workload_summary.csv
+
+[Trace] Files written to /Users/then_mac/code/npu-simulator/out/c5_dse/mac1024_2x2_b4/
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  total_num_other_requests: 0
+  total_num_write_requests: 1019392
+  total_num_read_requests: 6228134
+  memory_system_cycles: 10318759
+  DRAM:
+    impl: HBM
+  AddrMapper:
+    impl: RoBaRaCoCh
+  Controller:
+    impl: Generic
+    id: Channel 0
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 1
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 2
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+  Controller:
+    impl: Generic
+    id: Channel 3
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+
+
+

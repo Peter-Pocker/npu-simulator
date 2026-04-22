@@ -1,0 +1,19 @@
+
+[Deadlock] No progress for 20000000 cycles and no resolvable cycle found. Aborting.
+  Per-core state:
+    core  6    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7633]
+    core 13    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7629]
+    core 14    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7636]
+    core 15    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7675]
+    core 21    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7626]
+    core 22    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7639]
+    core 29    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7623]
+    core 30    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7642]
+    core 31    LOADING wl=69 done=69 pending=2 sram_retry=no wait=[7671,7669]
+    core 37    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7620]
+    core 38    LOADING wl=69 done=69 pending=2 sram_retry=no wait=[7647,7645]
+    core 47    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7663]
+    core 54    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7651]
+    core 62    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7654]
+    core 63    LOADING wl=69 done=69 pending=1 sram_retry=no wait=[7657]
+[Simulator] Aborting due to unresolvable deadlock.

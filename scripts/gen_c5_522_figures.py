@@ -2,7 +2,8 @@
 """
 Generate figures for thesis §5.2.2:
   - MB-1 hotspot heatmap from workload_summary.csv
-  - ResNet34/50 single-core phase stacked bars (matches bottleneck_breakdown_b1.csv)
+
+单核 ResNet 堆叠条与 5.2.1 节图共用，由 scripts/plot_c5_breakdown.py 生成 c5_breakdown.png。
 
 Output directory: thesis/Figures/（全部为 PNG，经 thesis_fig_png 存为 RGB）
 """
@@ -27,7 +28,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # 与 XJTU-thesis.cls 中 \\graphicspath{{./Figures/}} 一致，图文件放在 thesis/Figures/
 FIG_DIR = PROJECT_ROOT / "thesis" / "Figures"
 MB1_TRACE = PROJECT_ROOT / "experiments" / "runs" / "mb1_simple"
-BREAKDOWN_B1 = PROJECT_ROOT / "experiments" / "runs" / "bottleneck_breakdown_b1" / "bottleneck_breakdown.csv"
 
 
 def _save_fig_png(fig, path: Path) -> None:
@@ -77,45 +77,12 @@ def plot_hotspot_mb1() -> Path:
     return out
 
 
-def plot_resnet_phase_bars() -> Path:
-    """Stacked horizontal bars from bottleneck_breakdown_b1 (batch 1)."""
-    models = []
-    pct_c = []
-    pct_m = []
-    with open(BREAKDOWN_B1, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row["batch"] != "1":
-                continue
-            models.append(row["model"].replace("ResNet", "RN"))
-            pct_c.append(float(row["pct_Compute"]))
-            pct_m.append(float(row["pct_Mem_Stall"]))
-    y = np.arange(len(models))
-    fig, ax = plt.subplots(figsize=(8, 2.8))
-    w1 = [c / 100.0 for c in pct_c]
-    w2 = [m / 100.0 for m in pct_m]
-    ax.barh(y, w1, color="tab:blue", label=r"$T_{\mathrm{Compute}}$")
-    ax.barh(y, w2, left=w1, color="tab:orange", label=r"$T_{\mathrm{Mem}}$ (approx.)")
-    ax.set_yticks(y)
-    ax.set_yticklabels(models)
-    ax.set_xlabel("Fraction of end-to-end time")
-    ax.set_xlim(0, 1)
-    ax.legend(loc="lower right")
-    ax.set_title("")  # 图题在论文正文中以中文给出
-    plt.tight_layout()
-    out = FIG_DIR / "c5_522_resnet_phase_bars.png"
-    _save_fig_png(fig, out)
-    plt.close(fig)
-    return out
-
-
 def main():
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     assert (MB1_TRACE / "state_trace.csv").exists(), f"Missing {MB1_TRACE}/state_trace.csv"
-    assert BREAKDOWN_B1.exists(), f"Missing {BREAKDOWN_B1}"
 
     p1 = plot_hotspot_mb1()
-    p2 = plot_resnet_phase_bars()
-    print("Wrote:", p1, p2, sep="\n")
+    print("Wrote:", p1, sep="\n")
 
 
 if __name__ == "__main__":
