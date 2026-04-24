@@ -10,13 +10,13 @@ GS_FLAGS := -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dPDFSETTINGS=/printer -d
 
 pdf:
 	@mkdir -p $(BUILD_DIR)
-	$(LATEXMK) -xelatex -latexoption="-shell-escape" -interaction=nonstopmode -file-line-error main.tex
+	PAR_GLOBAL_CLEAN=1 PAR_GLOBAL_TEMP=/tmp $(LATEXMK) -xelatex -latexoption="-shell-escape" -interaction=nonstopmode -file-line-error main.tex
 	@cp $(BUILD_DIR)/main.pdf main.pdf
 	@echo "=> main.pdf updated"
 
 watch:
 	@mkdir -p $(BUILD_DIR)
-	$(LATEXMK) -pvc -xelatex -latexoption="-shell-escape" -interaction=nonstopmode -file-line-error main.tex
+	PAR_GLOBAL_CLEAN=1 PAR_GLOBAL_TEMP=/tmp $(LATEXMK) -pvc -xelatex -latexoption="-shell-escape" -interaction=nonstopmode -file-line-error main.tex
 
 compress: main.pdf
 	$(GS) $(GS_FLAGS) -sOutputFile=main_compressed.pdf main.pdf
