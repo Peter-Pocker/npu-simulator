@@ -5,9 +5,11 @@ One-shot: run GEMINI to generate IR, then run the NPU simulator with that IR.
 Each run creates a timestamped record folder under trace/ (or -t base):
   trace/trace_YYYYMMDD_HHMMSS/
   ├── gemini_log/          # Only with --save-gemini-log: stdout, stderr
-  ├── trans_2x2_ir.json    # Generated IR
+  ├── trans_2x2_ir.json    # Generated IR (if GEMINI found a valid mapping)
+  ├── gemini_no_ir.log     # If IR missing: GEMINI stdout/stderr for debugging
   ├── state_trace.csv      # Simulator trace (via run.sh)
   ├── workload_summary.csv
+  ├── phase_heatmap.png   # Per-core phase % heatmap (if matplotlib available)
   ├── stdout.txt           # Simulator output (via run.sh)
   └── run_info.md          # Run times, GEMINI input, config path
 
@@ -19,6 +21,7 @@ Example:
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 import re
@@ -228,7 +231,29 @@ def run_gemini(params: dict, gemini_dir: str, record_folder: str, save_log: bool
         raise SystemExit(f"GEMINI exited with code {proc.returncode}")
 
     if not os.path.isfile(ir_path_out):
-        raise SystemExit(f"GEMINI did not produce expected IR file: {ir_path_out}")
+        out_txt = (proc.stdout or b"").decode("utf-8", errors="replace")
+        err_txt = (proc.stderr or b"").decode("utf-8", errors="replace")
+        fail_log = os.path.join(record_folder, "gemini_no_ir.log")
+        try:
+            with open(fail_log, "w", encoding="utf-8") as f:
+                f.write("=== GEMINI stdout ===\n")
+                f.write(out_txt)
+                f.write("\n=== GEMINI stderr ===\n")
+                f.write(err_txt)
+        except OSError:
+            pass
+        sys.stderr.write(
+            f"\n[gemini_run] 未找到期望的 IR: {ir_path_out}\n"
+            "  GEMINI 在未找到可行映射 (DP_search 得到 nullptr) 时**不会**写出 _ir.json，但进程可能仍以退出码 0 结束。\n"
+            "  完整输出已写入: " + fail_log + "\n"
+            "  可尝试: 换小网络(如 -n vgg 或 2)、增大配置里 gemini.exploration_rounds、"
+            "或把 num_cores_x/y 调为 2x2 再试。\n"
+        )
+        if out_txt.strip():
+            sys.stderr.write("\n--- GEMINI stdout (tail) ---\n" + out_txt[-4000:])
+        if err_txt.strip():
+            sys.stderr.write("\n--- GEMINI stderr (tail) ---\n" + err_txt[-4000:])
+        raise SystemExit(1)
 
     if not save_log:
         for fname in ("temp_points.txt",):
@@ -253,6 +278,83 @@ def run_via_run_sh(config_path: str, ir_path: str, record_folder: str, root: str
     proc = subprocess.run(cmd, cwd=root)
     elapsed = time.perf_counter() - t0
     return proc.returncode, elapsed
+
+
+def _aggregate_workload_by_core_for_heatmap(ws_path: str) -> dict[str, list[float]]:
+    """workload_summary.csv -> { "Core 0": [L, C, W, S], ... } summed by core.
+    S (StallNoC) 无单独列时置 0，与 scripts/plot_c53_hotspot.py 一致。
+    """
+    per_core: dict[int, list[float]] = {}
+    with open(ws_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            cid = int(row["core_id"])
+            loading = float(row["loading_cycles"])
+            compute = float(row["compute_cycles"])
+            wb = float(row["writeback_cycles"])
+            stall = 0.0
+            if cid not in per_core:
+                per_core[cid] = [0.0, 0.0, 0.0, 0.0]
+            per_core[cid][0] += loading
+            per_core[cid][1] += compute
+            per_core[cid][2] += wb
+            per_core[cid][3] += stall
+    if not per_core:
+        return {}
+    return {f"Core {k}": v for k, v in sorted(per_core.items())}
+
+
+def plot_phase_heatmap(record_folder: str, title: str) -> str | None:
+    """
+    各核 Loading/Compute/Writeback/StallNoC 在阶段周期和中的占比热力图
+   （与 plot_c53_hotspot.py 相同配色与标度）。
+    成功则返回输出 PNG 路径，跳过或失败返回 None。
+    """
+    ws = os.path.join(record_folder, "workload_summary.csv")
+    if not os.path.isfile(ws):
+        print("[gemini_run] No workload_summary.csv; skip phase heatmap.")
+        return None
+    data_map = _aggregate_workload_by_core_for_heatmap(ws)
+    if not data_map:
+        print("[gemini_run] Empty workload summary; skip phase heatmap.")
+        return None
+    try:
+        import numpy as np
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError as e:
+        print(f"[gemini_run] Skip heatmap (need matplotlib, numpy: {e})")
+        return None
+    phases = ["Loading", "Compute", "Writeback", "StallNoC"]
+    cores = list(data_map.keys())
+    raw = np.array([data_map[c] for c in cores], dtype=float)
+    totals = raw.sum(axis=1, keepdims=True)
+    totals[totals == 0] = 1
+    pct = raw / totals * 100.0
+    n_cores = len(cores)
+    fig_h = max(3.2, 0.55 * n_cores + 1.0)
+    fig, ax = plt.subplots(figsize=(10, fig_h))
+    im = ax.imshow(pct, cmap="YlOrRd", vmin=0, vmax=100, aspect="auto")
+    ax.set_xticks(range(len(phases)))
+    ax.set_xticklabels(phases, fontsize=12)
+    ax.set_yticks(range(len(cores)))
+    ax.set_yticklabels(cores, fontsize=12)
+    ax.xaxis.set_ticks_position("bottom")
+    for i in range(len(cores)):
+        for j in range(len(phases)):
+            val = pct[i, j]
+            tcol = "white" if val > 55 else "black"
+            ax.text(j, i, f"{val:.1f}", ha="center", va="center", fontsize=13, fontweight="bold", color=tcol)
+    cbar = fig.colorbar(im, ax=ax, pad=0.02)
+    cbar.set_label("%", fontsize=11)
+    ax.set_title(title, fontsize=13, pad=10)
+    plt.tight_layout()
+    out_path = os.path.join(os.path.abspath(record_folder), "phase_heatmap.png")
+    fig.savefig(out_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
+    return out_path
 
 
 def write_run_info(record_folder: str, gemini_input: str, config_path: str,
@@ -331,6 +433,11 @@ def main() -> int:
         action="store_true",
         help="Print GEMINI network index and names, then exit",
     )
+    ap.add_argument(
+        "--no-heatmap",
+        action="store_true",
+        help="After simulation, do not write phase_heatmap.png from workload_summary.csv",
+    )
     args = ap.parse_args()
 
     if args.list_networks:
@@ -387,6 +494,11 @@ def main() -> int:
     exit_code, sim_time = run_via_run_sh(config_path, ir_path, record_folder, root)
     write_run_info(record_folder, gemini_stdin_line(params), config_path, gemini_time, sim_time, ir_path)
     print("[gemini_run] Run info written to:", os.path.join(record_folder, "run_info.md"))
+    if exit_code == 0 and not args.no_heatmap:
+        ht_title = f"{net_name}: per-core phase fraction of active time (%)"
+        hp = plot_phase_heatmap(record_folder, ht_title)
+        if hp:
+            print("[gemini_run] Phase heatmap:", hp)
     return exit_code
 
 
