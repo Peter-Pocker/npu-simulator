@@ -16,43 +16,58 @@
 @inproceedings{vaswani2017attention,
   title     = {Attention Is All You Need},
   author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  year      = {2017}
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS 2017)},
+  volume    = {30},
+  pages     = {5998--6008},
+  year      = {2017},
+  doi       = {10.48550/arXiv.1706.03762},
 }
 
 @article{zhao2023llm_survey,
   title   = {A Survey of Large Language Models},
-  author  = {Zhao, Wayne Xin and Zhou, Kun and Li, Jun and Tang, Tian and Wang, Xiaojie and Hou, Yidong and Min, Yixin and Zhang, Beichen and Zhang, Junjie and Dong, Zican and others},
-  journal = {arXiv preprint arXiv:2303.18223},
-  year    = {2023}
+  author  = {Zhao, Wayne Xin and Zhou, Kun and Li, Junyi and Tang, Tianyi and Wang, Xiaolei and Hou, Yupeng and Min, Yingqian and Zhang, Beichen and Zhang, Junjie and Dong, Zican and others},
+  journal = {Computing Research Repository (CoRR)},
+  volume  = {abs/2303.18223},
+  year    = {2023},
+  doi     = {10.48550/arXiv.2303.18223},
 }
 
-@article{dao2022flashattention,
-  title   = {FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness},
-  author  = {Dao, Tri and Fu, Daniel Y. and Ermon, Stefano and Rudra, Atri and R{\'e}, Christopher},
-  journal = {arXiv preprint arXiv:2205.14135},
-  year    = {2022}
+@inproceedings{dao2022flashattention,
+  title     = {FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness},
+  author    = {Dao, Tri and Fu, Daniel Y. and Ermon, Stefano and Rudra, Atri and R{\'e}, Christopher},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS 2022)},
+  volume    = {35},
+  pages     = {16344--16359},
+  year      = {2022},
+  doi       = {10.52202/068431-1189},
 }
 
-@article{dao2023flashattention2,
-  title   = {FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning},
-  author  = {Dao, Tri},
-  journal = {arXiv preprint arXiv:2307.08691},
-  year    = {2023}
+
+@inproceedings{dao2023flashattention2,
+  title     = {FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning},
+  author    = {Dao, Tri},
+  booktitle = {International Conference on Learning Representations (ICLR 2024)},
+  year      = {2024},
+  doi       = {10.48550/arXiv.2307.08691},
 }
 
-@article{kwon2023pagedattention,
+@inproceedings{kwon2023pagedattention,
   title   = {Efficient Memory Management for Large Language Model Serving with PagedAttention},
   author  = {Kwon, Woosuk and Li, Zhuohan and Zhuang, Siyuan and Sheng, Ying and Zheng, Lianmin and Yu, Cody Hao and Gonzalez, Joseph E. and Zhang, Hao and Stoica, Ion},
-  journal = {arXiv preprint arXiv:2309.06180},
-  year    = {2023}
+  booktitle = {ACM Symposium on Operating Systems Principles (SOSP 2023)},
+  year    = {2023},
+  doi     = {10.1145/3600006.3613165}
 }
 
-@article{reuther2024memorywall,
-  title   = {AI and the Memory Wall},
-  author  = {Reuther, Albert and Michaleas, Pavlos and Jones, Michael and Gadepally, Vijay and Samsi, Siddharth and Kepner, Jeremy},
-  journal = {arXiv preprint arXiv:2403.14123},
-  year    = {2024}
+@article{gholami2024aimemorywall,
+  title   = {AI and Memory Wall},
+  author  = {Gholami, Amir and Yao, Zhewei and Kim, Sehoon and Hooper, Coleman and Mahoney, Michael W. and Keutzer, Kurt},
+  journal = {IEEE Micro},
+  volume  = {44},
+  number  = {3},
+  pages   = {33--39},
+  year    = {2024},
+  doi     = {10.1109/MM.2024.3373763},
 }
 
 @article{williams2009roofline,
@@ -67,16 +82,20 @@
 }
 
 @article{jin2024onnxim,
-  title   = {ONNXim: A Fast, Cycle-level Multi-core NPU Simulator},
-  author  = {Jin, Hong and others},
-  journal = {arXiv preprint arXiv:2406.08051},
-  year    = {2024}
+  title   = {{ONNXim}: A Fast, Cycle-Level Multi-Core {NPU} Simulator},
+  author  = {Ham, Hyungkyu and Yang, Wonhyuk and Shin, Yunseon and Woo, Okkyun and Heo, Guseul and Lee, Sangyeop and Park, Jongse and Kim, Gwangsun},
+  journal = {IEEE Computer Architecture Letters},
+  volume  = {23},
+  number  = {2},
+  pages   = {219--222},
+  year    = {2024},
+  doi     = {10.1109/LCA.2024.3484648},
 }
 
 @inproceedings{jiang2013booksim,
   title     = {A Detailed and Flexible Cycle-Accurate Network-on-Chip Simulator},
   author    = {Jiang, Nan and Balfour, James and Becker, Daniel U. and Towles, Brian and Dally, William J. and Michelogiannakis, George and Kim, John},
-  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS)},
+  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS 2013)},
   year      = {2013},
   doi       = {10.1109/ISPASS.2013.6557149}
 }
@@ -84,63 +103,74 @@
 @article{luo2023ramulator2,
   title   = {Ramulator 2.0: A Modern, Modular, and Extensible DRAM Simulator},
   author  = {Luo, Haocong and Tugrul, Yahya Can and Bostanc{\i}, F. Nisa and Olgun, Ataberk and Ya{\u g}l{\i}kc{\i}, A. Giray and Mutlu, Onur},
-  journal = {arXiv preprint arXiv:2308.11030},
-  year    = {2023}
+  journal = {IEEE Computer Architecture Letters},
+  year    = {2024},
+  doi     = {10.1109/LCA.2023.3333759},
 }
 
 @article{zhang2023gem5nvdla,
   title   = {gem5-NVDLA: A Simulation Framework for Compiling, Scheduling, and Architecture Evaluation on AI System-on-Chips},
-  author  = {Zhang, X. and others},
-  journal = {arXiv preprint},
-  year    = {2023}
+  author  = {Lai, Chengtao and Zhang, Wei},
+  journal = {ACM Transactions on Design Automation of Electronic Systems (ACM TODAES)},
+  volume  = {29},
+  number  = {5},
+  articleno = {84},
+  year    = {2024},
+  doi     = {10.1145/3661997}
 }
 
 % 攻读学位期间取得的研究成果（作者论文）
 @inproceedings{set2023isca,
   title     = {Inter-layer Scheduling Space Definition and Exploration for Tiled Accelerators},
-  author    = {Author, A. and others},
-  booktitle = {Proceedings of the 50th International Symposium on Computer Architecture (ISCA)},
+  author    = {Cai, Jingwei and Wei, Yuchen and Wu, Zuotong and Peng, Sen and Ma, Kaisheng},
+  booktitle = {ACM/IEEE International Symposium on Computer Architecture (ISCA 2023)},
   year      = {2023},
-  publisher = {ACM},
   doi       = {10.1145/3579371.3589048},
-  url       = {https://doi.org/10.1145/3579371.3589048}
 }
 
 % 攻读学位期间取得的研究成果（作者论文）
 @inproceedings{cai2024gemini,
   title     = {Gemini: Mapping and Architecture Co-exploration for Large-scale DNN Chiplet Accelerators},
-  author    = {Author, A. and others},
-  booktitle = {2024 IEEE International Symposium on High-Performance Computer Architecture (HPCA)},
+  author    = {Cai, Jingwei and Wu, Zuotong and Peng, Sen and Wei, Yuchen and Tan, Zhanhong and Shi, Guiming and Gao, Mingyu and Ma, Kaisheng},
+  booktitle = {IEEE International Symposium on High-Performance Computer Architecture (HPCA 2024)},
   pages     = {156--171},
   year      = {2024},
-  organization = {IEEE}
+  doi       = {10.1109/HPCA57654.2024.00022},
 }
 
 @article{flooonoc2024,
-  title   = {FlooNoC: A 645 Gbps/link 0.15 pJ/B/hop Open-Source NoC with Wide Physical Links and End-to-End AXI4 Parallel Multi-Stream Support},
-  author  = {FlooNoC Authors},
-  journal = {arXiv preprint arXiv:2409.17606},
-  year    = {2024}
+  title   = {{FlooNoC}: A 645-{Gb}/s/link 0.15-{pJ}/{B}/hop Open-Source {NoC} With Wide Physical Links and End-to-End {AXI4} Parallel Multistream Support},
+  author  = {Fischer, Tim and Rogenmoser, Michael and Benz, Thomas and G{\"u}rkaynak, Frank K. and Benini, Luca},
+  journal = {IEEE Transactions on Very Large Scale Integration (VLSI) Systems},
+  volume  = {33},
+  number  = {4},
+  pages   = {1094--1107},
+  year    = {2025},
+  doi     = {10.1109/TVLSI.2025.3527225},
 }
 
 @article{qualcomm2026hexagonmlir,
-  title   = {Hexagon-MLIR: An AI Compilation Stack for Qualcomm's Neural Processing Units (NPUs)},
-  author  = {Qualcomm Research},
-  journal = {arXiv preprint arXiv:2602.19762},
-  year    = {2026}
+  title   = {{Hexagon-MLIR}: An {AI} Compilation Stack for {Qualcomm}'s Neural Processing Units ({NPUs})},
+  author  = {{Qualcomm Research}},
+  journal = {Computing Research Repository (CoRR)},
+  volume  = {abs/2602.19762},
+  year    = {2026},
+  doi     = {10.48550/arXiv.2602.19762},
 }
 
-@article{lattner2021mlir,
-  title     = {MLIR: Scaling Compiler Infrastructure for Domain Specific Computation},
-  author    = {Lattner, Chris and Amini, Mehdi and Bondhugula, Uday and Cohen, Albert and Davis, Andy and others},
-  journal   = {arXiv preprint arXiv:2002.11054},
-  year      = {2021}
+@inproceedings{lattner2021mlir,
+  title     = {{MLIR}: Scaling Compiler Infrastructure for Domain Specific Computation},
+  author    = {Lattner, Chris and Amini, Mehdi and Bondhugula, Uday and Cohen, Albert and Davis, Andy and Pienaar, Jacques and Riddle, River and Shpeisman, Tatiana and Vasilache, Nicolas and Zinenko, Oleksandr},
+  booktitle = {IEEE/ACM International Symposium on Code Generation and Optimization (CGO 2021)},
+  pages     = {2--14},
+  year      = {2021},
+  doi       = {10.1109/CGO51591.2021.9370308},
 }
 
 @inproceedings{parashar2019timeloop,
   title     = {Timeloop: A Systematic Approach to DNN Accelerator Evaluation},
   author    = {Parashar, Angshuman and Raina, Prasanth and Shao, Yakun Sophia and Chen, Yu-Hsin and Ying, Victor A. and Mukkara, Ananda and Venkataramanan, Rangaprabhu and Khailany, Brucek and Keckler, Stephen W. and Emer, Joel},
-  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS)},
+  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS 2019)},
   pages     = {304--315},
   year      = {2019},
   doi       = {10.1109/ISPASS.2019.00042}
@@ -149,7 +179,7 @@
 @inproceedings{wu2019accelergy,
   title     = {Accelergy: An Architecture-Level Energy Estimation Methodology for Accelerator Designs},
   author    = {Wu, Yannan Nellie and Deng, Rangharajan and He, Lillian and Gutturi, Prasanth and Sabne, Amit},
-  booktitle = {IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
+  booktitle = {IEEE/ACM International Conference on Computer-Aided Design (ICCAD 2019)},
   pages     = {1--8},
   year      = {2019},
   doi       = {10.1109/ICCAD45719.2019.8942143}
@@ -158,7 +188,7 @@
 @inproceedings{kwon2019maestro,
   title     = {Understanding Reuse, Performance, and Hardware Cost of DNN Dataflows: A Data-Centric Approach},
   author    = {Kwon, Hyoukjun and Chatarasi, Prasanth and Pellauer, Michael and Parashar, Angshuman and Sarkar, Vivek and Krishna, Tushar},
-  booktitle = {Proceedings of the 52nd IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  booktitle = {IEEE/ACM International Symposium on Microarchitecture (MICRO 2019)},
   pages     = {754--768},
   year      = {2019},
   doi       = {10.1145/3352460.3358272}
@@ -167,15 +197,16 @@
 @inproceedings{chen2018tvm,
   title     = {TVM: An Automated End-to-End Optimizing Compiler for Deep Learning},
   author    = {Chen, Tianqi and Moreau, Thierry and Jiang, Ziheng and Zheng, Lianmin and Yan, Eddie and Cowan, Meghan and Shen, Haichen and Wang, Leyuan and Hu, Yuwei and Ceze, Luis and Guestrin, Carlos and Krishnamurthy, Arvind},
-  booktitle = {Proceedings of the 13th USENIX Symposium on Operating Systems Design and Implementation (OSDI)},
+  booktitle = {USENIX Symposium on Operating Systems Design and Implementation (OSDI 2018)},
   pages     = {578--594},
-  year      = {2018}
+  year      = {2018},
+  doi       = {10.48550/arXiv.1802.04799},
 }
 
 @inproceedings{chen2016eyeriss,
   title     = {Eyeriss: A Spatial Architecture for Energy-Efficient Dataflow for Convolutional Neural Networks},
   author    = {Chen, Yu-Hsin and Emer, Joel and Sze, Vivienne},
-  booktitle = {Proceedings of the 43rd ACM/IEEE International Symposium on Computer Architecture (ISCA)},
+  booktitle = {ACM/IEEE International Symposium on Computer Architecture (ISCA 2016)},
   pages     = {367--379},
   year      = {2016},
   doi       = {10.1145/3007787.3001177}
@@ -184,7 +215,7 @@
 @inproceedings{jouppi2017tpu,
   title     = {In-Datacenter Performance Analysis of a Tensor Processing Unit},
   author    = {Jouppi, Norman P. and Young, Cliff and Patil, Nishant and Patterson, David and Agrawal, Gaurav and Bajwa, Raminder and Bates, Sarah and Bhatia, Suresh and Boden, Nan and Borchers, Al and others},
-  booktitle = {Proceedings of the 44th International Symposium on Computer Architecture (ISCA)},
+  booktitle = {ACM/IEEE International Symposium on Computer Architecture (ISCA 2017)},
   pages     = {1--12},
   year      = {2017},
   doi       = {10.1145/3079856.3080246}
@@ -193,22 +224,23 @@
 @inproceedings{veronesi2021nvdla,
   title     = {Cross-Layer Hardware/Software Assessment of the Open-Source {NVDLA} Configurable Deep Learning Accelerator},
   author    = {Veronesi, Alessandro and Bertozzi, Davide and Krstic, Milos},
-  booktitle = {IEEE International Symposium on Circuits and Systems (ISCAS)},
+  booktitle = {IEEE International Symposium on Circuits and Systems (ISCAS 2021)},
   year      = {2021},
   doi       = {10.1109/ISCAS51556.2021.9401134}
 }
 
-@article{ding2020survey,
-  title   = {A Survey of Quantization Methods for Efficient Neural Network Inference},
-  author  = {Ding, Ruihao and Mao, Zixuan and Yang, Zhekai and Zhang, Han and Chen, Chao and Liu, Li and Liu, Feng and Wang, Yiran},
-  journal = {arXiv preprint arXiv:2103.13630},
-  year    = {2021}
+@incollection{ding2020survey,
+  title     = {A Survey of Quantization Methods for Efficient Neural Network Inference},
+  author    = {Gholami, Amir and Kim, Sehoon and Dong, Zhen and Yao, Zhewei and Mahoney, Michael W. and Keutzer, Kurt},
+  booktitle = {Low-Power Computer Vision},
+  year      = {2022},
+  doi       = {10.1201/9781003162810-13},
 }
 
 @inproceedings{gao2017tetris,
   title     = {Tetris: Scalable and Efficient Neural Network Acceleration with 3D Memory},
   author    = {Gao, Mingyu and Pu, Jing and Yang, Xuan and Horowitz, Mark and Kozyrakis, Christos},
-  booktitle = {Proceedings of the 22nd International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
+  booktitle = {ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2017)},
   pages     = {751--764},
   year      = {2017},
   doi       = {10.1145/3037697.3037702}
@@ -228,9 +260,10 @@
 @article{sastry2024computing,
   title   = {Computing Power and the Governance of Artificial Intelligence},
   author  = {Sastry, Girish and Heim, Lennart and Belfield, Haydn and Anderljung, Markus and Brundage, Miles and Hazell, Julian and O'Keefe, Cullen and Hadfield, Gillian K. and others},
-  journal = {arXiv preprint arXiv:2402.08797},
+  journal = {Computing Research Repository (CoRR)},
+  volume  = {abs/2402.08797},
   year    = {2024},
-  url     = {https://arxiv.org/abs/2402.08797}
+  doi     = {10.48550/arXiv.2402.08797},
 }
 
 % =========================
@@ -240,7 +273,7 @@
 @inproceedings{shao2014aladdin,
   title     = {Aladdin: A Pre-{RTL}, Power-Performance Accelerator Simulator Enabling Large Design Space Exploration of Customized Architectures},
   author    = {Shao, Yakun Sophia and Reiter, Brandon and Wei, Gu-Yeon and Brooks, David},
-  booktitle = {Proceedings of the 41st ACM/IEEE International Symposium on Computer Architecture (ISCA)},
+  booktitle = {ACM/IEEE International Symposium on Computer Architecture (ISCA 2014)},
   pages     = {97--108},
   year      = {2014},
   doi       = {10.1109/ISCA.2014.6853196}
@@ -249,7 +282,7 @@
 @inproceedings{samajdar2020scalesim,
   title     = {A Systematic Methodology for Characterizing Scalability of {DNN} Accelerators using {SCALE-Sim}},
   author    = {Samajdar, Ananda and Zhu, Yuhao and Whatmough, Paul and Mattina, Matthew and Krishna, Tushar},
-  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS)},
+  booktitle = {IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS 2020)},
   pages     = {58--68},
   year      = {2020},
   doi       = {10.1109/ISPASS48437.2020.00016}
@@ -258,7 +291,7 @@
 @inproceedings{huang2021cosa,
   title     = {{CoSA}: Scheduling {DNN} Accelerators via Constrained Optimization},
   author    = {Huang, Qijing and Kalaiah, Aravind and Kang, Minwoo and Demmel, James and Dinh, Grace and Wawrzynek, John and Shao, Yakun Sophia},
-  booktitle = {Proceedings of the 48th ACM/IEEE International Symposium on Computer Architecture (ISCA)},
+  booktitle = {ACM/IEEE International Symposium on Computer Architecture (ISCA 2021)},
   pages     = {106--119},
   year      = {2021},
   doi       = {10.1109/ISCA52012.2021.00018}
@@ -267,24 +300,25 @@
 @inproceedings{yang2020interstellar,
   title     = {Interstellar: Using {Halide}'s Scheduling Language to Analyze {DNN} Accelerators},
   author    = {Yang, Xuan and Gao, Mingyu and Liu, Qiaoyi and Setter, Jeff and Pu, Jing and Nayak, Ankita and Bell, Steven and Cao, Kaidi and Ha, Heonjae and Raina, Prasanth and Kozyrakis, Christos and Horowitz, Mark},
-  booktitle = {Proceedings of the 25th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
+  booktitle = {ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2020)},
   pages     = {369--383},
   year      = {2020},
-  doi       = {10.1145/3373376.3378514}
 }
+doi       = {10.1145/3373376.3378514}
 
 @inproceedings{wu2019fbnet,
   title     = {{FBNet}: Hardware-Aware Efficient {ConvNet} Design via Differentiable Neural Architecture Search},
   author    = {Wu, Bichen and Dai, Xiaoliang and Zhang, Peizhao and Wang, Yanghan and Sun, Fei and Wu, Yiming and Tian, Yuandong and Vajda, Peter and Jia, Yangqing and Keutzer, Kurt},
-  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2019)},
   pages     = {10734--10742},
-  year      = {2019}
+  year      = {2019},
+  doi       = {10.1109/CVPR.2019.01099},
 }
 
 @inproceedings{liao2019davinci,
   title     = {{DaVinci}: A Scalable Architecture for Neural Network Computing},
   author    = {Liao, Heng and Tu, Jiajin and Xia, Jing and Zhou, Xiping},
-  booktitle = {IEEE Hot Chips 31 Symposium (HCS)},
+  booktitle = {IEEE Hot Chips Symposium (Hot Chips 31, 2019)},
   pages     = {1--44},
   year      = {2019},
   doi       = {10.1109/HOTCHIPS.2019.8875654}
@@ -293,7 +327,7 @@
 @inproceedings{liao2021ascend,
   title     = {Ascend: a Scalable and Unified Architecture for Ubiquitous Deep Neural Network Computing -- Industry Track Paper},
   author    = {Liao, Heng and Tu, Jiajin and Xia, Jing and Liu, Hong and Zhou, Xiping and Yuan, Honghui and Hu, Yuxing},
-  booktitle = {IEEE International Symposium on High-Performance Computer Architecture (HPCA)},
+  booktitle = {IEEE International Symposium on High-Performance Computer Architecture (HPCA 2021)},
   pages     = {789--801},
   year      = {2021},
   doi       = {10.1109/HPCA51647.2021.00071}
@@ -302,18 +336,17 @@
 % 攻读学位期间取得的研究成果（作者论文）
 @inproceedings{soma2024,
   title     = {SoMa: Identifying, Exploring, and Understanding the DRAM Communication Scheduling Space for DNN Accelerators},
-  author    = {Author, A. and others},
-  booktitle = {Proceedings of the IEEE International Symposium on High-Performance Computer Architecture ({HPCA})},
-  year      = {2024},
-  note      = {IEEE Xplore: 10476408},
-  url       = {https://ieeexplore.ieee.org/abstract/document/10476408/}
+  author    = {Cai, Jingwei and Wang, Xuan and Gao, Mingyu and Peng, Sen and Zhu, Zijian and Wei, Yuchen and Wu, Zuotong and Ma, Kaisheng},
+  booktitle = {IEEE International Symposium on High-Performance Computer Architecture (HPCA 2025)},
+  year      = {2025},
+  doi       = {10.1109/HPCA61900.2025.00048},
 }
 
 % 攻读学位期间取得的研究成果（作者论文）
 @inproceedings{bufferprospector2024,
   title     = {Buffer Prospector: Discovering and Exploiting Untapped Buffer Resources in Many-Core DNN Accelerators},
-  author    = {Author, A. and others},
-  booktitle = {Proceedings of the ACM International Conference on Architectural Support for Programming Languages and Operating Systems ({ASPLOS})},
-  year      = {2024},
-  note      = {正式出版链接请按录用版本在 ACM Digital Library 中核对后填写}
+  author    = {Wei, Yuchen and Cai, Jingwei and Gao, Mingyu and Peng, Sen and Wu, Zuotong and Shi, Guiming and Ma, Kaisheng},
+  booktitle = {ACM/IEEE Design Automation Conference (DAC 2025)},
+  year      = {2025},
+  doi       = {10.1109/DAC63849.2025.11132440}
 }
