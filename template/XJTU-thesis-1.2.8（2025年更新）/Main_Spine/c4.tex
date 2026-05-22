@@ -1,0 +1,64 @@
+% !TeX root = ../main.tex
+
+\xchapter{参考文献与交叉引用}{Crossreferences}
+
+注意，当引用时出现 [?] 时，请注意查看辅助文件是否正常生成，此种问题不是模板造成的，请自行解决。
+
+\xsection{公式、图表的引用}{Ref equations, tables or figures}
+
+\xsubsection{引用公式}{Ref equations}
+
+引用公式使用 \clist{\eqref{label}} 命令，将引用公式的编号（带括号）：
+
+\begin{texcode}[]{}
+  如式 \eqref{eqn:c1:diff} 所示
+\end{texcode}
+
+\xsubsection{引用其他内容}{Ref other floatings}
+
+其他浮动体引用请使用 \clist{\ref{label}} 命令，将引用其编号（无括号）：
+
+\begin{texcode}[]{}
+  如图 \ref{subfig:icon} 所示 \\
+  如表 \ref{tab:methodcompare} 所示 \\
+  如算法 \ref{algorithm} 所示 \\
+  如源码 \ref{lst:a_label} 所示
+\end{texcode}
+
+\xsection{参考文献}{References}
+
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black]
+  \begin{enumerate}[leftmargin=0.5cm]
+    \item 参考文献的著录格式应符合国家标准GB/T 7714-2015《文后参考文献著录规则》。参考文献中每条项目应齐全。
+    \item 参考文献里面标点符号：英文文献用半角,中文文献用全角。
+  \end{enumerate}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black]
+  \begin{enumerate}[leftmargin=0.5cm]
+    \item 文后著录的参考文献务必实事求是。论文中引用过的文献必须著录，未引用的文献不得出现。应遵循学术道德规范，避免涉嫌抄袭、剽窃等学术不端行为。
+    \item 参考文献一般应是作者亲自考察过的对学位论文有参考价值的文献，除特殊情况外，一般不应间接引用。
+    \item 参考文献应有权威性，要注意引用最新的文献。
+    \item 参考文献的数量：
+    博士学位论文，一般应在80篇以上，其中，期刊文献60篇以上，国外文献30篇以上，均以近5年的文献为主。
+    硕士学位论文，一般应在30篇以上，其中，期刊文献不少于20篇，国外文献不少于10篇，均以近5年的文献为主。对于申请专业学位的学位论文，参考文献的数量可参照执行。
+  \end{enumerate}
+\end{tcolorbox}
+
+模板使用 biblatex 编译参考文献，默认采用顺序编码制，有多种引用参考文献的方式，请自行查阅 biblatex-gbt-7715-2015 宏包，即 \clist{texdoc biblatex-gbt-7714-2015}。
+
+在导言区使用\clist{\addbibresource{path/to/.bib file}}添加参考文献数据库，默认参考文献数据库位于 ./References/ 下。
+
+这里主要举例三种引用方式，使用 \clist{\cite{ref}} 的引用结果作为上标出现在正文中，使用 \clist{\parencite{ref}} 的引用结果作为正文内容（一个名词）出现在正文中，使用 \clist{\footfullcite{ref}} 的引用结果作为脚注内容在脚注部分出现。
+
+
+
+\begin{texcode}[]{}
+  这是一个比较常见的问题 \cite{barella_situ_2021}。可以发现 xxxx \cite{atta_enhanced_2021}。\\
+
+  文献\parencite{张燕2013电气自动化在电气工程中的应用探讨} 提出了 xxx，文献 \parencite{黄雪芳2012探讨电气工程中自动化技术的应用} 则提出了 yyy。
+
+\end{texcode}
+
+\footnote{这是脚注1}根据 zzz 发布的报告 \footfullcite{王磊2011电气自动化控制设备可靠性探究}，可以发现\footnote{这是脚注2}

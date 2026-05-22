@@ -1,0 +1,205 @@
+% !TEX program = latexmk
+% !TEX encoding = UTF-8 Unicode
+
+% 注意：请使用 TeXLive 2019 及以上版本，已在 2019 2020 2021 版本测试编译成功，已在 2018 测试编译失败
+% 如不想更新，可尝试使用 手动编译 XeLaTeX（可能出错）
+% WARNING: Please use TeXLive version >= 2019, This template has been tested and found available on 2019, 2020, 2021, unavailable on 2018. 
+
+% 注意：请确保自己已经完整阅读了 README.md 这一 markdown 文档，部分功能的使用方法并未在 .tex 中直接给出；如果仍有使用问题，请在 Github 上提出 issue
+% WARNING: Pleans read README.md first cause some usages are not given in .tex files.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% select the basic style of this thesis/dissertation (this document will use thesis for convenience)
+%% 选择论文的基本类型
+
+\documentclass[
+    doctor,     % 必选项：   {master, doctor} 填写学历水平
+                % Mandatory: {master, doctor} Fill in the level of your degree
+    academic,   % 必选项：   {academic, professional} 填写学位类型
+                % Mandatory: {academic, professional} Fill in the type of your degree
+    % english,  % 可选项：   英文正文请选择此项
+                % Optional:  For english main content, It will change some auto-generated matter into English
+    % blind,    % 可选项：   论文用于盲审请选择此项，将不会产生致谢(内容)、答辩委员会会议决议(内容)、
+                %            常规评阅人名单(内容)，注意请自行修改 `攻读学位期间取得的研究成果' 内的内容格式
+                % Optional:  For blind review, It will not generate Acknowledgements(Content), Decision of Defense Committee(Content),
+                %            General Reviewers List(Content), CHANGE THE STYLE of Achievements BY YOURSELF
+]{XJTU-thesis}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% fill the each blank for auto-generate contents
+%% 填写以下信息用以自动生成
+
+% 论文标题（不超过35个字，英文注意大小写规律）
+% Title, Make sure you have an acceptable capitalization
+% 第一个参数为中文标题，第二个参数为英文标题
+% The first argument is Chinese title, the second argument is English title, if you have only English title, put it as both first and second argument
+% 第二个为论文题目的英文翻译，请注意单词的大小写规律，如Structural Design and Rapid Development of Labyrinth Drip Irrigation Emitters
+% The second argument is English translation of the Chinese title, please follow the capitalization rules of English. For example, "Structural Design and Rapid Development of Labyrinth Drip Irrigation Emitters". If you have only English title, you can ignore this tips.
+\title{XXXXXXXXXXXXXXXXXXX（论文题目不能超过35个汉字）}{XXXXXXXXXX XXXXXXXX}
+
+% 学位类型
+% Type of your degree, Translate it from documents in `Materials/Requirements/2025/01 中英文题名页示例/英文标准翻译/'
+% \degree{硕士}{Philosophy} % 学术型(Academic)硕士请基于 '学术学位名称.txt' 填写
+% \degree{硕士}{Engineering} % 专业型(Professional)硕士请基于 '专业学位（领域）英文标准翻译.pdf' 填写
+\degree{博士}{Philosophy}  % 学术型(Academic Doc)博士请填写 '{博士}{Philosophy}'
+% \degree{博士}{Engineering} % 专业型(Professional Doc)博士请基于 '专业学位（领域）英文标准翻译.pdf' 填写
+
+% 作者姓名（注意：所有人名英文均为「名在前，姓在后」，如果只有外文名，请在两个参数都填写外文名称）
+% If you have only foreign name, put it as both first and second argument
+% 第一个参数为中文名，第二个参数为外文名
+% The first argument is Chinese name, the second argument is foreign name
+\author{XXX}{XXX}
+
+% 指导老师姓名（注意：同作者姓名）
+% Name of supervisor, It have the same requirments as the author
+\advisor{XXX}{教授}{XXX}{(Associate)\ Prof.}
+
+% 合作指导老师姓名 或 导师团队
+%（校方模板要求只能选择一个，都有则显示合作导师）
+% Name of associate advisor or adviror's team, You can use only one of them, and advisorassociate has a higher priority.
+
+% ==== 设置合作导师
+% 注：以下情况可认定为申请学生的合作导师。
+%（1）与招生简章中一致的合作导师；（2）CSC项目的合作导师；（3）交叉培养项目认定的合作导师。
+% \advisorassociate{XXX}{教授}{XXX}{Prof.}
+
+% ==== 设置合作导师
+% 注：“导师团队”的书写需与招生简章保持一致
+% The English Name of the Team must be consistent with the enrollment brochure
+% \advisorteam{XXX教授团队\ 或\ “团队名称”}{English Name of the Team}
+
+% 填写学术型学位的学科名称 / 专业型学位类别（领域）
+% 请按照 '\Materials\Requirements\2025\01 中英文题名页示例' 下的附件1或附件2填写
+% 英文翻译请参照 'Materials/Requirements/2025/01 中英文题名页示例/英文标准翻译/学科（专业）英文标准翻译.pdf'
+% Name of the subject, also get it from that file
+% Please fill in according to Attachment 1 or Attachment 2 under "\Materials\Requirements\2025\01 Sample of Chinese and English Title Pages"
+% 
+\subject{XXXX}{XXXX}
+
+\submitdateDefault
+% 论文提交日期，不输入参数则默认使用当前日期，如手动指明年月，请在第一个可选参数内填写年份，第二个可选参数填写月份（均为阿拉伯数字）
+% Submission date of this thesis, if you not put it manually, it will use the current time
+% \submitdate[2025][10]
+% \submitdate
+
+% 答辩委员会委员 显示的顺序和这里的一样 第一个人是主席 格式：单位, 职称, 姓名
+% Committee member of your defence, notice that the order shows in the thesis is same as here, and the first one is the chairperson
+% each member should be put as {Organization,Name,Title} split by comma
+\addcommitteemember{XXXXXXXXXX大学,XXX,XXX}
+\addcommitteemember{XXXXXXXXXX大学,XXX,XXX}
+\addcommitteemember{XXXXXXXXXX大学,XXX,XXX}
+\addcommitteemember{XXXXXXXXXX大学,XXX,XXX}
+\addcommitteemember{XXXXXXXXXX大学,XXX,XXX}
+
+% 答辩时间（手动指定）
+% Defence date, input manually
+\defensedate{XXXX}{X}{X}
+
+% 答辩地点（涉密论文请手动设置为「西安交通大学」）
+% Defence location, default value is 「西安交通大学」
+% 非涉密论文填写具体地点，如：西安交通大学主楼E座303室。
+\defenseloc{XXXXXX}
+
+% 常规审阅人 要求和答辩委员会委员一样
+% General reviewer list, same requirements as the committee member
+\addgeneralreviewer{西安交通大学,王XX,教授}
+\addgeneralreviewer{XXXXXX大学,李XX,教授}
+\addgeneralreviewer{XXXXXX大学,田XX,教授}
+
+% 学院
+% School or Faculty, unused now
+% \school{电气工程学院}{School of Electrical Engineering}
+
+% 专业[学士学位使用]
+% Major, unused now
+% \stumajor{计算机科学与计数}{Computer Science}
+
+% 学号[学士学位使用]
+% Student ID, unused now
+% \stuid{}
+
+% 班级[学士学位使用]
+% Administrative class, unused now
+% \adminclass{电气7xx班}{}
+
+\addbibresource{References/reference.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 如果有使用其他包，请在这里添加
+%% If you need other packages, use them here
+
+% \usepackage{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 注意：根据校方要求，以下所有页面顺序不可调整
+%% Notice: The order of these pages are defined in the requirements of the University.
+
+\begin{document}
+% [自动生成] 中英题名页
+% [Auto Generate] Chinese English Title Page
+\thesistitles
+
+% [自动生成] 答辩委员会页
+% [Auto Generate] Defense Committee Pages
+\thesiscommittes
+
+% 生成摘要页 修改 Main_Miscellaneous/abstract_chs/eng.tex 中的内容
+% Abstract, Rewrite your content in Main_Miscellaneous/abstract_chs/eng.tex
+\thesisabstract
+
+% 中英目录页
+% Table of Contents
+\thesistableofcontens
+
+% 主要符号表 修改 Main_Miscellaneous/glossary.tex 中的内容
+% Glossaries Page, Rewrite your content in Main_Miscellaneous/glossary.tex
+% 本部分内容非强制性要求，如果论文中所用符号不多，可以省略《主要符号表》。
+% This section is not a mandatory requirement. If the number of symbols used in the paper is not large, the "Main Symbol Table" can be omitted.
+\thesisglossarylist
+
+% 正文 注意：英文正文写作时，中、英标题还是先中后英标题；同时，下面参数的顺序有意义，不要乱放
+% Main contents, X of cX is the chapter of the thesis, you can change it if you want, the order matters
+% and KEEP Chinese Title as the FIRST argument, English Titile as the SECOND, if you use `english' option
+
+\thesisbody{
+    Main_Spine/c1,
+    Main_Spine/c2,
+    Main_Spine/c3,
+    Main_Spine/c4,
+    Main_Spine/c5,
+    Main_Spine/c6
+}
+
+% 致谢 修改 Main_Miscellaneous/acknowledegment.tex 中的内容
+% Acknowledgement, Rewrite your content in Main_Miscellaneous/acknowledegment.tex
+\thesisacknowledegment
+
+% [自动生成] 参考文献 默认使用 References/reference.bib，手动指定请在导言区 \addbibresource 处指定
+% [Auto Generate] Bibliography, Default file is References/reference.bib, change argument in \addbibresource for manual specification
+\thesisbibliography
+
+% 附录（有几个附录就导入几个文件（不加.tex后缀）），
+% Appendi(x/ies), argument should not have the .tex suffix
+\thesisappendix{Main_Miscellaneous/appendix_a,
+                Main_Miscellaneous/appendix_b}
+
+% 攻读学位期间取得的研究成果 修改 Main_Miscellaneous/achievement.tex 中的内容 注意盲审时需要手动修改格式
+% Achievement, Rewrite your content in Main_Miscellaneous/achievement.tex
+\thesisachivements
+
+% 答辩委员会决议 修改 Main_Miscellaneous/decision.tex 中的内容
+% Decision, Rewrite your content in Main_Miscellaneous/decision.tex
+\thesisdecision
+
+% [自动生成] 常规评阅人名单 需要手动指定两个数字作为'本学位论文共接受 {#1} 位专家评阅，其中常规评阅人 {2}名'内容参数
+% [Auto Generate] Reviewer List, set two number as the content in this page 
+\thesisreviewers{7}{5}
+
+% [自动生成] 独创性声明
+% [Auto Generate] Originality Declaration
+\thesisdeclarations
+
+\end{document}

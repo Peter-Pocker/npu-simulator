@@ -1,0 +1,86 @@
+% !TeX root = ../main.tex
+
+\xchapter{算法与代码}{Algorithm and Code}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black]
+  学校并未对 算法 或 代码 的排版格式作出限定，因此可以自行修改。
+\end{tcolorbox}
+
+\xsection{算法}{Algorithm}
+
+在仔细研究后，本模板使用了基于 \clist[columbiablue]{algorithm2e} 宏包的算法排版工具，而没有使用 \clist[columbiablue]{algorithmicx (algpseudocode)}。同时，需要提醒的是， \clist[columbiablue]{algpseudocode} 在制作竖直定界线方面有一些问题，而能够较好的实现算法自动分段；\clist[columbiablue]{algorithm2e} 则相反，且这两个宏包相互冲突。
+
+算法的具体编写方式请自行查阅宏包，即\clist{texdoc algorithm2e}，本模板已预先定义了Do-While循环即\clist{\Do{cond}{code}}。
+
+\begin{texcode}[]{}
+  \begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{this text}
+    \KwResult{how to write algorithm with \LaTeX2e }
+  
+    initialization\;
+    \While{not at end of this document}{
+      read current\;
+      \eIf{understand}{
+        go to next section\;
+        current section becomes this one\;
+        }{
+        go back to the beginning of current section\;
+        }
+      }
+    \caption{How to write algorithms}
+  \end{algorithm}
+\end{texcode}
+
+\begin{algorithm}[h]
+  \caption{Simulation-optimization heuristic}\label{algorithm}
+  \KwData{current period $t$, initial inventory $I_{t-1}$, initial capital $B_{t-1}$, demand samples}
+  \KwResult{Optimal order quantity $Q^{\ast}_{t}$}
+  $r\leftarrow t$\;
+  $\Delta B^{\ast}\leftarrow -\infty$\;
+  \While{$\Delta B\leq \Delta B^{\ast}$ and $r\leq T$}{$Q\leftarrow\arg\max_{Q\geq 0}\Delta B^{Q}_{t,r}(I_{t-1},B_{t-1})$\;
+  $\Delta B\leftarrow \Delta B^{Q}_{t,r}(I_{t-1},B_{t-1})/(r-t+1)$\;
+  \If{$\Delta B\geq \Delta B^{\ast}$}{$Q^{\ast}\leftarrow Q$\;
+  $\Delta B^{\ast}\leftarrow \Delta B$\;}
+  $r\leftarrow r+1$\;}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+  \KwData{this text}
+  \KwResult{how to write algorithm with \LaTeX2e }
+  initialization\;
+  \While{not at end of this document}{
+    read current\;
+    \Repeat{this end condition}{
+      do these things\;
+    }
+    \eIf{understand}{
+      go to next section\;
+      current section becomes this one\;
+    }{
+      go back to the beginning of current section\;
+    }
+    \Do{this end condition}{
+      do these things\;
+    }
+  }
+  \caption{How to write algorithms}
+\end{algorithm}
+
+
+
+\xsection{导入代码}{Input codes}
+
+从现有文件导入源码，使用 \clist[columbiablue]{lstlisting} 宏包，本模板预先定义了一基本格式 \clist{sty_basic} 以供使用，可以自定义新的样式。
+
+\begin{texcodeonly}
+\lstinputlisting[style=sty_basic,
+  language=matlab,
+  caption={标准粒子群算法},
+  label={lst:a_label}]{./Codes/pso.m}
+\end{texcodeonly}
+\lstinputlisting[style=sty_basic,
+                    language=matlab,
+                    caption={标准粒子群算法},
+                    label={lst:a_label}]{./Codes/pso.m}
