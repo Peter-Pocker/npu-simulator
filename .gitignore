@@ -37,3 +37,7 @@ python_deps/
 *.swp
 *.swo
 *~
+
+# -- Other --
+thesis/main.pdf
+thesis/main_compressed.pdf
