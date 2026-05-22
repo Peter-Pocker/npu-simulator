@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-
 rm -f *.aux
 rm -f *.bak
 rm -f *.bbl
