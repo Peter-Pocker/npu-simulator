@@ -276,13 +276,13 @@
   \setallmainfonts{Times New Roman}
 \else
   \ifmacosx
-    \setCJKmainfont[AutoFakeBold=true]{Songti SC}
-    % ctex on mac may predefine \heiti/\songti; avoid "already defined" error.
-    % macOS 新版系统已移除 STHeiti，改用 Heiti SC（或安装华文黑体后改回 STHeiti）
-    \@ifundefined{heiti}{\newCJKfontfamily{\heiti}{Heiti SC}}{}
-    \newfontfamily{\heiti@letter}{Heiti SC}
-    \@ifundefined{songti}{\newCJKfontfamily{\songti}{Songti SC}}{}
-    \newfontfamily{\songti@letter}{Songti SC}
+    % macOS 上使用从 Microsoft Word 拷贝到 ~/Library/Fonts/ 的 Windows 中文字体，
+    % 全角引号字宽符合 GB/T 15834-2011，与 Word 中“宋体”渲染一致。
+    \setCJKmainfont[AutoFakeBold=true]{SimSun}
+    \@ifundefined{heiti}{\newCJKfontfamily{\heiti}{SimHei}}{}
+    \newfontfamily{\heiti@letter}{SimHei}
+    \@ifundefined{songti}{\newCJKfontfamily{\songti}{SimSun}}{}
+    \newfontfamily{\songti@letter}{SimSun}
     \setallmainfonts{Times New Roman}
   \else
     \setCJKmainfont[AutoFakeBold=true,Path=Materials/Fonts/]{fzsong.ttf}

@@ -12,9 +12,9 @@
 %% select the basic style of this thesis/dissertation (this document will use thesis for convenience)
 %% 选择论文的基本类型
 
-% ctex 在 macOS 上默认可能选用含 STHeiti 的旧字体集；新版系统若无该字体会导致 XeLaTeX 报错。
-% 指定 fandol 使用 TeX Live 自带中文字体，便于本地与 CI 一致通过编译。（若需系统黑体可改为 fontset=macnew 等）
-\PassOptionsToPackage{fontset=fandol}{ctex}
+% 使用 windows 字体集：宋体/黑体/楷体/仿宋来自 ~/Library/Fonts/（从 Microsoft Word 拷贝得到）。
+% 全角引号字宽与 GB/T 15834-2011 一致，排版效果与 Word 中“宋体”一致。
+\PassOptionsToPackage{fontset=windows}{ctex}
 
 \documentclass[
     master,     % 必选项：   {master, doctor} 填写学历水平
