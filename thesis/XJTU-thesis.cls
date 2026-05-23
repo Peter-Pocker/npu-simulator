@@ -1419,11 +1419,13 @@
 %   \end{spacing}
 % }{}{}
 
-\RequirePackage[hyperref=true,backend=biber,style=gb7714-2015,gbalign=left]{biblatex}
+\RequirePackage[hyperref=true,backend=biber,style=gb7714-2015,gbalign=left,gbnamefmt=lowercase,maxbibnames=3,minbibnames=3]{biblatex}
 \renewcommand{\bibfont}{\zihao{5}}
 \setlength{\bibitemsep}{0ex}
 \setlength{\bibnamesep}{0ex}
 \setlength{\bibinitsep}{0ex}
+% 校规要求名的缩写字母之间无空格（如 "Metcalf SW"、"Qian XS"），去掉 biblatex 默认的 init 之间空格
+\renewcommand*{\bibinitdelim}{}
 
 \RenewDocumentCommand {\thesisbibliography} {  } {
   \newcommand{\thesisbibname}{参考文献}
