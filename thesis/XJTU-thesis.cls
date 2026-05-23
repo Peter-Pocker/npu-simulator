@@ -1202,7 +1202,7 @@
 
 \renewcommand{\thesistableofcontens}{
   \fancyfoot[LE,RO]{\fontsize{9pt}{10.8pt}\selectfont\Roman{page}}
-  \begin{spacing}{1}
+  \begin{spacing}{1.1}
   \tableofchinesecontents
   \clearpage
   \tableofengcontents
